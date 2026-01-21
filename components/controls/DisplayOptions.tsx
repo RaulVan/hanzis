@@ -39,26 +39,6 @@ function CheckOption({ label, checked, onChange }: CheckOptionProps) {
   );
 }
 
-interface ColorPickerProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}
-
-function ColorPicker({ label, value, onChange }: ColorPickerProps) {
-  return (
-    <div className="flex items-center justify-between">
-      <Label>{label}</Label>
-      <input
-        type="color"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-8 h-8 rounded border border-gray-200 cursor-pointer"
-      />
-    </div>
-  );
-}
-
 export function DisplayOptions() {
   const {
     config,
@@ -70,8 +50,6 @@ export function DisplayOptions() {
     setHighlightFirst,
     setInsertEmptyRow,
     setTraceCount,
-    setTraceColor,
-    setGridColor,
   } = useWorksheetStore();
 
   const columnsPerRow = calculateColumnsPerRow({
@@ -141,19 +119,7 @@ export function DisplayOptions() {
           />
         </div>
 
-        {/* Color pickers */}
-        <div className="space-y-3">
-          <ColorPicker
-            label="描红颜色"
-            value={config.traceColor}
-            onChange={setTraceColor}
-          />
-          <ColorPicker
-            label="线条颜色"
-            value={config.gridColor}
-            onChange={setGridColor}
-          />
-        </div>
+        
       </CardContent>
     </Card>
   );

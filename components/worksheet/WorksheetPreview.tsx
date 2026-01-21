@@ -259,7 +259,7 @@ export function WorksheetPreview() {
                         <StrokeOrderFanning
                           char={row.char.char}
                           size={Math.max(12, strokeLineHeight - 2)}
-                          color={config.traceColor}
+                          color={config.strokeOrderColor}
                         />
                       ) : null}
                     </div>
@@ -325,7 +325,7 @@ export function WorksheetPreview() {
                                 y="50%"
                                 textAnchor="middle"
                                 dominantBaseline="central"
-                                fill={config.traceColor}
+                                fill={config.pinyinColor}
                                 fontSize={Math.max(10, cellSizePx * 0.22)}
                                 fontFamily="Noto Sans SC, Noto Sans, system-ui, sans-serif"
                               >

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useWorksheetStore } from "@/stores/worksheetStore";
 import { gridOptions, type GridType } from "@/types";
-import { cn } from "@/lib/utils";
+import { calculateColumnsPerRow, cn } from "@/lib/utils";
 
 // Grid type preview icons
 function GridPreview({ type, selected }: { type: GridType; selected: boolean }) {
@@ -96,6 +96,15 @@ function GridPreview({ type, selected }: { type: GridType; selected: boolean }) 
 export function GridSelector() {
   const { config, setGridType, setGridSize, setRowGap } =
     useWorksheetStore();
+  const pageWidthMm = 210;
+  const mmToPx = 3.78;
+  const contentWidthPx = pageWidthMm * mmToPx - config.pageMargin * 2;
+  const columnsPerRow = calculateColumnsPerRow({
+    gridSizeMm: config.gridSize,
+    pageMarginPx: config.pageMargin,
+    pageWidthMm,
+    mmToPx,
+  });
 
   return (
     <Card>
@@ -128,20 +137,24 @@ export function GridSelector() {
           </div>
         </div>
 
-        {/* Grid size (in mm) */}
+        {/* Columns per row (based on A4 width) */}
         <div className="space-y-2">
           <div className="flex justify-between">
-            <Label>方格大小</Label>
+            <Label>方格数量</Label>
             <span className="text-xs text-gray-500">
-              {config.gridSize}mm
+              {columnsPerRow}个
             </span>
           </div>
           <Slider
-            value={[config.gridSize]}
-            onValueChange={([value]) => setGridSize(value)}
+            value={[columnsPerRow]}
+            onValueChange={([value]) => {
+              const safeColumns = Math.max(1, Math.round(value));
+              const nextGridSizeMm = contentWidthPx / safeColumns / mmToPx;
+              setGridSize(Number(nextGridSizeMm.toFixed(2)));
+            }}
             min={8}
             max={20}
-            step={0.5}
+            step={1}
           />
         </div>
 

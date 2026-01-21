@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { InputPanel, GridSelector, DisplayOptions, ExportPanel } from "@/components/controls";
+import { InputPanel, GridSelector, DisplayOptions, ExportPanel, ColorSettings } from "@/components/controls";
 import { WorksheetPreview } from "./WorksheetPreview";
 import { useWorksheetStore } from "@/stores/worksheetStore";
 
@@ -114,6 +114,9 @@ export function WorksheetGenerator() {
         {/* Display options */}
         <DisplayOptions />
         
+        {/* Color settings */}
+        <ColorSettings />
+
         {/* Grid settings */}
         <GridSelector />
       </aside>

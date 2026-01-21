@@ -43,6 +43,7 @@ export interface WorksheetConfig {
   characterColor: string;
   pinyinColor: string;
   traceColor: string; // color for traced characters (light red)
+  strokeOrderColor: string;
 
   // Layout settings
   columnsPerRow: number;
@@ -81,7 +82,7 @@ export const defaultWorksheetConfig: WorksheetConfig = {
 
   gridType: "tian",
   gridSize: 10, // 10mm per cell
-  gridColor: "#f0a05a", // orange-ish grid lines
+  gridColor: "#af0000",
   gridLineWidth: 1,
 
   showPinyin: false,
@@ -96,9 +97,10 @@ export const defaultWorksheetConfig: WorksheetConfig = {
   repeatCount: 14, // total cells per row
 
   fontFamily: "kai",
-  characterColor: "#333333",
-  pinyinColor: "#666666",
-  traceColor: "#f5a9a9", // light red for traced chars
+  characterColor: "#6b7280",
+  pinyinColor: "#d1d5db",
+  traceColor: "#d1d5db",
+  strokeOrderColor: "#d1d5db",
 
   columnsPerRow: 14, // matches repeatCount
   rowsPerPage: 10,

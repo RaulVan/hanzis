@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 import type { WorksheetConfig, CharacterInfo, GridType, DisplayMode, PinyinPosition } from "@/types";
 import { defaultWorksheetConfig } from "@/types";
 
@@ -37,6 +38,9 @@ interface WorksheetState {
   setTraceCount: (count: number) => void;
   setTraceColor: (color: string) => void;
   setGridColor: (color: string) => void;
+  setPinyinColor: (color: string) => void;
+  setStrokeOrderColor: (color: string) => void;
+  setCharacterColor: (color: string) => void;
   setRowGap: (gap: number) => void;
   setInsertEmptyRow: (insert: boolean) => void;
   setCurrentPage: (page: number) => void;
@@ -44,122 +48,158 @@ interface WorksheetState {
   resetConfig: () => void;
 }
 
-export const useWorksheetStore = create<WorksheetState>((set) => ({
-  config: defaultWorksheetConfig,
-  characters: [],
-  currentPage: 0,
-  isLoading: false,
-
-  setConfig: (newConfig) =>
-    set((state) => ({
-      config: { ...state.config, ...newConfig },
-    })),
-
-  setCharacters: (characters) => set({ characters }),
-
-  setInputText: (text) =>
-    set((state) => ({
-      config: { ...state.config, characters: text },
-    })),
-
-  setGridType: (type) =>
-    set((state) => ({
-      config: { ...state.config, gridType: type },
-    })),
-
-  setGridSize: (size) =>
-    set((state) => ({
-      config: { ...state.config, gridSize: size },
-    })),
-
-  setShowPinyin: (show) =>
-    set((state) => ({
-      config: { ...state.config, showPinyin: show },
-    })),
-
-  setPinyinPosition: (position) =>
-    set((state) => ({
-      config: { ...state.config, pinyinPosition: position },
-    })),
-
-  setShowTone: (show) =>
-    set((state) => ({
-      config: { ...state.config, showTone: show },
-    })),
-
-  setShowStrokeCount: (show) =>
-    set((state) => ({
-      config: { ...state.config, showStrokeCount: show },
-    })),
-
-  setShowRadical: (show) =>
-    set((state) => ({
-      config: { ...state.config, showRadical: show },
-    })),
-
-  setShowStrokeOrder: (show) =>
-    set((state) => ({
-      config: { ...state.config, showStrokeOrder: show },
-    })),
-
-  setDisplayMode: (mode) =>
-    set((state) => ({
-      config: { ...state.config, displayMode: mode },
-    })),
-
-  setRepeatCount: (count) =>
-    set((state) => ({
-      config: { ...state.config, repeatCount: count, columnsPerRow: count },
-    })),
-
-  setColumnsPerRow: (columns) =>
-    set((state) => ({
-      config: { ...state.config, columnsPerRow: columns },
-    })),
-
-  setRowsPerPage: (rows) =>
-    set((state) => ({
-      config: { ...state.config, rowsPerPage: rows },
-    })),
-
-  setHighlightFirst: (highlight) =>
-    set((state) => ({
-      config: { ...state.config, highlightFirst: highlight },
-    })),
-
-  setTraceCount: (count) =>
-    set((state) => ({
-      config: { ...state.config, traceCount: count },
-    })),
-
-  setTraceColor: (color) =>
-    set((state) => ({
-      config: { ...state.config, traceColor: color },
-    })),
-
-  setGridColor: (color) =>
-    set((state) => ({
-      config: { ...state.config, gridColor: color },
-    })),
-
-  setRowGap: (gap) =>
-    set((state) => ({
-      config: { ...state.config, rowGap: gap },
-    })),
-
-  setInsertEmptyRow: (insert) =>
-    set((state) => ({
-      config: { ...state.config, insertEmptyRow: insert },
-    })),
-
-  setCurrentPage: (page) => set({ currentPage: page }),
-
-  setLoading: (loading) => set({ isLoading: loading }),
-
-  resetConfig: () =>
-    set({
+export const useWorksheetStore = create<WorksheetState>()(
+  persist(
+    (set) => ({
       config: defaultWorksheetConfig,
       characters: [],
       currentPage: 0,
+      isLoading: false,
+
+      setConfig: (newConfig) =>
+        set((state) => ({
+          config: { ...state.config, ...newConfig },
+        })),
+
+      setCharacters: (characters) => set({ characters }),
+
+      setInputText: (text) =>
+        set((state) => ({
+          config: { ...state.config, characters: text },
+        })),
+
+      setGridType: (type) =>
+        set((state) => ({
+          config: { ...state.config, gridType: type },
+        })),
+
+      setGridSize: (size) =>
+        set((state) => ({
+          config: { ...state.config, gridSize: size },
+        })),
+
+      setShowPinyin: (show) =>
+        set((state) => ({
+          config: { ...state.config, showPinyin: show },
+        })),
+
+      setPinyinPosition: (position) =>
+        set((state) => ({
+          config: { ...state.config, pinyinPosition: position },
+        })),
+
+      setShowTone: (show) =>
+        set((state) => ({
+          config: { ...state.config, showTone: show },
+        })),
+
+      setShowStrokeCount: (show) =>
+        set((state) => ({
+          config: { ...state.config, showStrokeCount: show },
+        })),
+
+      setShowRadical: (show) =>
+        set((state) => ({
+          config: { ...state.config, showRadical: show },
+        })),
+
+      setShowStrokeOrder: (show) =>
+        set((state) => ({
+          config: { ...state.config, showStrokeOrder: show },
+        })),
+
+      setDisplayMode: (mode) =>
+        set((state) => ({
+          config: { ...state.config, displayMode: mode },
+        })),
+
+      setRepeatCount: (count) =>
+        set((state) => ({
+          config: { ...state.config, repeatCount: count, columnsPerRow: count },
+        })),
+
+      setColumnsPerRow: (columns) =>
+        set((state) => ({
+          config: { ...state.config, columnsPerRow: columns },
+        })),
+
+      setRowsPerPage: (rows) =>
+        set((state) => ({
+          config: { ...state.config, rowsPerPage: rows },
+        })),
+
+      setHighlightFirst: (highlight) =>
+        set((state) => ({
+          config: { ...state.config, highlightFirst: highlight },
+        })),
+
+      setTraceCount: (count) =>
+        set((state) => ({
+          config: { ...state.config, traceCount: count },
+        })),
+
+      setTraceColor: (color) =>
+        set((state) => ({
+          config: { ...state.config, traceColor: color },
+        })),
+
+      setGridColor: (color) =>
+        set((state) => ({
+          config: { ...state.config, gridColor: color },
+        })),
+
+      setPinyinColor: (color) =>
+        set((state) => ({
+          config: { ...state.config, pinyinColor: color },
+        })),
+
+      setStrokeOrderColor: (color) =>
+        set((state) => ({
+          config: { ...state.config, strokeOrderColor: color },
+        })),
+
+      setCharacterColor: (color) =>
+        set((state) => ({
+          config: { ...state.config, characterColor: color },
+        })),
+
+      setRowGap: (gap) =>
+        set((state) => ({
+          config: { ...state.config, rowGap: gap },
+        })),
+
+      setInsertEmptyRow: (insert) =>
+        set((state) => ({
+          config: { ...state.config, insertEmptyRow: insert },
+        })),
+
+      setCurrentPage: (page) => set({ currentPage: page }),
+
+      setLoading: (loading) => set({ isLoading: loading }),
+
+      resetConfig: () =>
+        set({
+          config: defaultWorksheetConfig,
+          characters: [],
+          currentPage: 0,
+        }),
     }),
-}));
+    {
+      name: "hanzis-worksheet-settings",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        config: state.config,
+      }),
+      merge: (persistedState, currentState) => {
+        const typed = persistedState as { config?: WorksheetConfig } | null;
+        return {
+          ...currentState,
+          config: {
+            ...currentState.config,
+            ...(typed?.config ?? {}),
+          },
+        };
+      },
+    }
+  )
+);
