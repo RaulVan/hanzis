@@ -27,7 +27,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white mt-auto">
         <div className="container mx-auto px-4 py-4 text-center text-sm text-gray-500">
-          <p>汉字字帖生成器 - 开源项目</p>
+          <p>汉字网</p>
         </div>
       </footer>
     </main>
