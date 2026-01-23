@@ -11,28 +11,36 @@ interface StrokeAnimationProps {
 export function StrokeAnimation({ char, size = 200 }: StrokeAnimationProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const writerRef = React.useRef<unknown>(null);
+  const initRef = React.useRef(false);
   const [isAnimating, setIsAnimating] = React.useState(false);
   const [isQuizMode, setIsQuizMode] = React.useState(false);
   const [quizResult, setQuizResult] = React.useState<string | null>(null);
 
   // Initialize HanziWriter
   React.useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Prevent double initialization in Strict Mode
+    if (initRef.current) return;
+    initRef.current = true;
 
     // Clear previous instance
-    containerRef.current.innerHTML = "";
+    container.innerHTML = "";
     writerRef.current = null;
     setIsAnimating(false);
     setIsQuizMode(false);
     setQuizResult(null);
 
+    let isMounted = true;
+
     // Dynamic import hanzi-writer
     import("hanzi-writer").then((mod) => {
       const HanziWriter = mod.default || mod;
 
-      if (!containerRef.current) return;
+      if (!isMounted || !container) return;
 
-      const writer = HanziWriter.create(containerRef.current, char, {
+      const writer = HanziWriter.create(container, char, {
         width: size,
         height: size,
         padding: 10,
@@ -49,9 +57,12 @@ export function StrokeAnimation({ char, size = 200 }: StrokeAnimationProps) {
     });
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
+      isMounted = false;
+      initRef.current = false;
+      if (container) {
+        container.innerHTML = "";
       }
+      writerRef.current = null;
     };
   }, [char, size]);
 
@@ -124,7 +135,7 @@ export function StrokeAnimation({ char, size = 200 }: StrokeAnimationProps) {
       <div className="flex justify-center">
         <div
           ref={containerRef}
-          className="border-2 border-gray-200 rounded-lg bg-white"
+          className="border-2 border-gray-200 rounded-lg bg-white overflow-hidden"
           style={{ width: size, height: size }}
         />
       </div>
