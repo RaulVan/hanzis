@@ -1,7 +1,10 @@
-import { WorksheetGenerator } from "@/components/worksheet/WorksheetGenerator";
-import { Navigation } from "@/components/layout";
+"use client";
 
-export default function Home() {
+import * as React from "react";
+import { Navigation } from "@/components/layout";
+import { StrokeViewer } from "@/components/stroke/StrokeViewer";
+
+export default function StrokePage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <Navigation />
@@ -9,13 +12,13 @@ export default function Home() {
       {/* Main content */}
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">汉字字帖生成器</h1>
+          <h1 className="text-2xl font-bold text-gray-900">汉字笔顺</h1>
           <p className="text-sm text-gray-500 mt-1">
-            生成田字格、米字格字帖，支持拼音、笔画顺序
+            查询汉字笔顺、观看笔画动画、学习正确书写顺序
           </p>
         </div>
 
-        <WorksheetGenerator />
+        <StrokeViewer />
       </div>
 
       {/* Footer */}

@@ -1,415 +1,345 @@
-# 字帖生成器 - 项目规划
+# Hanzis.com - 中文学习平台规划
 
 ## 项目概述
 
-**目标**: 开发一款功能丰富的中文字帖生成器，支持生成田字格、米字格等多种格式的字帖，包含汉字、拼音、部首、笔画顺序等内容。
+**网站**: https://hanzis.com  
+**定位**: 综合性中文学习工具平台  
+**目标用户**: 汉字初学者、小学生、中文学习者、海外华人子女
 
-**参考**: https://z2h.cn/number
+**核心模块**:
 
-**核心依赖库**:
-- [hanzi-writer](https://github.com/chanind/hanzi-writer) - 汉字笔画顺序动画
-- [cnchar](https://github.com/theajack/cnchar) - 汉字工具库（拼音、笔画、偏旁等）
-
----
-
-## 功能需求分析
-
-### 核心功能
-
-| 功能模块 | 描述 | 优先级 | 依赖库 |
-|---------|------|--------|--------|
-| 汉字输入 | 支持手动输入、批量输入、常用字词库选择 | P0 | - |
-| 田字格生成 | 标准田字格（十字线） | P0 | - |
-| 米字格生成 | 米字格（十字+对角线） | P0 | - |
-| 拼音标注 | 自动生成拼音，支持音调显示 | P0 | cnchar |
-| 笔画顺序 | 显示笔画顺序数字/动画 | P1 | hanzi-writer |
-| 部首显示 | 显示汉字部首信息 | P1 | cnchar-radical |
-| 笔画数显示 | 显示汉字笔画数 | P1 | cnchar |
-| PDF导出 | 生成可打印的PDF文件 | P0 | jspdf/html2canvas |
-| 图片导出 | 导出PNG/JPG格式 | P1 | html2canvas |
-
-### 扩展功能
-
-| 功能模块 | 描述 | 优先级 | 依赖库 |
-|---------|------|--------|--------|
-| 描红模式 | 浅色汉字供描写 | P1 | - |
-| 空格练习 | 只显示格子不显示字 | P2 | - |
-| 笔画动画 | 动态演示笔画书写过程 | P2 | hanzi-writer |
-| 组词提示 | 显示常用词组 | P2 | cnchar-words |
-| 成语练习 | 成语字帖模式 | P3 | cnchar-idiom |
-| 古诗词模板 | 预设古诗词内容 | P3 | - |
-| 自定义样式 | 字体、颜色、大小自定义 | P2 | - |
+| 模块 | 功能 | 状态 | 优先级 |
+|------|------|------|--------|
+| 字帖生成器 | 生成田字格/米字格字帖，支持拼音、笔顺 | **已完成** | P0 |
+| 拼音学习 | 拼音字母表、声母韵母、声调练习 | pending | P1 |
+| 汉字笔顺 | 单字笔顺查询、笔顺动画、笔画练习 | **已完成** | P1 |
+| 古诗词 | 古诗词库、朗读、注释、背诵练习 | pending | P2 |
+| 中文字典 | 汉字查询、释义、组词、例句 | pending | P2 |
 
 ---
 
-## 技术架构设计
+## 模块一：字帖生成器 [complete]
 
-### 技术栈选型
+**路径**: `/` (首页)  
+**功能**: 生成可打印的汉字练习字帖
+
+### 已完成功能
+
+- [x] 汉字输入（手动输入）
+- [x] 格子类型（田字格/米字格/回宫格/空白格）
+- [x] 拼音显示（四线三格样式）
+- [x] 笔顺显示（fanning式笔画分解）
+- [x] 描红模式（首字高亮 + 描红字）
+- [x] 颜色自定义（描字/首字/线条/拼音/笔顺）
+- [x] 方格数量动态计算
+- [x] PDF导出（多页）
+- [x] 打印支持
+- [x] 本地设置持久化
+- [x] Cloudflare Pages 部署
+
+### 技术栈
 
 ```
-前端框架: Next.js 14+ (App Router) + TypeScript
-UI组件库: Tailwind CSS + shadcn/ui
-汉字处理: cnchar + cnchar-poly + cnchar-order + cnchar-trad + cnchar-radical
-笔画动画: hanzi-writer
+框架: Next.js 16+ (App Router) + TypeScript
+UI: Tailwind CSS v4 + shadcn/ui
+汉字处理: cnchar + cnchar-poly + cnchar-order + cnchar-radical
+笔画渲染: hanzi-writer (SVG paths)
 PDF生成: jspdf + html2canvas
-状态管理: Zustand (轻量级)
-部署平台: Vercel / Cloudflare Pages / Netlify
+状态管理: Zustand (persist)
+部署: Cloudflare Pages
 ```
 
-### 为什么选择 Next.js
+---
 
-| 优势 | 说明 |
-|-----|------|
-| **Vercel原生支持** | 零配置部署，自动优化 |
-| **Cloudflare兼容** | 通过 @cloudflare/next-on-pages 支持 |
-| **App Router** | 现代化路由，支持布局嵌套 |
-| **静态导出** | `output: 'export'` 生成纯静态站点 |
-| **SEO友好** | 内置metadata API |
-| **图片优化** | next/image 自动优化 |
-| **字体优化** | next/font 自动优化中文字体加载 |
+## 模块二：拼音学习 [pending]
 
-### 部署方案
+**路径**: `/pinyin`  
+**功能**: 系统学习汉语拼音
 
-#### Vercel (推荐)
-```bash
-# 直接推送到GitHub，Vercel自动部署
-git push origin main
-```
+### 功能规划
 
-#### Cloudflare Pages
-```bash
-# 安装适配器
-npm install @cloudflare/next-on-pages
+| 子功能 | 描述 | 优先级 |
+|--------|------|--------|
+| 拼音字母表 | 完整26字母对应拼音 | P1 |
+| 声母表 | 23个声母，发音示例 | P1 |
+| 韵母表 | 24个韵母（单韵母/复韵母/鼻韵母） | P1 |
+| 整体认读音节 | 16个整体认读音节 | P1 |
+| 声调练习 | 四声+轻声，听音辨调 | P1 |
+| 拼音拼读 | 声母+韵母组合练习 | P2 |
+| 拼音字帖 | 生成拼音练习字帖 | P2 |
 
-# wrangler.toml 配置
-name = "hanzis"
-compatibility_flags = ["nodejs_compat"]
-```
+### 数据结构
 
-#### 静态导出 (通用)
 ```typescript
-// next.config.ts
-const nextConfig = {
-  output: 'export',  // 生成纯静态文件
-  images: { unoptimized: true }
-};
+// 声母定义
+interface Initial {
+  letter: string;       // 'b'
+  pinyin: string;       // 'bō'
+  audio?: string;       // 发音音频URL
+  examples: string[];   // ['爸', '不', '北']
+}
+
+// 韵母定义
+interface Final {
+  letter: string;       // 'a'
+  pinyin: string;       // 'ā'
+  type: 'single' | 'compound' | 'nasal';
+  audio?: string;
+  examples: string[];
+}
+
+// 整体认读音节
+interface WholeReadSyllable {
+  syllable: string;     // 'zhi'
+  pinyin: string;       // 'zhī'
+  characters: string[]; // ['知', '织', '之']
+}
 ```
 
-### 项目目录结构
+### 页面结构
+
+```
+/pinyin
+├── /initials          # 声母表
+├── /finals            # 韵母表
+├── /syllables         # 整体认读音节
+├── /tones             # 声调练习
+└── /practice          # 综合练习
+```
+
+---
+
+## 模块三：汉字笔顺 [pending]
+
+**路径**: `/stroke`  
+**功能**: 查询单字笔顺、观看动画、练习书写
+
+### 功能规划
+
+| 子功能 | 描述 | 优先级 |
+|--------|------|--------|
+| 笔顺查询 | 输入汉字查看笔顺信息 | P1 |
+| 笔顺动画 | hanzi-writer 动画演示 | P1 |
+| 笔画分解 | 显示每一笔的名称和形状 | P1 |
+| 笔顺测验 | 用户按顺序书写验证 | P2 |
+| 常用字列表 | 按年级/难度分类 | P2 |
+| 汉字详情 | 拼音/部首/结构/释义 | P2 |
+
+### 数据结构
+
+```typescript
+interface StrokeInfo {
+  char: string;              // '我'
+  pinyin: string;            // 'wǒ'
+  strokeCount: number;       // 7
+  radical: string;           // '戈'
+  structure: string;         // '独体字'
+  strokes: StrokeDetail[];   // 笔画详情
+}
+
+interface StrokeDetail {
+  index: number;             // 1-7
+  name: string;              // '撇'
+  shape: string;             // '㇒'
+  path: string;              // SVG path data
+}
+```
+
+### 页面结构
+
+```
+/stroke
+├── /[char]            # 单字详情页 /stroke/我
+├── /practice          # 笔顺练习
+├── /common            # 常用字列表
+└── /search            # 搜索页
+```
+
+### 技术实现
+
+- 使用 `hanzi-writer` 提供笔画数据和动画
+- 使用 `cnchar-order` 提供笔画名称
+- 动态路由 `[char]` 支持任意汉字
+
+---
+
+## 模块四：古诗词 [pending]
+
+**路径**: `/poetry`  
+**功能**: 古诗词学习与背诵
+
+### 功能规划
+
+| 子功能 | 描述 | 优先级 |
+|--------|------|--------|
+| 诗词库 | 唐诗宋词元曲等 | P2 |
+| 诗词详情 | 原文/拼音/注释/译文 | P2 |
+| 作者介绍 | 诗人生平与风格 | P3 |
+| 背诵模式 | 逐句显示/填空练习 | P3 |
+| 语音朗读 | TTS或真人朗读 | P3 |
+| 诗词字帖 | 生成诗词练习字帖 | P2 |
+
+### 数据来源
+
+- 开源诗词数据库：[chinese-poetry](https://github.com/chinese-poetry/chinese-poetry)
+- 包含：唐诗、宋词、元曲、诗经、楚辞等
+
+---
+
+## 模块五：中文字典 [pending]
+
+**路径**: `/dictionary`  
+**功能**: 汉字/词语查询
+
+### 功能规划
+
+| 子功能 | 描述 | 优先级 |
+|--------|------|--------|
+| 汉字查询 | 拼音/部首/笔画/释义 | P2 |
+| 词语查询 | 词义/例句/近反义词 | P2 |
+| 成语查询 | 释义/出处/用法 | P2 |
+| 部首检索 | 按部首查字 | P3 |
+| 拼音检索 | 按拼音查字 | P3 |
+| 笔画检索 | 按笔画数查字 | P3 |
+
+---
+
+## 技术架构
+
+### 整体架构
 
 ```
 Hanzis/
-├── app/                          # Next.js App Router
-│   ├── layout.tsx                # 根布局
-│   ├── page.tsx                  # 首页（字帖生成器）
-│   ├── globals.css               # 全局样式
-│   ├── worksheet/                # 字帖相关页面
-│   │   └── page.tsx
-│   └── about/                    # 关于页面
-│       └── page.tsx
-├── components/
-│   ├── ui/                       # shadcn/ui 组件
-│   │   ├── button.tsx
-│   │   ├── input.tsx
-│   │   ├── select.tsx
+├── app/
+│   ├── layout.tsx              # 全局布局
+│   ├── page.tsx                # 首页（字帖生成器）
+│   ├── globals.css
+│   ├── pinyin/                 # 拼音学习模块
+│   │   ├── page.tsx
+│   │   ├── initials/page.tsx
+│   │   ├── finals/page.tsx
 │   │   └── ...
-│   ├── grid/                     # 格子组件
-│   │   ├── TianGrid.tsx          # 田字格
-│   │   ├── MiGrid.tsx            # 米字格
-│   │   ├── HuiGongGrid.tsx       # 回宫格
-│   │   └── GridBase.tsx          # 格子基础组件
-│   ├── character/                # 汉字组件
-│   │   ├── CharacterCell.tsx     # 单个汉字单元格
-│   │   ├── PinyinDisplay.tsx     # 拼音显示
-│   │   ├── StrokeOrder.tsx       # 笔画顺序
-│   │   └── RadicalInfo.tsx       # 部首信息
-│   ├── worksheet/                # 字帖组件
-│   │   ├── Worksheet.tsx         # 字帖主组件
-│   │   ├── WorksheetRow.tsx      # 字帖行
-│   │   └── WorksheetPreview.tsx  # 预览组件
-│   ├── controls/                 # 控制面板
-│   │   ├── InputPanel.tsx        # 输入面板
-│   │   ├── StylePanel.tsx        # 样式设置
-│   │   ├── GridSelector.tsx      # 格子类型选择
-│   │   └── ExportPanel.tsx       # 导出面板
-│   └── animation/                # 动画组件
-│       └── StrokeAnimation.tsx   # 笔画动画
-├── hooks/
-│   ├── useCharacter.ts           # 汉字处理Hook
-│   ├── usePinyin.ts              # 拼音Hook
-│   ├── useStroke.ts              # 笔画Hook
-│   └── useExport.ts              # 导出Hook
+│   ├── stroke/                 # 汉字笔顺模块
+│   │   ├── page.tsx
+│   │   ├── [char]/page.tsx
+│   │   └── ...
+│   ├── poetry/                 # 古诗词模块
+│   │   ├── page.tsx
+│   │   └── [id]/page.tsx
+│   └── dictionary/             # 字典模块
+│       ├── page.tsx
+│       └── [word]/page.tsx
+├── components/
+│   ├── ui/                     # 通用UI组件
+│   ├── grid/                   # 格子组件
+│   ├── character/              # 汉字组件
+│   ├── controls/               # 控制面板
+│   ├── worksheet/              # 字帖组件
+│   ├── pinyin/                 # 拼音组件
+│   ├── stroke/                 # 笔顺组件
+│   └── layout/                 # 布局组件
 ├── lib/
-│   ├── cncharHelper.ts           # cnchar工具封装
-│   ├── hanziWriterHelper.ts      # hanzi-writer封装
-│   ├── pdfGenerator.ts           # PDF生成工具
-│   └── utils.ts                  # 通用工具函数
+│   ├── cncharHelper.ts
+│   ├── hanziWriterHelper.ts
+│   ├── pinyinData.ts           # 拼音数据
+│   └── utils.ts
 ├── stores/
-│   └── worksheetStore.ts         # 字帖状态管理
+│   ├── worksheetStore.ts
+│   └── ...
 ├── types/
-│   └── index.ts                  # 类型定义
-├── public/
-│   └── fonts/                    # 字体文件（可选，推荐用next/font）
-├── package.json
-├── next.config.ts
-├── tailwind.config.ts
-├── tsconfig.json
-├── components.json               # shadcn/ui配置
-└── README.md
+│   └── index.ts
+└── data/
+    ├── initials.json           # 声母数据
+    ├── finals.json             # 韵母数据
+    ├── syllables.json          # 整体认读音节
+    └── poetry/                 # 诗词数据
 ```
+
+### 共享组件
+
+| 组件 | 用途 | 模块 |
+|------|------|------|
+| CharacterGrid | 汉字格子 | 字帖/笔顺 |
+| PinyinDisplay | 拼音显示 | 字帖/拼音/笔顺 |
+| StrokeAnimation | 笔画动画 | 字帖/笔顺 |
+| AudioPlayer | 音频播放 | 拼音/诗词 |
 
 ---
 
 ## 开发阶段规划
 
-### Phase 1: 项目初始化与基础架构 [pending]
-- [ ] 使用nvm配置Node.js版本(20.x LTS)
-- [ ] 创建Next.js 14+ 项目 (App Router + TypeScript)
-- [ ] 配置Tailwind CSS + shadcn/ui
-- [ ] 安装cnchar及相关插件
-- [ ] 安装hanzi-writer
-- [ ] 创建基础目录结构
-- [ ] 配置部署环境（Vercel/Cloudflare）
+### Phase 1: 字帖生成器 [complete]
+- [x] 核心功能实现
+- [x] 颜色自定义
+- [x] PDF/打印导出
+- [x] Cloudflare Pages 部署
 
-### Phase 2: 核心格子组件开发 [pending]
-- [ ] 实现GridBase基础格子组件
-- [ ] 实现TianGrid田字格组件
-- [ ] 实现MiGrid米字格组件
-- [ ] 格子尺寸和样式可配置
-- [ ] 响应式布局支持
+### Phase 2: 拼音学习模块 [pending]
+- [ ] 拼音数据准备
+- [ ] 声母表页面
+- [ ] 韵母表页面
+- [ ] 整体认读音节页面
+- [ ] 声调练习页面
+- [ ] 导航整合
 
-### Phase 3: 汉字处理功能 [pending]
-- [ ] 封装cnchar工具函数
-- [ ] 实现拼音获取和显示（支持音调）
-- [ ] 实现笔画数获取
-- [ ] 实现部首信息获取
-- [ ] 处理多音字情况
+### Phase 3: 汉字笔顺模块 [complete]
+- [x] 笔顺查询页面
+- [x] 笔顺动画集成 (hanzi-writer)
+- [x] 笔画分解显示 (fanning)
+- [x] 笔顺练习模式 (quiz)
+- [x] 常用字快速选择
+- [x] 汉字信息展示
 
-### Phase 4: 字帖主界面开发 [pending]
-- [ ] 输入面板（文本输入、常用字选择）
-- [ ] 格子类型选择器
-- [ ] 样式配置面板
-- [ ] 字帖预览区域
-- [ ] 实时预览功能
-
-### Phase 5: 笔画顺序功能 [pending]
-- [ ] 集成hanzi-writer
-- [ ] 静态笔画顺序显示
-- [ ] 笔画动画演示
-- [ ] 笔画练习模式
-
-### Phase 6: 导出功能 [pending]
-- [ ] PDF导出功能
-- [ ] 图片导出功能
-- [ ] 打印优化
-- [ ] 批量导出
-
-### Phase 7: 高级功能与优化 [pending]
-- [ ] 描红模式
-- [ ] 组词/成语模式
-- [ ] 古诗词模板
+### Phase 4: 网站整合与优化 [pending]
+- [ ] 全局导航
+- [ ] 响应式优化
+- [ ] SEO优化
 - [ ] 性能优化
-- [ ] 移动端适配
 
-### Phase 8: 测试与部署 [pending]
-- [ ] 单元测试
-- [ ] E2E测试
-- [ ] 部署配置
-- [ ] 文档完善
+### Phase 5: 古诗词模块 [pending]
+- [ ] 诗词数据导入
+- [ ] 诗词列表页
+- [ ] 诗词详情页
+- [ ] 拼音注音
 
----
-
-## 核心数据结构设计
-
-### 字帖配置类型
-
-```typescript
-// 格子类型
-type GridType = 'tian' | 'mi' | 'huigong' | 'empty';
-
-// 显示模式
-type DisplayMode = 'solid' | 'outline' | 'stroke-order' | 'empty';
-
-// 字帖配置
-interface WorksheetConfig {
-  // 基础配置
-  title: string;                    // 字帖标题
-  characters: string;               // 输入的汉字
-  
-  // 格子配置
-  gridType: GridType;               // 格子类型
-  gridSize: number;                 // 格子大小(px)
-  gridColor: string;                // 格子线颜色
-  gridLineWidth: number;            // 线条粗细
-  
-  // 内容配置
-  showPinyin: boolean;              // 显示拼音
-  pinyinPosition: 'top' | 'bottom'; // 拼音位置
-  showTone: boolean;                // 显示声调
-  showStrokeCount: boolean;         // 显示笔画数
-  showRadical: boolean;             // 显示部首
-  showStrokeOrder: boolean;         // 显示笔顺
-  
-  // 显示模式
-  displayMode: DisplayMode;         // 显示模式
-  characterOpacity: number;         // 字符透明度(描红用)
-  repeatCount: number;              // 每字重复次数
-  
-  // 样式配置
-  fontFamily: string;               // 字体
-  characterColor: string;           // 汉字颜色
-  pinyinColor: string;              // 拼音颜色
-  
-  // 布局配置
-  columnsPerRow: number;            // 每行列数
-  rowsPerPage: number;              // 每页行数
-  pageSize: 'A4' | 'A3' | 'Letter'; // 纸张大小
-  orientation: 'portrait' | 'landscape'; // 方向
-}
-
-// 汉字信息
-interface CharacterInfo {
-  char: string;                     // 汉字
-  pinyin: string;                   // 拼音
-  pinyinWithTone: string;           // 带声调拼音
-  tone: number;                     // 声调(1-4)
-  strokeCount: number;              // 笔画数
-  radical: string;                  // 部首
-  radicalStrokeCount: number;       // 部首笔画数
-  struct: string;                   // 结构(左右、上下等)
-  strokeOrder: string[];            // 笔顺
-  strokeNames: string[];            // 笔画名称
-}
-```
+### Phase 6: 字典模块 [pending]
+- [ ] 字典数据准备
+- [ ] 查询功能
+- [ ] 详情页面
 
 ---
 
-## UI/UX 设计要点
-
-### 页面布局
-
-```
-+----------------------------------------------------------+
-|  Header: Logo + 标题 + 导航                                |
-+----------------------------------------------------------+
-|  +------------------+  +-------------------------------+ |
-|  |    控制面板       |  |         预览区域              | |
-|  | +--------------+ |  |                               | |
-|  | | 文字输入     | |  |  +----+  +----+  +----+       | |
-|  | +--------------+ |  |  |田字|  |田字|  |田字|       | |
-|  | +--------------+ |  |  | 格 |  | 格 |  | 格 |       | |
-|  | | 格子类型     | |  |  +----+  +----+  +----+       | |
-|  | +--------------+ |  |                               | |
-|  | +--------------+ |  |  +----+  +----+  +----+       | |
-|  | | 显示选项     | |  |  |    |  |    |  |    |       | |
-|  | | □ 拼音      | |  |  +----+  +----+  +----+       | |
-|  | | □ 笔画数    | |  |                               | |
-|  | | □ 部首      | |  |                               | |
-|  | +--------------+ |  |                               | |
-|  | +--------------+ |  |                               | |
-|  | | 样式设置     | |  |                               | |
-|  | +--------------+ |  |                               | |
-|  | +--------------+ |  +-------------------------------+ |
-|  | | 导出按钮     | |                                    |
-|  | +--------------+ |                                    |
-|  +------------------+                                    |
-+----------------------------------------------------------+
-```
-
-### 设计原则
-
-1. **简洁直观**: 控制面板分组清晰，选项一目了然
-2. **实时预览**: 任何设置变更立即在预览区显示
-3. **响应式**: 支持桌面和平板设备
-4. **打印友好**: 预览效果与打印效果一致
-5. **无障碍**: 支持键盘导航，对比度符合标准
-
----
-
-## 依赖包清单
-
-### 核心依赖
+## 核心依赖
 
 ```json
 {
   "dependencies": {
-    "next": "^14.x",
-    "react": "^18.x",
-    "react-dom": "^18.x",
+    "next": "^16.x",
+    "react": "^19.x",
+    "tailwindcss": "^4.x",
     "cnchar": "^3.x",
     "cnchar-poly": "^3.x",
     "cnchar-order": "^3.x",
-    "cnchar-trad": "^3.x",
     "cnchar-radical": "^3.x",
-    "cnchar-draw": "^3.x",
     "hanzi-writer": "^3.x",
-    "jspdf": "^2.x",
+    "jspdf": "^4.x",
     "html2canvas": "^1.x",
-    "zustand": "^4.x",
-    "class-variance-authority": "^0.7.x",
-    "clsx": "^2.x",
-    "tailwind-merge": "^2.x",
-    "lucide-react": "^0.x"
-  },
-  "devDependencies": {
-    "typescript": "^5.x",
-    "@types/node": "^20.x",
-    "@types/react": "^18.x",
-    "@types/react-dom": "^18.x",
-    "tailwindcss": "^3.x",
-    "autoprefixer": "^10.x",
-    "postcss": "^8.x",
-    "eslint": "^8.x",
-    "eslint-config-next": "^14.x"
+    "zustand": "^5.x"
   }
 }
 ```
-
-### Cloudflare Pages 额外依赖（可选）
-
-```json
-{
-  "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.x",
-    "wrangler": "^3.x"
-  }
-}
-```
-
----
-
-## 风险与挑战
-
-| 风险 | 影响 | 缓解措施 |
-|-----|------|---------|
-| 部分生僻字无笔画数据 | hanzi-writer可能不支持 | 提供降级方案，仅显示文字 |
-| 多音字处理 | 自动拼音可能不准确 | 使用cnchar-poly，提供手动修正 |
-| PDF生成性能 | 大量汉字时可能慢 | 分页处理，显示进度 |
-| 字体版权 | 商用字体版权问题 | 使用开源字体如思源黑体 |
-| 打印效果 | 屏幕与打印差异 | 提供打印预览，使用CSS print media |
-
----
-
-## 错误记录
-
-| 错误 | 尝试 | 解决方案 |
-|-----|------|---------|
-| - | - | - |
 
 ---
 
 ## 决策记录
 
 | 决策 | 原因 | 日期 |
-|-----|------|------|
-| ~~使用React+Vite~~ | ~~开发效率高，生态丰富~~ | ~~2026-01-19~~ |
-| **使用Next.js 14+** | Vercel原生支持、Cloudflare兼容、App Router现代化、SEO友好 | 2026-01-19 |
-| 使用cnchar库 | 功能全面，支持拼音/笔画/部首 | 2026-01-19 |
-| 使用hanzi-writer | 专业的笔画顺序库，支持动画 | 2026-01-19 |
-| 使用Zustand状态管理 | 轻量级，API简洁 | 2026-01-19 |
-| 使用jspdf+html2canvas | 成熟的PDF生成方案 | 2026-01-19 |
-| 使用shadcn/ui | 可定制、无依赖、与Tailwind完美配合 | 2026-01-19 |
-| 支持静态导出 | 兼容更多部署平台（Cloudflare/Netlify） | 2026-01-19 |
+|------|------|------|
+| 使用Next.js App Router | 现代化路由、SEO友好、静态导出 | 2026-01-19 |
+| 使用cnchar全家桶 | 汉字处理功能完善 | 2026-01-19 |
+| 使用hanzi-writer | 笔画动画专业 | 2026-01-19 |
+| Cloudflare Pages部署 | 全球CDN、免费额度高 | 2026-01-21 |
+| 模块化开发 | 独立迭代、渐进增强 | 2026-01-21 |
 
 ---
 
@@ -417,4 +347,5 @@ interface CharacterInfo {
 
 - [hanzi-writer 文档](https://hanziwriter.org/docs.html)
 - [cnchar 文档](https://theajack.github.io/cnchar)
+- [chinese-poetry 诗词库](https://github.com/chinese-poetry/chinese-poetry)
 - [参考网站 z2h.cn](https://z2h.cn/number)

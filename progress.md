@@ -1,174 +1,233 @@
-# 字帖生成器 - 进度日志
+# Hanzis.com - 开发进度
 
 ## 项目状态
 
-| 阶段 | 状态 | 完成度 |
-|-----|------|--------|
-| Phase 1: 项目初始化 | **complete** | 100% |
-| Phase 2: 格子组件 | **complete** | 100% |
-| Phase 3: 汉字处理 | **complete** | 100% |
-| Phase 4: 主界面 | **complete** | 100% |
-| Phase 5: 笔画功能 | pending | 0% |
-| Phase 6: 导出功能 | **complete** | 100% |
-| Phase 7: 高级功能 | pending | 0% |
-| Phase 8: 测试部署 | pending | 0% |
+| 模块 | 状态 | 完成度 | 备注 |
+|------|------|--------|------|
+| 字帖生成器 | **complete** | 100% | 已部署上线 |
+| 拼音学习 | pending | 0% | 待开发 |
+| 汉字笔顺 | **complete** | 100% | 已完成 |
+| 古诗词 | pending | 0% | 待开发 |
+| 中文字典 | pending | 0% | 待开发 |
+
+---
+
+## 模块一：字帖生成器 [complete]
+
+### 功能清单
+
+| 功能 | 状态 | 备注 |
+|------|------|------|
+| 汉字输入 | ✅ | 手动输入 |
+| 格子类型 | ✅ | 田字格/米字格/回宫格/空白格 |
+| 拼音显示 | ✅ | 四线三格样式 |
+| 笔顺显示 | ✅ | fanning式笔画分解 |
+| 描红模式 | ✅ | 首字高亮+描红 |
+| 颜色自定义 | ✅ | 描字/首字/线条/拼音/笔顺 |
+| 方格数量 | ✅ | 动态计算 |
+| PDF导出 | ✅ | 多页支持 |
+| 打印支持 | ✅ | A4纸张 |
+| 本地持久化 | ✅ | localStorage |
+| Cloudflare部署 | ✅ | hanzis.com |
+
+### 技术实现
+
+- **框架**: Next.js 16+ (App Router)
+- **UI**: Tailwind CSS v4 + shadcn/ui
+- **汉字**: cnchar + hanzi-writer
+- **导出**: jspdf + html2canvas
+- **状态**: Zustand (persist)
 
 ---
 
 ## 会话日志
 
-### 2026-01-19 - 项目规划
+### 2026-01-21 - 汉字笔顺模块开发
 
 **完成事项:**
-- [x] 分析用户需求
-- [x] 研究核心依赖库 (hanzi-writer, cnchar)
-- [x] 设计技术架构
-- [x] 规划项目目录结构
-- [x] 定义核心数据结构
-- [x] 设计UI布局
-- [x] 创建项目规划文档
+- [x] 创建笔顺模块路由 `/stroke`
+- [x] 创建全局导航组件 `Navigation`
+- [x] 实现笔顺查询组件 `StrokeViewer`
+- [x] 实现笔顺动画组件 `StrokeAnimation` (hanzi-writer集成)
+- [x] 实现笔画分解组件 `StrokeFanning`
+- [x] 实现汉字信息组件 `StrokeInfo`
+- [x] 构建测试通过
 
-**研究发现:**
-1. hanzi-writer 提供完善的笔画动画和测验功能
-2. cnchar 提供全面的汉字处理功能（拼音、笔画、部首等）
-3. 两个库可以很好地互补使用
-4. PDF生成推荐使用 jspdf + html2canvas 方案
+**功能特性:**
+- 输入汉字查询笔顺
+- 常用字快速选择
+- 笔顺动画播放
+- 笔顺练习模式（quiz）
+- 笔画分解（fanning）显示
+- 汉字详细信息（拼音/笔画数/部首/结构/笔顺名称）
 
-**决策记录:**
-1. ~~技术栈：React + TypeScript + Vite + Tailwind CSS~~
-2. 状态管理：Zustand（轻量级）
-3. 汉字处理：cnchar 全家桶
-4. 笔画动画：hanzi-writer
-5. PDF生成：jspdf + html2canvas
-
----
-
-### 2026-01-19 - 技术栈更新
-
-**用户需求:**
-1. 需要方便部署到 Cloudflare、Vercel 等平台
-2. 询问是否可以使用 Next.js 方案
-
-**决策更新:**
-- [x] 技术栈从 Vite + React 更改为 **Next.js 14+ (App Router)**
-- [x] 添加部署方案设计（Vercel/Cloudflare Pages）
-- [x] 更新项目目录结构
-- [x] 添加 shadcn/ui 组件库
-- [x] 研究静态导出方案
-
-**技术栈最终确定:**
-```
-框架: Next.js 14+ (App Router) + TypeScript
-UI: Tailwind CSS + shadcn/ui
-汉字: cnchar + hanzi-writer
-状态: Zustand
-导出: jspdf + html2canvas
-部署: Vercel (推荐) / Cloudflare Pages
-```
-
-**Next.js 优势:**
-1. Vercel 原生支持，零配置部署
-2. Cloudflare Pages 兼容（静态导出或 @cloudflare/next-on-pages）
-3. App Router 现代化路由
-4. next/font 优化中文字体加载
-5. SEO 友好
-
-**下一步计划:**
-1. ~~创建 Next.js 项目基础架构~~ ✓
-2. ~~配置 Tailwind CSS + shadcn/ui~~ ✓
-3. ~~实现基础格子组件~~ ✓
-4. ~~集成 cnchar 库~~ ✓
+**新增文件:**
+- `app/stroke/page.tsx` - 笔顺页面
+- `components/layout/Navigation.tsx` - 全局导航
+- `components/stroke/StrokeViewer.tsx` - 主查询组件
+- `components/stroke/StrokeAnimation.tsx` - 动画组件
+- `components/stroke/StrokeFanning.tsx` - 笔画分解
+- `components/stroke/StrokeInfo.tsx` - 信息展示
 
 ---
 
-### 2026-01-19 - 核心功能实现
+### 2026-01-21 - 平台规划更新
 
 **完成事项:**
-- [x] 创建 Next.js 14+ 项目
-- [x] 配置 Tailwind CSS v4 + PostCSS
-- [x] 创建 UI 组件 (Button, Input, Card, Slider等)
-- [x] 实现格子组件 (田字格、米字格、回宫格)
-- [x] 实现汉字单元格组件
-- [x] 集成 cnchar 库获取拼音/笔画/部首
-- [x] 实现控制面板 (输入、格子选择、显示选项)
-- [x] 实现字帖预览功能
-- [x] 实现 PDF/图片导出功能
-- [x] 实现 Zustand 状态管理
+- [x] 更新项目规划为 hanzis.com 综合平台
+- [x] 规划拼音学习模块
+- [x] 规划汉字笔顺模块
+- [x] 规划古诗词模块
+- [x] 规划中文字典模块
 
-**遇到的问题:**
-1. Tailwind CSS v4 配置变化 - 需要 @tailwindcss/postcss
-2. CSS 变量方式在 v4 中需要使用 @theme 指令
+**平台定位:**
+- 综合性中文学习工具平台
+- 目标用户：汉字初学者、小学生、中文学习者
 
-**解决方案:**
-- 安装 @tailwindcss/postcss 包
-- 使用标准 Tailwind 颜色类替代自定义 CSS 变量
-
-**当前可用功能:**
-- 汉字输入（手动输入/常用字组快捷输入）
-- 田字格/米字格/回宫格/空白格切换
-- 拼音显示（支持声调）
-- 笔画数和部首显示（可选）
-- 实心字/描红字/空白格模式
-- 格子大小/每行数量/重复次数可调
-- PDF导出
-- 图片导出
-- 打印预览
-
-**下一步计划:**
-1. 集成 hanzi-writer 实现笔画动画
-2. 优化米字格对角线显示
-3. 添加更多常用字组
-4. 移动端适配
-5. 部署到 Vercel
+**模块规划:**
+1. 字帖生成器 `/` - 已完成
+2. 拼音学习 `/pinyin` - 待开发
+3. 汉字笔顺 `/stroke` - 待开发
+4. 古诗词 `/poetry` - 待开发
+5. 中文字典 `/dictionary` - 待开发
 
 ---
 
-## 文件变更记录
+### 2026-01-21 - Cloudflare Pages 部署
 
-| 日期 | 文件 | 操作 | 说明 |
-|-----|------|------|------|
-| 2026-01-19 | task_plan.md | 创建 | 项目规划文档 |
-| 2026-01-19 | findings.md | 创建 | 研究发现文档 |
-| 2026-01-19 | progress.md | 创建 | 进度日志文档 |
-| 2026-01-19 | task_plan.md | 更新 | 技术栈更改为Next.js |
-| 2026-01-19 | .nvmrc | 创建 | Node.js 版本配置 |
-| 2026-01-19 | package.json | 创建 | 项目依赖配置 |
-| 2026-01-19 | tsconfig.json | 创建 | TypeScript配置 |
-| 2026-01-19 | next.config.ts | 创建 | Next.js配置 |
-| 2026-01-19 | tailwind.config.ts | 创建 | Tailwind配置 |
-| 2026-01-19 | app/ | 创建 | Next.js App Router |
-| 2026-01-19 | components/ui/ | 创建 | UI基础组件 |
-| 2026-01-19 | components/grid/ | 创建 | 格子组件 |
-| 2026-01-19 | components/character/ | 创建 | 汉字组件 |
-| 2026-01-19 | components/controls/ | 创建 | 控制面板组件 |
-| 2026-01-19 | components/worksheet/ | 创建 | 字帖组件 |
-| 2026-01-19 | lib/ | 创建 | 工具函数 |
-| 2026-01-19 | stores/ | 创建 | Zustand状态管理 |
-| 2026-01-19 | types/ | 创建 | TypeScript类型定义 |
+**完成事项:**
+- [x] 修复 slider.tsx 类型错误
+- [x] 修复 tailwind.config.ts darkMode 类型
+- [x] 添加 pages:build 脚本
+- [x] 成功部署到 Cloudflare Pages
+
+**部署配置:**
+- Build command: `npm run pages:build`
+- Output directory: `out`
+- Node version: 20
 
 ---
 
-## 测试结果
+### 2026-01-21 - 颜色设置优化
 
-暂无
+**完成事项:**
+- [x] 抽出独立颜色设置区块
+- [x] 实现固定预设+扩展色板+自定义颜色
+- [x] 单行布局优化
+- [x] 选择颜色后自动收起面板
+
+**颜色配置:**
+- 描字颜色（浅灰）
+- 首字颜色（黑/灰）
+- 字格线条（红色系）
+- 拼音颜色（浅灰）
+- 笔画顺序（浅灰）
+
+---
+
+### 2026-01-21 - 本地持久化
+
+**完成事项:**
+- [x] 使用 Zustand persist 中间件
+- [x] 配置保存到 localStorage
+- [x] 刷新后自动恢复设置
+
+---
+
+### 2026-01-21 - 方格数量改造
+
+**完成事项:**
+- [x] "方格大小"改为"方格数量"
+- [x] 根据A4宽度动态计算gridSize
+- [x] 保持预览与导出一致
+
+---
+
+### 2026-01-20 - PDF导出文字居中修复
+
+**问题:** 导出PDF时汉字和拼音整体下移
+
+**原因:** html2canvas渲染时字体基线与视觉中心不一致
+
+**解决方案:** 将拼音和汉字改为SVG `<text>` 渲染，使用 `dominantBaseline="central"` 实现精确居中
+
+---
+
+### 2026-01-19 - 核心功能开发
+
+**完成事项:**
+- [x] 项目初始化 (Next.js + TypeScript)
+- [x] 格子组件 (田字格/米字格/回宫格)
+- [x] 汉字处理 (cnchar集成)
+- [x] 字帖预览
+- [x] PDF/图片导出
+- [x] 打印样式
+
+---
+
+## 文件结构
+
+```
+Hanzis/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/
+│   ├── ui/              # 基础UI组件
+│   ├── grid/            # 格子组件
+│   ├── character/       # 汉字组件
+│   ├── controls/        # 控制面板
+│   └── worksheet/       # 字帖组件
+├── lib/
+│   ├── cncharHelper.ts
+│   └── utils.ts
+├── stores/
+│   └── worksheetStore.ts
+├── types/
+│   └── index.ts
+├── next.config.ts
+├── tailwind.config.ts
+├── package.json
+└── .nvmrc
+```
+
+---
+
+## 待办事项
+
+### 近期 (P1)
+
+- [ ] 拼音学习模块开发
+- [ ] 汉字笔顺模块开发
+- [ ] 全局导航设计
+
+### 中期 (P2)
+
+- [ ] 古诗词模块开发
+- [ ] 中文字典模块开发
+- [ ] 移动端适配优化
+
+### 长期 (P3)
+
+- [ ] 用户系统
+- [ ] 学习进度追踪
+- [ ] 多语言支持
 
 ---
 
 ## 已知问题
 
 | 问题 | 状态 | 备注 |
-|-----|------|------|
+|------|------|------|
 | 暂无 | - | - |
 
 ---
 
 ## 性能基准
 
-暂无
-
----
-
-## 备注
-
-- 项目处于规划阶段
-- 待用户确认后开始实现
+| 指标 | 数值 | 备注 |
+|------|------|------|
+| 构建时间 | ~8s | Cloudflare Pages |
+| 首页加载 | ~1s | 静态导出 |
+| PDF导出 | ~2s | 单页 |
