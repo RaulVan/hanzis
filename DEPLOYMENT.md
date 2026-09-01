@@ -60,7 +60,8 @@ unzip -t release/hanzis-static-2026-09-01.zip
 - `/_next/static/*`：长期 immutable 缓存
 - `/voice/*`、`/hanzi/*`：可缓存且不得被 HTML fallback 截获
 - `/dictionary/*`：必须返回 JSON 分片或对应静态页面
-- HTML 与静态资源保留 `no-transform`，避免 Cloudflare 自动注入 Web Analytics 脚本，与站点“无分析脚本”的隐私承诺保持一致
+- HTML 与静态资源保留 `no-transform`，减少 CDN 对发布文件的非必要改写
+- `hanzis.com` 所属 Cloudflare Zone 会自动注入 Web Analytics；CSP 仅允许其官方脚本域名，实际用途须与站内隐私说明一致
 - CSP、`X-Content-Type-Options: nosniff`、Referrer-Policy、X-Frame-Options 与 Permissions-Policy
 
 ## 上线后冒烟
@@ -93,4 +94,4 @@ curl -I https://目标域名/不存在的发布检查路径
 - CDN 存在缓存时，优先只清理 HTML、manifest、robots、sitemap 和 404；带哈希的 `/_next/static/` 可继续长期缓存。
 - 记录失败 URL、状态码、响应头和控制台错误，再在新版本目录修复并重新发布。
 
-本手册只描述可执行发布步骤。本轮没有连接或修改任何生产托管环境。
+当前生产站点由 GitHub `main` 自动部署至 Cloudflare Pages，正式域名为 [hanzis.com](https://hanzis.com/)。

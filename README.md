@@ -62,13 +62,13 @@ npm run test:e2e
 release/hanzis-static-2026-09-01.zip
 ```
 
-详细上传、校验、冒烟检查和回滚步骤见 [DEPLOYMENT.md](DEPLOYMENT.md)。当前仓库已完成发布准备，没有替用户执行生产部署。
+详细上传、校验、冒烟检查和回滚步骤见 [DEPLOYMENT.md](DEPLOYMENT.md)。生产站点已通过 GitHub `main` 自动部署到 [hanzis.com](https://hanzis.com/)。
 
 ## 数据、授权与隐私
 
 - 教育部《國語辭典簡編本》原始记录、cnchar-data、Hanzi Writer 字形数据和 Noto 字体均保留来源、版本与许可说明。
 - `public/voice/` 中 1,678 个 MP3 已由项目所有者确认取得口头授权；书面授权协议说明待后续补充。录音不包含在源码 MIT License 中。
-- 应用不提供账号，不接入分析或广告脚本。字帖导出在浏览器本地完成；静态托管方仍可能按其配置记录常规访问日志。
+- 应用不提供账号，不接入广告或营销 Cookie；字帖导出在浏览器本地完成。生产环境使用 Cloudflare Web Analytics 汇总匿名访问与性能指标，托管方仍可能按其政策记录常规访问日志；详见站内隐私说明。
 
 ## 项目文档
 

@@ -108,5 +108,5 @@ Playwright + axe 对首页、拼音概览、声调、笔顺、诗词列表、诗
 - 未使用物理打印机；只验证 PDF 物理尺寸、PNG 和浏览器打印 iframe。
 - 未以真实中文输入法发送 composition 事件；代码路径已实现输入合成保护。
 - 系统中文 TTS 音色与可用性由设备和浏览器决定。
-- 未上传生产环境；生产域名、CDN 缓存、安全响应头、404 重写和大文件 Range 必须按 [DEPLOYMENT.md](DEPLOYMENT.md) 再做冒烟。
+- 生产环境已通过 GitHub `main` 自动部署到 Cloudflare Pages；正式域名、安全响应头、自定义 404、JSON 静态资源与 MP3 Range 已完成线上冒烟。Cloudflare Zone 自动注入的 Web Analytics 已在 CSP 与隐私说明中明确处理。
 - 拼音录音已获口头授权；书面授权协议说明仍需归档。
