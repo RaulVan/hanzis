@@ -52,4 +52,4 @@
 - [x] 定位全局 focus outline 与 shadcn 表单组件 focus ring 的叠加来源。
 - [x] 统一 `Input`、`Textarea`、`InputGroup` 为单层朱红焦点边界，保留错误状态语义。
 - [x] 通过静态检查、构建和真实浏览器核对字帖、诗词、字典、笔顺输入框。
-- [ ] 推送 GitHub 并完成 Cloudflare 生产部署冒烟。
+- [x] 推送 GitHub 并完成 Cloudflare 生产部署冒烟。
