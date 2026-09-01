@@ -1,117 +1,70 @@
-"use client";
-
-import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { BookOpen, Grid2X2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getStrokeName } from "@/lib/strokeLearning";
 import type { CharacterInfo } from "@/types";
 
 interface StrokeInfoProps {
   char: string;
-  info: CharacterInfo;
-  isLoading?: boolean;
+  info: CharacterInfo | null;
+  infoStatus: "loading" | "ready" | "unavailable";
+  strokeCount: number;
 }
 
-// Stroke name mapping
-const strokeNameMap: Record<string, string> = {
-  h: "横",
-  s: "竖",
-  p: "撇",
-  n: "捺",
-  d: "点",
-  t: "提",
-  z: "折",
-  hg: "横钩",
-  sg: "竖钩",
-  wg: "弯钩",
-  xg: "斜钩",
-  hzg: "横折钩",
-  hpg: "横撇弯钩",
-  hz: "横折",
-  hzz: "横折折",
-  hzzg: "横折折钩",
-  hzzzg: "横折折折钩",
-  hzzp: "横折折撇",
-  hzp: "横折撇",
-  hzwg: "横折弯钩",
-  hzw: "横折弯",
-  hzzz: "横折折折",
-  sp: "竖撇",
-  sz: "竖折",
-  szz: "竖折折",
-  szzg: "竖折折钩",
-  sw: "竖弯",
-  swg: "竖弯钩",
-  pg: "撇钩",
-  pz: "撇折",
-  pd: "撇点",
-};
-
-function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-3 py-2 border-b border-gray-100 last:border-0">
-      <span className="text-sm text-gray-500 w-16 shrink-0">{label}</span>
-      <span className="text-sm text-gray-900">{value}</span>
+    <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 border-b border-border py-3 last:border-b-0">
+      <dt className="text-sm text-muted-foreground">{label}</dt>
+      <dd className="min-w-0 break-words text-sm font-medium">{children}</dd>
     </div>
   );
 }
 
-export function StrokeInfo({ char, info, isLoading }: StrokeInfoProps) {
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-center text-gray-400">
-          加载中...
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Format stroke names
-  const strokeNames = info.strokeNames
-    .map((name) => strokeNameMap[name] || name)
-    .join("、");
+export function StrokeInfo({ char, info, infoStatus, strokeCount }: StrokeInfoProps) {
+  const names = info?.strokeNames.map((name, index) => getStrokeName(name, index)).filter(Boolean) ?? [];
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">汉字信息</CardTitle>
+    <Card className="min-w-0 lg:sticky lg:top-24">
+      <CardHeader>
+        <CardTitle>汉字信息</CardTitle>
+        <CardDescription>读音和结构供识字参考，笔画数以当前笔顺数据为准。</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-0">
-        <InfoRow
-          label="汉字"
-          value={<span className="text-2xl font-serif">{char}</span>}
-        />
-        <InfoRow
-          label="拼音"
-          value={
-            <span className="text-lg">
-              {info.pinyinWithTone || info.pinyin}
-            </span>
-          }
-        />
-        <InfoRow label="笔画数" value={`${info.strokeCount} 画`} />
-        <InfoRow
-          label="部首"
-          value={
-            <span>
-              <span className="text-lg font-serif">{info.radical}</span>
-              {info.radicalStrokeCount > 0 && (
-                <span className="text-gray-500 ml-2">
-                  ({info.radicalStrokeCount}画)
-                </span>
-              )}
-            </span>
-          }
-        />
-        <InfoRow label="结构" value={info.struct || "独体字"} />
-        <InfoRow
-          label="笔顺"
-          value={
-            <span className="text-xs leading-relaxed break-all">
-              {strokeNames || "暂无数据"}
-            </span>
-          }
-        />
+      <CardContent className="space-y-5">
+        <div className="relative mx-auto grid aspect-square w-full max-w-48 place-items-center overflow-hidden border border-border bg-card">
+          <svg viewBox="0 0 100 100" className="absolute inset-0 size-full text-border" aria-hidden="true">
+            <path d="M50 0V100M0 50H100M0 0L100 100M100 0L0 100" fill="none" stroke="currentColor" strokeDasharray="2 2" />
+          </svg>
+          <span className="relative font-serif text-8xl leading-none">{char}</span>
+        </div>
+
+        <dl>
+          <InfoRow label="总笔画"><Badge variant="secondary">{strokeCount} 画</Badge></InfoRow>
+          {infoStatus === "loading" ? (
+            <>
+              <InfoRow label="拼音"><Skeleton className="h-5 w-20" /></InfoRow>
+              <InfoRow label="部首"><Skeleton className="h-5 w-14" /></InfoRow>
+              <InfoRow label="结构"><Skeleton className="h-5 w-24" /></InfoRow>
+            </>
+          ) : (
+            <>
+              <InfoRow label="拼音">{info?.pinyinWithTone || "暂未收录"}</InfoRow>
+              <InfoRow label="部首">{info?.radical || "暂未收录"}</InfoRow>
+              <InfoRow label="结构">{info?.struct || "暂未收录"}</InfoRow>
+              <InfoRow label="笔画名称">{names.length ? names.join("、") : "暂未收录"}</InfoRow>
+            </>
+          )}
+        </dl>
+
+        {infoStatus === "unavailable" && <Alert><AlertDescription>读音和结构资料暂时不可用，笔顺动画与书写练习仍可正常使用。</AlertDescription></Alert>}
       </CardContent>
+      <CardFooter className="flex-col items-stretch">
+        <Button asChild><Link href={`/?text=${encodeURIComponent(char)}`}><Grid2X2 aria-hidden="true" />用“{char}”生成字帖</Link></Button>
+        <Button asChild variant="outline"><Link href={`/dictionary/?q=${encodeURIComponent(char)}`}><BookOpen aria-hidden="true" />查“{char}”的释义</Link></Button>
+      </CardFooter>
     </Card>
   );
 }

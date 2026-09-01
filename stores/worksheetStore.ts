@@ -1,24 +1,23 @@
 "use client";
 
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 import type { WorksheetConfig, CharacterInfo, GridType, DisplayMode, PinyinPosition } from "@/types";
 import { defaultWorksheetConfig } from "@/types";
+import {
+  MM_TO_PX, WORKSHEET_STORAGE_KEY, restoreWorksheetSettings,
+  sanitizeWorksheetConfig, serializeWorksheetSettings,
+} from "@/lib/worksheetConfig";
 
 interface WorksheetState {
-  // Configuration
   config: WorksheetConfig;
-  
-  // Processed character data
   characters: CharacterInfo[];
-  
-  // Current page for preview
   currentPage: number;
-  
-  // Loading state
   isLoading: boolean;
-  
-  // Actions
+  isComposing: boolean;
+  hasHydrated: boolean;
+  storageError: string | null;
+  storageAvailable: boolean;
+  hydrate: () => void;
   setConfig: (config: Partial<WorksheetConfig>) => void;
   setCharacters: (characters: CharacterInfo[]) => void;
   setInputText: (text: string) => void;
@@ -45,161 +44,82 @@ interface WorksheetState {
   setInsertEmptyRow: (insert: boolean) => void;
   setCurrentPage: (page: number) => void;
   setLoading: (loading: boolean) => void;
+  setComposing: (composing: boolean) => void;
   resetConfig: () => void;
 }
 
-export const useWorksheetStore = create<WorksheetState>()(
-  persist(
-    (set) => ({
-      config: defaultWorksheetConfig,
-      characters: [],
-      currentPage: 0,
-      isLoading: false,
-
-      setConfig: (newConfig) =>
-        set((state) => ({
-          config: { ...state.config, ...newConfig },
-        })),
-
-      setCharacters: (characters) => set({ characters }),
-
-      setInputText: (text) =>
-        set((state) => ({
-          config: { ...state.config, characters: text },
-        })),
-
-      setGridType: (type) =>
-        set((state) => ({
-          config: { ...state.config, gridType: type },
-        })),
-
-      setGridSize: (size) =>
-        set((state) => ({
-          config: { ...state.config, gridSize: size },
-        })),
-
-      setShowPinyin: (show) =>
-        set((state) => ({
-          config: { ...state.config, showPinyin: show },
-        })),
-
-      setPinyinPosition: (position) =>
-        set((state) => ({
-          config: { ...state.config, pinyinPosition: position },
-        })),
-
-      setShowTone: (show) =>
-        set((state) => ({
-          config: { ...state.config, showTone: show },
-        })),
-
-      setShowStrokeCount: (show) =>
-        set((state) => ({
-          config: { ...state.config, showStrokeCount: show },
-        })),
-
-      setShowRadical: (show) =>
-        set((state) => ({
-          config: { ...state.config, showRadical: show },
-        })),
-
-      setShowStrokeOrder: (show) =>
-        set((state) => ({
-          config: { ...state.config, showStrokeOrder: show },
-        })),
-
-      setDisplayMode: (mode) =>
-        set((state) => ({
-          config: { ...state.config, displayMode: mode },
-        })),
-
-      setRepeatCount: (count) =>
-        set((state) => ({
-          config: { ...state.config, repeatCount: count, columnsPerRow: count },
-        })),
-
-      setColumnsPerRow: (columns) =>
-        set((state) => ({
-          config: { ...state.config, columnsPerRow: columns },
-        })),
-
-      setRowsPerPage: (rows) =>
-        set((state) => ({
-          config: { ...state.config, rowsPerPage: rows },
-        })),
-
-      setHighlightFirst: (highlight) =>
-        set((state) => ({
-          config: { ...state.config, highlightFirst: highlight },
-        })),
-
-      setTraceCount: (count) =>
-        set((state) => ({
-          config: { ...state.config, traceCount: count },
-        })),
-
-      setTraceColor: (color) =>
-        set((state) => ({
-          config: { ...state.config, traceColor: color },
-        })),
-
-      setGridColor: (color) =>
-        set((state) => ({
-          config: { ...state.config, gridColor: color },
-        })),
-
-      setPinyinColor: (color) =>
-        set((state) => ({
-          config: { ...state.config, pinyinColor: color },
-        })),
-
-      setStrokeOrderColor: (color) =>
-        set((state) => ({
-          config: { ...state.config, strokeOrderColor: color },
-        })),
-
-      setCharacterColor: (color) =>
-        set((state) => ({
-          config: { ...state.config, characterColor: color },
-        })),
-
-      setRowGap: (gap) =>
-        set((state) => ({
-          config: { ...state.config, rowGap: gap },
-        })),
-
-      setInsertEmptyRow: (insert) =>
-        set((state) => ({
-          config: { ...state.config, insertEmptyRow: insert },
-        })),
-
-      setCurrentPage: (page) => set({ currentPage: page }),
-
-      setLoading: (loading) => set({ isLoading: loading }),
-
-      resetConfig: () =>
-        set({
-          config: defaultWorksheetConfig,
-          characters: [],
-          currentPage: 0,
-        }),
-    }),
-    {
-      name: "hanzis-worksheet-settings",
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        config: state.config,
-      }),
-      merge: (persistedState, currentState) => {
-        const typed = persistedState as { config?: WorksheetConfig } | null;
-        return {
-          ...currentState,
-          config: {
-            ...currentState.config,
-            ...(typed?.config ?? {}),
-          },
-        };
-      },
+export const useWorksheetStore = create<WorksheetState>()((set, get) => ({
+  config: { ...defaultWorksheetConfig }, characters: [], currentPage: 0,
+  isLoading: false, isComposing: false, hasHydrated: false,
+  storageError: null, storageAvailable: false,
+  hydrate: () => {
+    if (get().hasHydrated) return;
+    let config = { ...defaultWorksheetConfig };
+    let storageError: string | null = null;
+    let storageAvailable = false;
+    try {
+      const raw = localStorage.getItem(WORKSHEET_STORAGE_KEY);
+      if (raw !== null) {
+        try {
+          const restored = restoreWorksheetSettings(raw);
+          config = restored.config;
+          if (restored.needsBackup) {
+            localStorage.setItem(`${WORKSHEET_STORAGE_KEY}-backup-v${Date.now()}`, raw);
+          }
+        } catch {
+          // Invalid/future-version storage and failed backups must leave the original key intact.
+          storageError = "保存的设置暂时无法读取，原记录未改动。本次设置不会自动保存，请在关闭页面前导出字帖。";
+          set({ config, hasHydrated: true, storageError, storageAvailable: false });
+          return;
+        }
+      }
+      storageAvailable = true;
+    } catch {
+      storageError = "浏览器不允许保存本地设置。仍可生成和导出，关闭页面后本次设置不会保留。";
     }
-  )
-);
+    set({ config, hasHydrated: true, storageError, storageAvailable });
+  },
+  setConfig: (patch) => set((state) => ({ config: sanitizeWorksheetConfig({ ...state.config, ...patch }) })),
+  setCharacters: (characters) => set({ characters }),
+  setInputText: (characters) => get().setConfig({ characters }),
+  setGridType: (gridType) => get().setConfig({ gridType }),
+  setGridSize: (gridSize) => get().setConfig({
+    gridSize,
+    columnsPerRow: Math.round((210 * MM_TO_PX - get().config.pageMargin * 2) / (gridSize * MM_TO_PX)),
+  }),
+  setShowPinyin: (showPinyin) => get().setConfig({ showPinyin }),
+  setPinyinPosition: (pinyinPosition) => get().setConfig({ pinyinPosition }),
+  setShowTone: (showTone) => get().setConfig({ showTone }),
+  setShowStrokeCount: (showStrokeCount) => get().setConfig({ showStrokeCount }),
+  setShowRadical: (showRadical) => get().setConfig({ showRadical }),
+  setShowStrokeOrder: (showStrokeOrder) => get().setConfig({ showStrokeOrder }),
+  setDisplayMode: (displayMode) => get().setConfig({ displayMode }),
+  setRepeatCount: (repeatCount) => get().setConfig({ repeatCount, columnsPerRow: repeatCount }),
+  setColumnsPerRow: (columnsPerRow) => get().setConfig({ columnsPerRow, repeatCount: columnsPerRow }),
+  setRowsPerPage: (rowsPerPage) => get().setConfig({ rowsPerPage }),
+  setHighlightFirst: (highlightFirst) => get().setConfig({ highlightFirst }),
+  setTraceCount: (traceCount) => get().setConfig({ traceCount }),
+  setTraceColor: (traceColor) => get().setConfig({ traceColor }),
+  setGridColor: (gridColor) => get().setConfig({ gridColor }),
+  setPinyinColor: (pinyinColor) => get().setConfig({ pinyinColor }),
+  setStrokeOrderColor: (strokeOrderColor) => get().setConfig({ strokeOrderColor }),
+  setCharacterColor: (characterColor) => get().setConfig({ characterColor }),
+  setRowGap: (rowGap) => get().setConfig({ rowGap }),
+  setInsertEmptyRow: (insertEmptyRow) => get().setConfig({ insertEmptyRow }),
+  setCurrentPage: (currentPage) => set({ currentPage: Math.max(0, currentPage) }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setComposing: (isComposing) => set({ isComposing }),
+  resetConfig: () => set({ config: { ...defaultWorksheetConfig }, currentPage: 0 }),
+}));
+
+useWorksheetStore.subscribe((state, previous) => {
+  if (!state.hasHydrated || !state.storageAvailable || state.config === previous.config) return;
+  try {
+    localStorage.setItem(WORKSHEET_STORAGE_KEY, serializeWorksheetSettings(state.config));
+  } catch {
+    useWorksheetStore.setState({
+      storageAvailable: false,
+      storageError: "设置未能保存到浏览器。仍可继续编辑和导出，请勿在导出前关闭页面。",
+    });
+  }
+});

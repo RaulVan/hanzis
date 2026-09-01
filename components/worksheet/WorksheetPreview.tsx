@@ -1,414 +1,83 @@
 "use client";
 
 import * as React from "react";
-import { CharacterGrid } from "@/components/grid";
-import { useWorksheetStore } from "@/stores/worksheetStore";
-import { calculateColumnsPerRow, filterChineseCharacters } from "@/lib/utils";
-import { loadCnchar, getCharacterInfo } from "@/lib/cncharHelper";
-import type { CharacterInfo } from "@/types";
+import { ChevronLeft, ChevronRight, CircleAlert, RefreshCw } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { WorksheetDocument } from "@/lib/worksheetLayout";
+import { WorksheetPageSVG } from "./WorksheetPageSVG";
 
-// A4 dimensions in mm
-const A4_WIDTH_MM = 210;
-const A4_HEIGHT_MM = 297;
-
-// Convert mm to pixels (at 96 DPI, 1mm = 3.78px)
-const MM_TO_PX = 3.78;
-
-type StrokeData = {
-  strokes: string[];
-};
-
-const strokeDataCache = new Map<string, Promise<StrokeData | null>>();
-
-async function loadStrokeData(char: string): Promise<StrokeData | null> {
-  if (strokeDataCache.has(char)) {
-    return strokeDataCache.get(char) ?? null;
-  }
-
-  const promise: Promise<StrokeData | null> = import("hanzi-writer")
-    .then((mod) => mod.default || mod)
-    .then((HanziWriter) => HanziWriter.loadCharacterData(char))
-    .then((data: unknown) => {
-      if (data && typeof data === "object" && "strokes" in data && Array.isArray((data as { strokes: string[] }).strokes)) {
-        return { strokes: (data as { strokes: string[] }).strokes };
-      }
-      return null;
-    })
-    .catch(() => null);
-
-  strokeDataCache.set(char, promise);
-  return promise;
+interface WorksheetPreviewProps {
+  document: WorksheetDocument;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  pending: boolean;
+  ready: boolean;
+  error: string | null;
+  onRetry: () => void;
+  onUseBasicCharacters: () => void;
+  disabled?: boolean;
 }
 
-function StrokeOrderFanning({
-  char,
-  size,
-  color,
-}: {
-  char: string;
-  size: number;
-  color: string;
-}) {
-  const [strokes, setStrokes] = React.useState<string[] | null>(null);
-
+export function WorksheetPreview({ document, currentPage, onPageChange, pending, ready,
+  error, onRetry, onUseBasicCharacters, disabled }: WorksheetPreviewProps) {
+  const container = React.useRef<HTMLDivElement>(null);
+  const [availableWidth, setAvailableWidth] = React.useState(0);
   React.useEffect(() => {
-    let cancelled = false;
-    loadStrokeData(char).then((data) => {
-      if (cancelled) return;
-      setStrokes(data?.strokes ?? []);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [char]);
-
-  if (!strokes || strokes.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="flex items-center gap-1 flex-wrap">
-      {strokes.map((_, index) => {
-        const portion = strokes.slice(0, index + 1);
-        const transform = `translate(0, ${size}) scale(${size / 1024}, ${-size / 1024})`;
-        return (
-          <svg
-            key={index}
-            width={size}
-            height={size}
-            className="shrink-0"
-            viewBox={`0 0 ${size} ${size}`}
-          >
-            <g transform={transform}>
-              {portion.map((path, pathIndex) => (
-                <path key={pathIndex} d={path} fill={color} />
-              ))}
-            </g>
-          </svg>
-        );
-      })}
-    </div>
-  );
-}
-
-export function WorksheetPreview() {
-  const { config, characters, setCharacters, setLoading, setCurrentPage } = useWorksheetStore();
-  const [isInitialized, setIsInitialized] = React.useState(false);
-  const previewRef = React.useRef<HTMLDivElement>(null);
-
-  // Initialize cnchar on mount
-  React.useEffect(() => {
-    loadCnchar().then(() => {
-      setIsInitialized(true);
-    });
+    const element = container.current;
+    if (!element) return;
+    const measure = () => setAvailableWidth(element.clientWidth);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
   }, []);
-
-  // Process characters when input changes
-  React.useEffect(() => {
-    if (!isInitialized) {
-      return;
-    }
-
-    const filteredText = filterChineseCharacters(config.characters);
-    if (!filteredText) {
-      setCharacters([]);
-      setCurrentPage(0);
-      return;
-    }
-
-    setLoading(true);
-
-    // Keep original order and count, cache repeated lookups
-    const cache = new Map<string, CharacterInfo>();
-    const charInfos: CharacterInfo[] = filteredText.split("").map((char) => {
-      const cached = cache.get(char);
-      if (cached) return cached;
-      const info = getCharacterInfo(char);
-      cache.set(char, info);
-      return info;
-    });
-
-    setCharacters(charInfos);
-    setCurrentPage(0);
-    setLoading(false);
-  }, [config.characters, isInitialized, setCharacters, setLoading, setCurrentPage]);
-
-  // Calculate layout dimensions
-  const gridSizePx = config.gridSize * MM_TO_PX;
-  const rowGapPx = config.rowGap * MM_TO_PX;
-  const pageMarginPx = config.pageMargin;
-  
-  // Calculate content area dimensions
-  const contentHeight = A4_HEIGHT_MM * MM_TO_PX - pageMarginPx * 2;
-  // 根据页面宽度与格子大小动态计算每行格子数
-  const columnsPerRow = calculateColumnsPerRow({
-    gridSizeMm: config.gridSize,
-    pageMarginPx,
-    pageWidthMm: A4_WIDTH_MM,
-    mmToPx: MM_TO_PX,
-  });
-  const contentWidthPx = A4_WIDTH_MM * MM_TO_PX - pageMarginPx * 2;
-  const cellSizePx = contentWidthPx / columnsPerRow;
-  const effectiveTraceCount = Math.min(config.traceCount, Math.max(0, columnsPerRow));
-  
-  // Calculate how many rows fit per page (considering row gap)
-  // Add extra buffer (2px per section) to account for borders
-  const strokeLineHeight = config.showStrokeOrder ? Math.round(cellSizePx * 0.4) + 2 : 0;
-  const pinyinLineHeight = config.showPinyin ? Math.round(cellSizePx * 0.35) + 2 : 0;
-  const rowHeight = cellSizePx + rowGapPx + strokeLineHeight + pinyinLineHeight + 2; // extra buffer for row border
-  const rowsPerPage = Math.max(1, Math.floor(contentHeight / rowHeight));
-  
-  // Calculate total rows needed
-  const hasCharacters = characters.length > 0;
-  const rowsPerChar = config.insertEmptyRow ? 2 : 1;
-  const totalCharRows = hasCharacters ? characters.length * rowsPerChar : 0;
-  
-  // If no characters, show one full page of empty grids
-  const totalRows = hasCharacters ? totalCharRows : rowsPerPage;
-  const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
-
-  // Get rows for current page
-  const getPageRows = (pageIndex: number) => {
-    const startRow = pageIndex * rowsPerPage;
-    const endRow = Math.min(startRow + rowsPerPage, totalRows);
-    const rows: { char: CharacterInfo | null; isEmpty: boolean }[] = [];
-    
-    if (hasCharacters) {
-      for (let i = startRow; i < endRow; i++) {
-        if (config.insertEmptyRow) {
-          const charIndex = Math.floor(i / 2);
-          const isEmptyRow = i % 2 === 1;
-          if (charIndex < characters.length) {
-            rows.push({
-              char: isEmptyRow ? characters[charIndex] : characters[charIndex],
-              isEmpty: isEmptyRow,
-            });
-          }
-        } else {
-          if (i < characters.length) {
-            rows.push({ char: characters[i], isEmpty: false });
-          }
-        }
-      }
-    }
-    
-    // Fill remaining with empty rows (for practice or when no characters)
-    while (rows.length < rowsPerPage) {
-      rows.push({ char: null, isEmpty: true });
-    }
-    
-    return rows;
-  };
-
-  const getPinyinText = (rowChar: CharacterInfo | null) => {
-    if (!rowChar) return "";
-    return config.showTone ? rowChar.pinyinWithTone : rowChar.pinyin;
-  };
-
-  // Wait for cnchar to load
-  if (!isInitialized) {
-    return (
-      <div className="flex items-center justify-center h-full min-h-[400px] text-gray-400">
-        <div className="text-center">
-          <p>正在加载...</p>
+  const scale = Math.round(Math.min(1, availableWidth / document.width) * 100);
+  return (
+    <section aria-labelledby="worksheet-preview-title" className="worksheet-stage w-full min-w-0 rounded-xl border border-border bg-muted p-4 sm:p-5">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <h2 id="worksheet-preview-title" className="font-serif text-xl font-medium">字帖预览</h2>
+        <div className="flex items-center gap-3 text-sm tabular-nums text-muted-foreground" aria-live="polite">
+          <Badge variant="outline">{document.config.pageSize}</Badge>
+          <span>{pending ? "排版中" : `共 ${document.pages.length} 页`}</span>
+          <span data-preview-scale={scale}>{scale ? `${scale}%` : "适应宽度"}</span>
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6" id="worksheet-preview" ref={previewRef}>
-      {Array.from({ length: totalPages }).map((_, pageIndex) => {
-        const rows = getPageRows(pageIndex);
-        return (
-          <div
-            key={pageIndex}
-            className="worksheet-container bg-white shadow-lg mx-auto print:shadow-none page-break-before overflow-hidden"
-            style={{
-              width: A4_WIDTH_MM * MM_TO_PX,
-              height: A4_HEIGHT_MM * MM_TO_PX,
-              padding: pageMarginPx,
-              boxSizing: "border-box",
-            }}
-          >
-            <div className="space-y-0">
-              {rows.map((row, rowIndex) => (
-                <div
-                  key={rowIndex}
-                  className="flex flex-col"
-                  style={{
-                    marginBottom: rowGapPx,
-                    border: `1px solid ${config.gridColor}`,
-                    width: contentWidthPx,
-                    boxSizing: "border-box",
-                  }}
-                >
-                  {/* Stroke order line */}
-                  {config.showStrokeOrder && (
-                    <div
-                      className="flex items-center"
-                      style={{
-                        height: strokeLineHeight,
-                        borderBottom: `1px solid ${config.gridColor}`,
-                        paddingLeft: Math.max(4, gridSizePx * 0.1),
-                        width: contentWidthPx,
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      {row.char && !row.isEmpty ? (
-                        <StrokeOrderFanning
-                          char={row.char.char}
-                          size={Math.max(12, strokeLineHeight - 2)}
-                          color={config.strokeOrderColor}
-                        />
-                      ) : null}
-                    </div>
-                  )}
-
-                  {/* Pinyin line */}
-                  {config.showPinyin && (
-                    <div
-                      className="relative flex"
-                      style={{
-                        height: pinyinLineHeight,
-                        width: contentWidthPx,
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      {/* Four-line grid: top/bottom + two inner lines */}
-                      <div
-                        className="absolute inset-x-0"
-                        style={{
-                          top: 0,
-                          borderTop: `1px dashed ${config.gridColor}`,
-                        }}
-                      />
-                      <div
-                        className="absolute inset-x-0"
-                        style={{
-                          bottom: 0,
-                          borderBottom: `1px dashed ${config.gridColor}`,
-                        }}
-                      />
-                      <div
-                        className="absolute inset-x-0"
-                        style={{
-                          top: `${(pinyinLineHeight / 3).toFixed(2)}px`,
-                          borderTop: `1px dashed ${config.gridColor}`,
-                        }}
-                      />
-                      <div
-                        className="absolute inset-x-0"
-                        style={{
-                          top: `${((pinyinLineHeight * 2) / 3).toFixed(2)}px`,
-                          borderTop: `1px dashed ${config.gridColor}`,
-                        }}
-                      />
-                      {Array.from({ length: columnsPerRow }).map((_, colIndex) => (
-                        <div
-                          key={colIndex}
-                          className="relative shrink-0"
-                          style={{
-                            width: cellSizePx,
-                            height: pinyinLineHeight,
-                          }}
-                        >
-                          {row.char && !row.isEmpty ? (
-                            <svg
-                              width={cellSizePx}
-                              height={pinyinLineHeight}
-                              viewBox={`0 0 ${cellSizePx} ${pinyinLineHeight}`}
-                              className="absolute inset-0"
-                            >
-                              <text
-                                x="50%"
-                                y="50%"
-                                textAnchor="middle"
-                                dominantBaseline="central"
-                                fill={config.pinyinColor}
-                                fontSize={Math.max(10, cellSizePx * 0.22)}
-                                fontFamily="Noto Sans SC, Noto Sans, system-ui, sans-serif"
-                              >
-                                {getPinyinText(row.char)}
-                              </text>
-                            </svg>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Grid line */}
-                  <div className="flex" style={{ width: contentWidthPx }}>
-                    {Array.from({ length: columnsPerRow }).map((_, colIndex) => {
-                      const isFirstCell = colIndex === 0;
-                      const isTraceCell = config.highlightFirst
-                        ? colIndex > 0 && colIndex <= effectiveTraceCount
-                        : colIndex >= 0 && colIndex < effectiveTraceCount;
-                      const isEmpty = row.isEmpty || !row.char;
-
-                      let displayChar = "";
-                      let charColor = "transparent";
-
-                      if (row.char && !isEmpty) {
-                        displayChar = row.char.char;
-                        if (isFirstCell && config.highlightFirst) {
-                          charColor = config.characterColor;
-                        } else if (isTraceCell) {
-                          charColor = config.traceColor;
-                        } else if (isFirstCell && !config.highlightFirst) {
-                          charColor = config.traceColor;
-                        }
-                      }
-
-                      return (
-                        <div
-                          key={colIndex}
-                          className="relative shrink-0"
-                          style={{
-                            width: cellSizePx,
-                            height: cellSizePx,
-                          }}
-                        >
-                          <CharacterGrid
-                            type={config.gridType}
-                            size={cellSizePx}
-                            lineColor={config.gridColor}
-                            borderColor={config.gridColor}
-                            lineWidth={config.gridLineWidth}
-                            borderWidth={config.gridLineWidth}
-                          >
-                            {displayChar && (
-                              <svg
-                                width={cellSizePx}
-                                height={cellSizePx}
-                                viewBox={`0 0 ${cellSizePx} ${cellSizePx}`}
-                                className="absolute inset-0"
-                              >
-                                <text
-                                  x="50%"
-                                  y="50%"
-                                  textAnchor="middle"
-                                  dominantBaseline="central"
-                                  fill={charColor}
-                                  fontSize={cellSizePx * 0.8}
-                                  fontFamily="KaiTi, STKaiti, serif"
-                                >
-                                  {displayChar}
-                                </text>
-                              </svg>
-                            )}
-                          </CharacterGrid>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+      <div ref={container} className="min-w-0" id="worksheet-preview" aria-busy={pending}>
+        <div className="mx-auto w-full" style={{ maxWidth: document.width }}>
+          {pending ? (
+            <div className="relative">
+              <Skeleton className="w-full" style={{ aspectRatio: `${document.widthMm} / ${document.heightMm}` }} />
+              <p className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground" role="status">正在准备字帖资料……</p>
             </div>
-          </div>
-        );
-      })}
-    </div>
+          ) : error && !ready ? (
+            <Empty className="min-h-96">
+              <EmptyHeader>
+                <EmptyMedia variant="icon"><CircleAlert /></EmptyMedia>
+                <EmptyTitle>字库暂时无法加载</EmptyTitle>
+                <EmptyDescription>{error}</EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button onClick={onRetry}><RefreshCw data-icon="inline-start" />重新加载</Button>
+                <Button variant="outline" onClick={onUseBasicCharacters}>继续使用基础字形</Button>
+                <p className="text-xs text-muted-foreground">基础字形不含拼音、部首或笔顺资料，原文与字格会完整保留。</p>
+              </EmptyContent>
+            </Empty>
+          ) : <WorksheetPageSVG document={document} pageIndex={currentPage} />}
+        </div>
+      </div>
+      <div className="mt-5 flex flex-col items-center gap-3">
+        {document.pages.length > 1 && ready ? (
+          <nav aria-label="字帖分页" className="flex flex-wrap items-center justify-center gap-3">
+            <Button variant="outline" size="sm" disabled={disabled || currentPage === 0} onClick={() => onPageChange(currentPage - 1)}><ChevronLeft data-icon="inline-start" />上一页</Button>
+            <span className="text-sm tabular-nums" aria-live="polite">第 {currentPage + 1} / {document.pages.length} 页</span>
+            <Button variant="outline" size="sm" disabled={disabled || currentPage >= document.pages.length - 1} onClick={() => onPageChange(currentPage + 1)}>下一页<ChevronRight data-icon="inline-end" /></Button>
+          </nav>
+        ) : null}
+        <p className="text-center text-xs text-muted-foreground">{document.characters.length === 0 && ready ? "空白练习纸可直接导出。" : ""}预览适应屏幕宽度，导出保留真实纸张尺寸。</p>
+      </div>
+    </section>
   );
 }

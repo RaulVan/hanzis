@@ -1,45 +1,14 @@
 "use client";
-
 import * as React from "react";
+import { Slider as SliderPrimitive } from "radix-ui";
 import { cn } from "@/lib/utils";
-
-export interface SliderProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "onChange" | "value" | "defaultValue"
-  > {
-  value?: number[];
-  defaultValue?: number[];
-  onValueChange?: (value: number[]) => void;
+function Slider({ className, value, defaultValue, min = 0, max = 100, ...props }: React.ComponentProps<typeof SliderPrimitive.Root>) {
+  const values = value ?? defaultValue ?? [min];
+  return (
+    <SliderPrimitive.Root data-slot="slider" value={value} defaultValue={defaultValue} min={min} max={max} className={cn("relative flex h-11 w-full touch-none items-center select-none data-[disabled]:opacity-50", className)} {...props}>
+      <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-input"><SliderPrimitive.Range className="absolute h-full bg-primary" /></SliderPrimitive.Track>
+      {values.map((_, index) => <SliderPrimitive.Thumb key={index} aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={props["aria-describedby"]} className="relative block size-5 rounded-full border-2 border-primary bg-card outline-none before:absolute before:-inset-3 before:content-[''] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />)}
+    </SliderPrimitive.Root>
+  );
 }
-
-const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
-  (
-    { className, value, defaultValue, onValueChange, min = 0, max = 100, ...props },
-    ref
-  ) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onValueChange?.([parseInt(e.target.value, 10)]);
-    };
-
-    return (
-      <input
-        type="range"
-        ref={ref}
-        min={min}
-        max={max}
-        value={value?.[0]}
-        defaultValue={defaultValue?.[0]}
-        onChange={handleChange}
-        className={cn(
-          "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-rose-500",
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
-Slider.displayName = "Slider";
-
 export { Slider };

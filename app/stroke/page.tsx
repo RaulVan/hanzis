@@ -1,32 +1,34 @@
-"use client";
-
-import * as React from "react";
-import { Navigation } from "@/components/layout";
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { PageHeading } from "@/components/layout/PageHeading";
 import { StrokeViewer } from "@/components/stroke/StrokeViewer";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export const metadata: Metadata = {
+  title: "汉字笔顺 · 动画与书写练习",
+  description: "查询汉字笔顺，观看逐笔动画与分解，并使用交互式书写测验练习正确笔顺。",
+  alternates: { canonical: "/stroke/" },
+};
+
+function StrokeViewerFallback() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]" role="status" aria-label="正在加载笔顺工具">
+      <div className="space-y-6">
+        <Skeleton className="h-56 w-full" />
+        <Skeleton className="h-[620px] w-full" />
+      </div>
+      <Skeleton className="h-[420px] w-full" />
+    </div>
+  );
+}
 
 export default function StrokePage() {
   return (
-    <main className="min-h-screen bg-gray-50">
-      <Navigation />
-
-      {/* Main content */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">汉字笔顺</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            查询汉字笔顺、观看笔画动画、学习正确书写顺序
-          </p>
-        </div>
-
+    <>
+      <PageHeading title="从第一笔，写好一个字。" description="看清笔顺、逐笔拆解，再亲手写一遍。" />
+      <Suspense fallback={<StrokeViewerFallback />}>
         <StrokeViewer />
-      </div>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white mt-auto">
-        <div className="container mx-auto px-4 py-4 text-center text-sm text-gray-500">
-          <p>汉字网</p>
-        </div>
-      </footer>
-    </main>
+      </Suspense>
+    </>
   );
 }

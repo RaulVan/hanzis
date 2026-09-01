@@ -1,0 +1,18 @@
+Hanzis third-party learning data
+
+Character stroke data: hanzi-writer-data 2.0.1, from Make Me A Hanzi.
+The underlying font data was released by Arphic Technology under the
+Arphic Public License (1999). See ARPHICPL.TXT, retained without changes.
+The JSON files are unmodified; filenames use Unicode code points for safe URLs.
+Original source: https://github.com/chanind/hanzi-writer-data
+
+Chinese word explanations: cnchar-data 1.1.0, MIT License.
+The source snapshot is reorganized into static shards. See cnchar-data-MIT.txt.
+Original source: https://github.com/theajack/cnchar
+
+Noto Sans SC and Noto Serif SC: SIL Open Font License 1.1.
+See Noto-Sans-SC-OFL.txt and Noto-Serif-SC-OFL.txt.
+
+Pinyin MP3 files: supplied by the project owner. The owner confirmed oral
+authorization on 2026-09-01; a written authorization statement will be added.
+These recordings are not covered by the source code's MIT license.

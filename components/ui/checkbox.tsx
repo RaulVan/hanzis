@@ -1,48 +1,9 @@
 "use client";
-
 import * as React from "react";
 import { Check } from "lucide-react";
+import { Checkbox as CheckboxPrimitive } from "radix-ui";
 import { cn } from "@/lib/utils";
-
-export interface CheckboxProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  onCheckedChange?: (checked: boolean) => void;
+function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+  return <CheckboxPrimitive.Root data-slot="checkbox" className={cn("peer relative flex size-5 shrink-0 items-center justify-center rounded border border-input bg-card before:absolute before:-inset-3 before:content-[''] focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-50 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground", className)} {...props}><CheckboxPrimitive.Indicator><Check className="size-4" /></CheckboxPrimitive.Indicator></CheckboxPrimitive.Root>;
 }
-
-const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, onCheckedChange, ...props }, ref) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onCheckedChange?.(e.target.checked);
-      props.onChange?.(e);
-    };
-
-    return (
-      <div className="relative inline-flex items-center">
-        <input
-          type="checkbox"
-          ref={ref}
-          className="peer sr-only"
-          onChange={handleChange}
-          {...props}
-        />
-        <div
-          className={cn(
-            "h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 peer-checked:bg-primary peer-checked:text-primary-foreground flex items-center justify-center cursor-pointer",
-            className
-          )}
-          onClick={() => {
-            const input = ref as React.RefObject<HTMLInputElement>;
-            if (input?.current) {
-              input.current.click();
-            }
-          }}
-        >
-          <Check className="h-3 w-3 hidden peer-checked:block text-primary-foreground" />
-        </div>
-      </div>
-    );
-  }
-);
-Checkbox.displayName = "Checkbox";
-
 export { Checkbox };

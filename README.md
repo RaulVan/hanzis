@@ -1,91 +1,80 @@
-# 汉字字帖生成器 (Hanzis)
+# 汉字网 Hanzis
 
-一款功能丰富的中文字帖生成器，支持生成田字格、米字格等多种格式的字帖，包含汉字、拼音、部首、笔画顺序等内容。
+一个无需账号、可离线构建的中文学习工具站。当前发布版已完整提供字帖生成、拼音学习、汉字笔顺、古诗词与中文字典，并可导出为纯静态站点。
 
-## 功能特点
+## 功能
 
-- **多种格子类型**: 田字格、米字格、回宫格、空白格
-- **拼音标注**: 自动生成拼音，支持声调显示
-- **笔画信息**: 显示笔画数和部首
-- **多种显示模式**: 实心字、描红字、空白格
-- **PDF导出**: 生成可打印的PDF文件
-- **响应式设计**: 支持桌面和移动设备
+| 模块 | 路径 | 发布版能力 |
+| --- | --- | --- |
+| 字帖生成 | `/` | 四类字格、拼音、笔顺、描红、颜色与排版、多页 PDF、PNG、打印、配置保存与链接导入 |
+| 拼音学习 | `/pinyin/` | 声母、韵母、整体认读、四声与轻声、同源录音、系统语音回退、10 题综合练习 |
+| 汉字笔顺 | `/stroke/` | 单字查询、动画速度与暂停、逐笔分解、互动书写、错误恢复与跨模块入口 |
+| 古诗词 | `/poetry/` | 30 首唐宋诗词、搜索筛选、逐字拼音、注释译文、收藏、朗读、背诵与生成字帖 |
+| 中文字典 | `/dictionary/` | 汉字、词语、拼音、部首与笔画检索，分页结果、双来源释义与笔顺/字帖入口 |
 
-## 技术栈
+全站另含响应式导航、键盘焦点、错误页、404、站点地图、robots、Web App Manifest、来源说明和隐私说明。
 
-- **框架**: Next.js 14+ (App Router)
-- **语言**: TypeScript
-- **样式**: Tailwind CSS
-- **汉字处理**: cnchar
-- **状态管理**: Zustand
-- **PDF生成**: jsPDF + html2canvas
+## 技术架构
 
-## 快速开始
+- Next.js 16 App Router 静态导出、React 19、TypeScript 5.9、Tailwind CSS v4。
+- shadcn 组件约定、Radix primitives、Lucide 图标与语义 Design Token。
+- Zustand 只保存本机字帖设置；收藏与配置不上传服务器。
+- Hanzi Writer 与本地 9,574 字笔画数据；jsPDF 在浏览器内生成 A4 文件。
+- 两套本地字典快照按 128 个分片发布；构建过程不联网拉取数据。
+- 所有主要页面、字典、笔画、录音和字体均可由普通静态服务器托管。
 
-### 安装依赖
+设计约定见 [Design.md](Design.md)，数据来源、许可和校验值见 [DATA_SOURCES.md](DATA_SOURCES.md)。
 
-```bash
-# 使用 nvm 切换到 Node.js 20
-nvm use 20
+## 本地开发
 
-# 安装依赖
-npm install
-```
-
-### 开发模式
+要求 Node.js `>=20.9`，发布验收使用 Node.js `20.20.2`。
 
 ```bash
+npm ci
 npm run dev
 ```
 
-打开 [http://localhost:3000](http://localhost:3000) 查看应用。
+开发服务器默认位于 <http://localhost:3000>。首次开发或构建会从已安装依赖和版本化快照生成静态笔画、词典、录音清单与公开许可文件。
 
-### 构建
+## 检查与构建
 
 ```bash
+npm run check
 npm run build
+npm run release:verify
+npm run preview -- --port=4317
+npm run test:e2e
 ```
 
-### 部署
+- `check`：ESLint、TypeScript 和单元测试。
+- `build`：生成 `out/` 纯静态站点。
+- `release:verify`：核对页面、资源数量和关键入口。
+- `preview`：用带安全响应头、Range 请求和正确 MIME 的本地服务器预览 `out/`。
+- `test:e2e`：对核心页面执行 axe WCAG A/AA 扫描，并验证真实 PDF 下载。
 
-#### Vercel (推荐)
+本轮实测结果记录于 [QA_REPORT.md](QA_REPORT.md)。
 
-直接连接 GitHub 仓库，Vercel 会自动部署。
+## 发布
 
-#### Cloudflare Pages
+`out/` 中的内容可直接部署到静态站点根目录。已生成的根目录发布包位于：
 
-1. 构建命令: `npm run build`
-2. 输出目录: `out`
-
-#### 其他静态托管
-
-项目配置了 `output: 'export'`，构建后会在 `out` 目录生成静态文件，可以部署到任何静态托管服务。
-
-## 项目结构
-
-```
-Hanzis/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # 根布局
-│   ├── page.tsx            # 首页
-│   └── globals.css         # 全局样式
-├── components/
-│   ├── ui/                 # UI 组件
-│   ├── grid/               # 格子组件
-│   ├── character/          # 汉字组件
-│   ├── controls/           # 控制面板
-│   └── worksheet/          # 字帖组件
-├── hooks/                  # React Hooks
-├── lib/                    # 工具函数
-├── stores/                 # 状态管理
-└── types/                  # 类型定义
+```text
+release/hanzis-static-2026-09-01.zip
 ```
 
-## 开源协议
+详细上传、校验、冒烟检查和回滚步骤见 [DEPLOYMENT.md](DEPLOYMENT.md)。当前仓库已完成发布准备，没有替用户执行生产部署。
 
-MIT License
+## 数据、授权与隐私
 
-## 致谢
+- 教育部《國語辭典簡編本》原始记录、cnchar-data、Hanzi Writer 字形数据和 Noto 字体均保留来源、版本与许可说明。
+- `public/voice/` 中 1,678 个 MP3 已由项目所有者确认取得口头授权；书面授权协议说明待后续补充。录音不包含在源码 MIT License 中。
+- 应用不提供账号，不接入分析或广告脚本。字帖导出在浏览器本地完成；静态托管方仍可能按其配置记录常规访问日志。
 
-- [cnchar](https://github.com/theajack/cnchar) - 功能全面的汉字工具库
-- [hanzi-writer](https://github.com/chanind/hanzi-writer) - 汉字笔画动画库
+## 项目文档
+
+- [task_plan.md](task_plan.md)：本轮范围、架构与实施结果。
+- [progress.md](progress.md)：当前功能与验证进度。
+- [findings.md](findings.md)：关键技术发现、修复和风险边界。
+- [DATA_SOURCES.md](DATA_SOURCES.md)：数据来源、处理和授权状态。
+- [QA_REPORT.md](QA_REPORT.md)：自动化与浏览器验收证据。
+- [DEPLOYMENT.md](DEPLOYMENT.md)：发布与回滚手册。

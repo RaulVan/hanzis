@@ -13,6 +13,14 @@
 
 # Production
 /build
+/release/
+/public/hanzi/
+/public/dictionary/
+/public/licenses/
+/test-results/
+/playwright-report/
+/venv/
+**/__pycache__/
 
 # Misc
 .DS_Store

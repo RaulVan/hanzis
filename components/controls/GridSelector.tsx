@@ -1,180 +1,39 @@
 "use client";
 
-import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { CharacterGrid } from "@/components/grid";
+import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { Slider } from "@/components/ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useWorksheetStore } from "@/stores/worksheetStore";
 import { gridOptions, type GridType } from "@/types";
-import { calculateColumnsPerRow, cn } from "@/lib/utils";
-
-// Grid type preview icons
-function GridPreview({ type, selected }: { type: GridType; selected: boolean }) {
-  const size = 40;
-  const center = size / 2;
-
-  return (
-    <svg
-      width={size}
-      height={size}
-      className={cn(
-        "border-2 rounded transition-colors",
-        selected ? "border-rose-500" : "border-gray-200"
-      )}
-    >
-      {/* Border */}
-      <rect
-        x={1}
-        y={1}
-        width={size - 2}
-        height={size - 2}
-        fill="white"
-        stroke="#999"
-        strokeWidth={1}
-      />
-
-      {/* Grid lines based on type */}
-      {(type === "tian" || type === "mi") && (
-        <>
-          <line
-            x1={center}
-            y1={2}
-            x2={center}
-            y2={size - 2}
-            stroke="#ccc"
-            strokeWidth={1}
-          />
-          <line
-            x1={2}
-            y1={center}
-            x2={size - 2}
-            y2={center}
-            stroke="#ccc"
-            strokeWidth={1}
-          />
-        </>
-      )}
-
-      {type === "mi" && (
-        <>
-          <line
-            x1={2}
-            y1={2}
-            x2={size - 2}
-            y2={size - 2}
-            stroke="#ccc"
-            strokeWidth={1}
-            strokeDasharray="2,2"
-          />
-          <line
-            x1={size - 2}
-            y1={2}
-            x2={2}
-            y2={size - 2}
-            stroke="#ccc"
-            strokeWidth={1}
-            strokeDasharray="2,2"
-          />
-        </>
-      )}
-
-      {type === "huigong" && (
-        <rect
-          x={size * 0.25}
-          y={size * 0.25}
-          width={size * 0.5}
-          height={size * 0.5}
-          fill="none"
-          stroke="#ccc"
-          strokeWidth={1}
-        />
-      )}
-    </svg>
-  );
-}
 
 export function GridSelector() {
-  const { config, setGridType, setGridSize, setRowGap } =
-    useWorksheetStore();
-  const pageWidthMm = 210;
-  const mmToPx = 3.78;
-  const contentWidthPx = pageWidthMm * mmToPx - config.pageMargin * 2;
-  const columnsPerRow = calculateColumnsPerRow({
-    gridSizeMm: config.gridSize,
-    pageMarginPx: config.pageMargin,
-    pageWidthMm,
-    mmToPx,
-  });
-
+  const { config, setGridType, setColumnsPerRow } = useWorksheetStore();
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">方格设置</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Grid type selection */}
-        <div className="space-y-2">
-          <Label>方格类型</Label>
-          <div className="grid grid-cols-4 gap-2">
+    <FieldSet className="gap-3">
+      <FieldLegend className="mb-0">字格与排版</FieldLegend>
+      <FieldGroup className="gap-3">
+        <Field>
+          <FieldLabel id="worksheet-grid-label" className="sr-only">字格类型</FieldLabel>
+          <ToggleGroup type="single" variant="outline" spacing={2} value={config.gridType}
+            onValueChange={(value) => { if (value) setGridType(value as GridType); }}
+            aria-labelledby="worksheet-grid-label" className="grid w-full grid-cols-4 gap-2">
             {gridOptions.map((option) => (
-              <button
-                key={option.type}
-                onClick={() => setGridType(option.type)}
-                className={cn(
-                  "flex flex-col items-center gap-1 p-2 rounded-md border transition-colors",
-                  config.gridType === option.type
-                    ? "border-rose-500 bg-rose-50"
-                    : "border-gray-200 hover:border-rose-300"
-                )}
-              >
-                <GridPreview
-                  type={option.type}
-                  selected={config.gridType === option.type}
-                />
-                <span className="text-xs">{option.label}</span>
-              </button>
+              <ToggleGroupItem key={option.type} value={option.type} aria-label={option.label} title={option.description}
+                className="h-auto min-w-0 flex-col gap-2 px-1 py-2">
+                <span aria-hidden="true"><CharacterGrid type={option.type} size={36} lineColor="currentColor" borderColor="currentColor" borderWidth={1} /></span>
+                <span>{option.label}</span>
+              </ToggleGroupItem>
             ))}
-          </div>
-        </div>
-
-        {/* Columns per row (based on A4 width) */}
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <Label>方格数量</Label>
-            <span className="text-xs text-gray-500">
-              {columnsPerRow}个
-            </span>
-          </div>
-          <Slider
-            value={[columnsPerRow]}
-            onValueChange={([value]) => {
-              const safeColumns = Math.max(1, Math.round(value));
-              const nextGridSizeMm = contentWidthPx / safeColumns / mmToPx;
-              setGridSize(Number(nextGridSizeMm.toFixed(2)));
-            }}
-            min={8}
-            max={20}
-            step={1}
-          />
-        </div>
-
-        {/* Row gap */}
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <Label>行间距</Label>
-            <span className="text-xs text-gray-500">
-              {config.rowGap}mm
-            </span>
-          </div>
-          <Slider
-            value={[config.rowGap]}
-            onValueChange={([value]) => setRowGap(value)}
-            min={0}
-            max={5}
-            step={0.5}
-          />
-        </div>
-      </CardContent>
-    </Card>
+          </ToggleGroup>
+        </Field>
+        <Field orientation="horizontal" className="gap-3">
+          <FieldLabel id="worksheet-columns-label" className="shrink-0">每行格数</FieldLabel>
+          <Slider aria-labelledby="worksheet-columns-label" value={[config.columnsPerRow]}
+            onValueChange={([value]) => setColumnsPerRow(value)} min={8} max={20} step={1} className="min-w-0 flex-1" />
+          <output className="min-w-8 text-center text-sm tabular-nums" aria-label="每行格数">{config.columnsPerRow}</output>
+        </Field>
+      </FieldGroup>
+    </FieldSet>
   );
 }

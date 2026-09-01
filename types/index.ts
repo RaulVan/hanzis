@@ -51,10 +51,11 @@ export interface WorksheetConfig {
   pageSize: PageSize;
   orientation: Orientation;
   rowGap: number; // gap between rows in mm
-  pageMargin: number; // page margin in mm
+  pageMargin: number; // CSS px at 96 DPI; retained for saved-setting compatibility
 
   // New features
   highlightFirst: boolean; // first char is solid black
+  traceEnabled: boolean;
   traceCount: number; // number of traced (light) characters
   emptyCount: number; // number of empty cells for practice
   insertEmptyRow: boolean; // insert empty row after each char
@@ -77,15 +78,15 @@ export interface CharacterInfo {
 
 // Default worksheet configuration
 export const defaultWorksheetConfig: WorksheetConfig = {
-  title: "",
-  characters: "",
+  title: "汉字书写练习",
+  characters: "春眠不觉晓，处处闻啼鸟。",
 
   gridType: "tian",
-  gridSize: 10, // 10mm per cell
-  gridColor: "#af0000",
-  gridLineWidth: 1,
+  gridSize: 15.91,
+  gridColor: "#C87D75",
+  gridLineWidth: 0.7,
 
-  showPinyin: false,
+  showPinyin: true,
   pinyinPosition: "top",
   showTone: true,
   showStrokeCount: false,
@@ -94,23 +95,24 @@ export const defaultWorksheetConfig: WorksheetConfig = {
 
   displayMode: "solid",
   characterOpacity: 1,
-  repeatCount: 14, // total cells per row
+  repeatCount: 12, // total cells per row
 
   fontFamily: "kai",
-  characterColor: "#6b7280",
-  pinyinColor: "#d1d5db",
-  traceColor: "#d1d5db",
-  strokeOrderColor: "#d1d5db",
+  characterColor: "#292C26",
+  pinyinColor: "#62685E",
+  traceColor: "#C6C2BC",
+  strokeOrderColor: "#62685E",
 
-  columnsPerRow: 14, // matches repeatCount
-  rowsPerPage: 10,
+  columnsPerRow: 12,
+  rowsPerPage: 0, // 0: automatically fit the page
   pageSize: "A4",
   orientation: "portrait",
   rowGap: 2, // 2mm gap between rows
   pageMargin: 36, // 36px margins (all sides)
 
   highlightFirst: true,
-  traceCount: 13, // traced characters after first solid
+  traceEnabled: true,
+  traceCount: 11, // traced characters after first solid
   emptyCount: 0, // empty cells for practice
   insertEmptyRow: false,
   insertEmptyColumn: false,

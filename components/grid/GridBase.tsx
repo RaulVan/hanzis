@@ -17,16 +17,14 @@ interface GridBaseProps {
 // Base grid component with outer border only
 export function GridBase({
   size,
-  lineColor = "#cccccc",
-  lineWidth = 1,
   borderColor = "#999999",
   borderWidth = 2,
   className,
   children,
 }: GridBaseProps) {
   return (
-    <div
-      className={cn("relative bg-white", className)}
+    <span
+      className={cn("relative block bg-card", className)}
       style={{
         width: size,
         height: size,
@@ -35,7 +33,7 @@ export function GridBase({
       }}
     >
       {children}
-    </div>
+    </span>
   );
 }
 
@@ -63,7 +61,8 @@ export function GridLines({
     <svg
       width={size}
       height={size}
-      className="absolute inset-0 pointer-events-none"
+      viewBox={`0 0 ${size} ${size}`}
+      className="pointer-events-none absolute inset-0 size-full"
       style={{ top: 0, left: 0 }}
     >
       {/* Tian grid: horizontal and vertical center lines */}
@@ -77,7 +76,7 @@ export function GridLines({
             y2={center}
             stroke={lineColor}
             strokeWidth={lineWidth}
-            strokeDasharray={type === "tian" ? "none" : "4,4"}
+            strokeDasharray="3,3"
           />
           {/* Vertical center line */}
           <line
@@ -87,7 +86,7 @@ export function GridLines({
             y2={size}
             stroke={lineColor}
             strokeWidth={lineWidth}
-            strokeDasharray={type === "tian" ? "none" : "4,4"}
+            strokeDasharray="3,3"
           />
         </>
       )}

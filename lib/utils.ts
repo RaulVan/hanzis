@@ -8,19 +8,18 @@ export function cn(...inputs: ClassValue[]) {
 
 // Check if a character is a Chinese character
 export function isChinese(char: string): boolean {
-  const code = char.charCodeAt(0);
+  const code = char.codePointAt(0) ?? 0;
   return (
     (code >= 0x4e00 && code <= 0x9fff) || // CJK Unified Ideographs
     (code >= 0x3400 && code <= 0x4dbf) || // CJK Unified Ideographs Extension A
-    (code >= 0x20000 && code <= 0x2a6df) || // CJK Unified Ideographs Extension B
+    (code >= 0x20000 && code <= 0x323af) || // CJK extensions, including supplementary planes
     (code >= 0xf900 && code <= 0xfaff) // CJK Compatibility Ideographs
   );
 }
 
 // Filter only Chinese characters from a string
 export function filterChineseCharacters(text: string): string {
-  return text
-    .split("")
+  return Array.from(text)
     .filter((char) => isChinese(char))
     .join("");
 }
@@ -28,11 +27,12 @@ export function filterChineseCharacters(text: string): string {
 // Get unique characters from a string
 export function getUniqueCharacters(text: string): string[] {
   const filtered = filterChineseCharacters(text);
-  return [...new Set(filtered.split(""))];
+  return [...new Set(Array.from(filtered))];
 }
 
 // Chunk array into smaller arrays
 export function chunkArray<T>(array: T[], size: number): T[][] {
+  if (!Number.isInteger(size) || size < 1) throw new RangeError("Chunk size must be a positive integer");
   const chunks: T[][] = [];
   for (let i = 0; i < array.length; i += size) {
     chunks.push(array.slice(i, i + size));

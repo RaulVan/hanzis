@@ -1,0 +1,1 @@
+export { PinyinCard } from "./PinyinCard";
