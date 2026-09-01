@@ -1,4 +1,5 @@
 /*
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
@@ -6,13 +7,13 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob:; connect-src 'self'; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'
 
 /_next/static/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=31536000, immutable, no-transform
 
 /hanzi/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=86400, no-transform
 
 /voice/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=86400, no-transform
 
 /dictionary/*
-  Cache-Control: public, max-age=3600
+  Cache-Control: public, max-age=3600, no-transform
