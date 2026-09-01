@@ -38,7 +38,7 @@
 - 层级：page heading → section h2 → subsection h3，不为视觉大小跳过语义层级。
 - 间距：4、8、12、16、24、32、48、64px。内容宽度最多 1280px（允许 1420px 参考图匹配时使用更宽纸台），手机 20px 边距。
 - header：80px，桌面文字导航；手机显示可展开菜单，子导航可换行，不挤压为横向溢出。
-- 控件至少 44px 可触区域；focus-visible 2px 朱红 outline，offset 3px；图标 lucide-react 统一 1.75–2px 描边。
+- 控件至少 44px 可触区域；按钮、链接等交互控件使用 2px 朱红 focus-visible outline，文本输入框与文本域聚焦时只显示单层朱红边框，不叠加外圈；图标 lucide-react 统一 1.75–2px 描边。
 - radius：控件 8px，功能纸面 12px；只有纸张轻投影，不堆叠带影卡片。
 - motion：150–200ms 颜色/透明度反馈，尊重 prefers-reduced-motion，避免自动循环装饰。
 
