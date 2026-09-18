@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Database, HardDrive, LockKeyhole, Server } from "lucide-react";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const metadata: Metadata = {
-  title: "隐私说明",
-  description: "汉字网的本地存储、网络请求和数据处理说明。",
-  alternates: { canonical: "/privacy/" },
-};
+export const metadata = pageMetadata(
+  "/privacy/",
+  "隐私说明",
+  "了解汉字网如何处理字帖内容、排版设置与诗词收藏，查看浏览器本地存储、网络请求和匿名访问统计说明。",
+);
 
 const items = [
   { icon: LockKeyhole, title: "不需要账号", text: "本站不提供注册或登录，不接入广告、营销 Cookie 或用于识别个人的追踪功能。" },

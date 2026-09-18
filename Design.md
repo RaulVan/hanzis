@@ -50,6 +50,7 @@
 - 笔顺：输入/常用字 → 汉字信息 → 动画、逐笔分解与练习；URL query 可分享当前汉字；加载失败有重试，不将失败呈现成空数据。
 - 诗词：搜索/分类 → 简洁列表 → 阅读页（原文/拼音、译文/注释、收藏、朗读、背诵练习、生成字帖）。
 - 字典：输入/过滤 → 分页结果 → 单字/词语/成语释义、读音及字帖/笔顺入口；显示真实内容覆盖范围。
+- 学习说明与阅读目录：放在工具主体之后，使用现有 section-title、body-copy、border 与 primary token；说明桌面三列、手机单列，目录链接保持至少 44px 点击区域。诗词详情使用简洁文字面包屑。
 - 数据：笔顺、字典、拼音录音均使用同源静态资源；页面显示来源与覆盖边界。本地录音已获口头授权，书面协议说明待补充。
 - Card 使用完整 Header/Title/Description/Content/Footer 组合；表单用 FieldGroup/Field，选择组用 ToggleGroup，消息用 Alert，空状态用 Empty，通知用 sonner。
 - 默认 npm runner；官方 `@shadcn` registry；Radix base；导入别名 `@/`；不覆盖旧组件，CLI diff 后按需合并。

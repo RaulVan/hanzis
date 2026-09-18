@@ -1,11 +1,15 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Ear, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { initials, finals, wholeSyllables } from "@/data/pinyin";
 
-export const metadata: Metadata = { title: "拼音学习", description: "从声母、韵母、整体认读音节到声调，听本地录音、读例字并完成综合练习。" };
+export const metadata = pageMetadata(
+  "/pinyin/",
+  "汉语拼音学习 · 声母韵母表与发音练习",
+  "学习 23 个声母、24 个韵母、16 个整体认读音节及普通话四声，听发音、读例字，通过听音辨读与看字选拼音巩固学习。",
+);
 
 const lessons = [
   { title: "声母", href: "initials", description: "23 个声母，用呼读音入门，再跟着例字读。", examples: initials.map((item) => item.letter).join("  ") },

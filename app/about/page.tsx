@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { BookOpen, FileText, HelpCircle, ShieldCheck, Volume2 } from "lucide-react";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 
-export const metadata: Metadata = {
-  title: "关于与帮助",
-  description: "了解汉字网的学习工具、使用方法、数据来源与第三方许可。",
-  alternates: { canonical: "/about/" },
-};
+export const metadata = pageMetadata(
+  "/about/",
+  "关于与帮助",
+  "了解汉字网的字帖生成、拼音学习、笔顺查询、古诗词与中文字典使用方法，查看数据来源与第三方许可。",
+);
 
 const helpItems = [
   { href: "/", title: "字帖生成", text: "输入汉字后选择字格、描红、拼音与纸张；可下载 PDF、当前页图片，或打印全部页面。" },
