@@ -76,3 +76,18 @@
 - 指引：[Google 标题规范](https://developers.google.com/search/docs/appearance/title-link)、[canonical](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)、[站点名称](https://developers.google.com/search/docs/appearance/site-names)、本地 Next.js metadata/JSON-LD/static export/loading 文档。
 - 构建存在 Node `module.register()` 弃用和 Browserslist 数据较旧提示，不影响本次通过；未扩展到依赖升级。
 - 生产收录、排名和真实流量未验证；本轮没有推送、部署或向第三方提交站点。
+
+## 2026-09-19：SEO 生产发布
+
+- 用户已明确授权提交和部署；目标为 GitHub `origin/main` → Cloudflare Pages → `https://hanzis.com/`。
+- [x] 核对 SEO 提交 `0d050b3`、已有本地验收结果、远程配置和未提交改动。
+- [x] 推送 SEO 提交并确认生产部署成功。
+- [x] 核对正式域名正常缓存下的页面元数据、静态正文、结构化数据、robots/sitemap、404 与关键资源。
+- [x] 记录生产结果并提交发布记录；保留游戏调研文档改动。
+
+- SEO 代码提交：`0d050b3ff420342e61e484daea40ab005d48f47e`，已正常推送至 `origin/main`。
+- Cloudflare Pages 部署：`ed6111ec-7cf9-4b91-9c4f-9c41250307dd`；GitHub 对应提交的 Pages 与 Workers Builds 检查均为 `success`。
+- 正式域名验收：2026-09-19 07:38（Asia/Singapore），`https://hanzis.com/`；正常缓存请求遍历 sitemap 全部 42 页，标题/描述/canonical/OG/Twitter 与本地输出一致，静态正文及 JSON-LD 可读取，robots/sitemap 正常。
+- 真实未知路由返回 404/noindex，MP3 Range 返回 206/32 字节，汉字/字典 JSON、manifest MIME 及 CSP/nosniff 正常。
+- Playwright Chromium 1440×1000、390×844：首页与诗词详情无溢出，目录 → 静夜思 → 刷新 → 面包屑返回通过，控制台/运行错误均为 0；另以禁用 JavaScript 的上下文确认诗词标题直接可见。
+- 证据：`/tmp/hanzis-seo-qa/production-result.json` 与同目录 `production-*.png`；搜索引擎实际收录/排名变化仍需后续观察，不作为部署成功条件。
