@@ -1,3 +1,4 @@
+import sources from "@/data/dictionary-sources.json";
 import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { BookOpen, FileText, HelpCircle, ShieldCheck, Volume2 } from "lucide-react";
@@ -34,6 +35,8 @@ export default function AboutPage() {
         <div><h3 className="font-semibold text-foreground">汉字字形与笔顺</h3><p>9,574 个本地字形文件来自 <a href="https://github.com/chanind/hanzi-writer-data" rel="noreferrer" className="underline underline-offset-4">hanzi-writer-data</a>。底层字形资料按文鼎公众授权条款提供，发布包保留完整许可和来源说明。</p></div>
         <div><h3 className="font-semibold text-foreground">字词释义</h3><p>开放词库包含 278,369 条释义索引，来源快照取自 <a href="https://github.com/theajack/cnchar" rel="noreferrer" className="underline underline-offset-4">cnchar-data</a>，按 MIT License 使用并重新分片。部分词条可能缺少释义，页面会如实提示。</p></div>
         <div><h3 className="font-semibold text-foreground">教育部《国语辞典简编本》</h3><p>本地保留版本 2014_20260626 的 45,130 条原始繁体条目及全部字段；网站的简体检索映射和学习提示与原始资料分开呈现。来源为<a href="https://dict.concised.moe.edu.tw/" rel="noreferrer" className="underline underline-offset-4">教育部《国语辞典简编本》</a>，依 CC BY-ND 3.0 TW 及官方公众授权说明使用。</p></div>
+        <div><h3 className="font-semibold text-foreground">教育部《重編國語辭典修訂本》</h3><p>通过 <a href="https://github.com/g0v/moedict-data/tree/a6dc997417507eb510fc29822bc514de2c92728c" className="underline underline-offset-4">g0v/moedict-data</a> 收录 {sources[0].entries.toLocaleString("zh-CN")} 条资料，保留繁体原文、异读、例句与引文。上游标示为中華民國110年11月臺灣學術網路第六版，依 CC BY-ND 3.0 TW 使用。moedict-process 为相关处理工具，不另算一个来源。</p></div>
+        <div><h3 className="font-semibold text-foreground">第三方整理字典 · chinese-xinhua</h3><p>来自 <a href="https://github.com/pwxcoo/chinese-xinhua/tree/fe6d6c2e8baa82187f4c96bbe042e43f96c05666" className="underline underline-offset-4">pwxcoo/chinese-xinhua</a>：{sources[1].entries.toLocaleString("zh-CN")} 条汉字、{sources[2].entries.toLocaleString("zh-CN")} 条词语与 {sources[3].entries.toLocaleString("zh-CN")} 条成语记录，包含同字异读与重复词头。这是网络收集整理资料，非官方《新华字典》版本；仓库附 MIT License，原始内容权利归属未逐条核验。各来源分别显示，便于对照。</p></div>
         <div><h3 className="font-semibold text-foreground">诗词与注音</h3><p>首发收录 30 首公版唐宋诗词。简体文本、拼音、译文和学习注释在项目中逐条校核；注音标本调，实际朗读可能发生变调。</p></div>
       </CardContent></Card>
     </section>
@@ -47,7 +50,8 @@ export default function AboutPage() {
       <h2 id="license-title" className="section-title flex items-center gap-2"><ShieldCheck aria-hidden="true" />许可与完整说明</h2>
       <Card><CardContent className="flex flex-wrap gap-3 pt-1">
         <Link href="/licenses/NOTICE.txt" className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 hover:bg-muted"><FileText aria-hidden="true" className="size-4" />第三方资料说明</Link>
-        <Link href="/licenses/MOE-Concised-Usage.pdf" className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 hover:bg-muted"><FileText aria-hidden="true" className="size-4" />教育部使用说明</Link>
+        <Link href="/licenses/MOE-Concised-Usage.pdf" className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 hover:bg-muted"><FileText aria-hidden="true" className="size-4" />简编本使用说明</Link>
+        <Link href="/licenses/MOE-Revised-Usage.txt" className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 hover:bg-muted"><FileText aria-hidden="true" className="size-4" />修订本使用说明</Link>
         <Link href="/licenses/ARPHICPL.TXT" className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 py-2 hover:bg-muted"><FileText aria-hidden="true" className="size-4" />字形资料许可</Link>
       </CardContent></Card>
     </section>

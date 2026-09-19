@@ -5,10 +5,12 @@ import { getCharacterInfo, getRadical, getStrokeCount, getTextPinyin, loadCnchar
 import { filterChineseCharacters, isChinese } from "@/lib/utils";
 import type { CharacterInfo } from "@/types";
 
+import type { DictionarySearchResult, RevisedEntry, XinhuaEntry } from "@/lib/dictionarySources";
+
 export type DictionaryKind = "all" | "character" | "word" | "idiom";
 export interface DictionaryQuery { q: string; kind: DictionaryKind; radical: string; strokes: number | null }
 export type MoeEntry = Record<string, string> & { "字詞名": string; "字詞號": string; "漢語拼音": string; "釋義": string };
-export interface DictionaryEntry { term: string; spelling: string[]; character: CharacterInfo | null; openDefinition: string; moe: MoeEntry[] }
+export interface DictionaryEntry { term: string; spelling: string[]; character: CharacterInfo | null; openDefinition: string; moe: MoeEntry[]; revised: RevisedEntry[]; xinhua: XinhuaEntry[]; unavailableSources: string[] }
 
 const cache = new Map<string, Promise<unknown>>();
 async function fetchData<T>(path: string): Promise<T> {
@@ -39,7 +41,7 @@ export function validateDictionaryQuery(query: DictionaryQuery): string | null {
   return null;
 }
 
-export async function searchDictionary(query: DictionaryQuery): Promise<string[]> {
+export async function searchDictionary(query: DictionaryQuery): Promise<DictionarySearchResult> {
   const error = validateDictionaryQuery(query);
   if (error) throw new Error(error);
   const cnchar = await loadCnchar();
@@ -54,35 +56,60 @@ export async function searchDictionary(query: DictionaryQuery): Promise<string[]
       characters = Array.isArray(value) ? value : Array.from(value);
     } else characters = text ? [...new Set(Array.from(filterChineseCharacters(text)))] : hanziManifest.characters;
     characters = characters.filter(char => (!query.strokes || getStrokeCount(char) === query.strokes) && (!query.radical || getRadical(char).radical === query.radical));
-    if (characterOnly) return [...new Set(characters)];
+    if (characterOnly) return { terms: [...new Set(characters)], unavailableSources: [] };
   }
-  let words: string[];
-  if (query.kind === "idiom") {
-    const idiom = (await import("cnchar-idiom")).default;
-    words = idiom.dict.idiom.filter(term => term.includes(text));
-  } else {
-    const [openIndex, moeIndex] = await Promise.all([fetchData<string[]>("/dictionary/index.json"), fetchData<string[]>("/dictionary/moe/index.json")]);
-    if (!Array.isArray(openIndex) || !Array.isArray(moeIndex)) throw new Error("词典索引格式不正确，请刷新后重试。");
-    const traditional = cnchar.convert.simpleToTrad(text);
-    words = [...openIndex.filter(term => term.length > 1 && term.includes(text)), ...moeIndex.filter(term => Array.from(term).length > 1 && (term.includes(text) || term.includes(traditional)))];
-  }
+  const traditional = cnchar.convert.simpleToTrad(text);
+  const simplified = cnchar.convert.tradToSimple(text);
+  const queries = [...new Set([text, traditional, simplified])];
+  const sources = query.kind === "idiom" ? [
+    { name: "开放成语索引", load: async () => (await import("cnchar-idiom")).default.dict.idiom },
+    { name: "第三方成语索引", load: () => fetchData<string[]>("/dictionary/xinhua/idioms.json") },
+  ] : [
+    { name: "开放词库", load: () => fetchData<string[]>("/dictionary/index.json") },
+    { name: "简编本", load: () => fetchData<string[]>("/dictionary/moe/index.json") },
+    { name: "修订本", load: () => fetchData<string[]>("/dictionary/revised/index.json") },
+    { name: "第三方整理", load: () => fetchData<string[]>("/dictionary/xinhua/index.json") },
+  ];
+  const indexes = await Promise.allSettled(sources.map(async source => {
+    const index = await source.load();
+    if (!Array.isArray(index) || index.some(term => typeof term !== "string")) throw new Error("词典索引格式错误");
+    return index;
+  }));
+  if (indexes.every(result => result.status === "rejected")) throw new Error("词典索引加载失败，请重试。");
+  const unavailableSources = sources.filter((_, index) => indexes[index].status === "rejected").map(source => source.name);
+  const words = indexes.flatMap(result => result.status === "fulfilled" ? result.value.filter(term =>
+    (query.kind !== "word" || Array.from(term).length > 1) && queries.some(value => term.includes(value))) : []);
   const unique = [...new Set([...characters, ...words])];
   // Exact matches first, then shorter related words; source order breaks ties.
-  return unique.sort((a, b) => Number(b === text) - Number(a === text) || Array.from(a).length - Array.from(b).length);
+  return { terms: unique.sort((a, b) => Number(b === text) - Number(a === text) || Array.from(a).length - Array.from(b).length), unavailableSources };
+}
+
+async function sourceEntries<T>(directory: string, heads: string[]): Promise<T[]> {
+  const shards = [...new Set(heads.map(dictionaryShard))];
+  const data = await Promise.all(shards.map(shard => fetchData<Record<string, T[]>>(`/dictionary/${directory}/${shard}.json`)));
+  return heads.flatMap(head => data[shards.indexOf(dictionaryShard(head))][head] ?? []);
 }
 
 export async function getDictionaryEntry(term: string): Promise<DictionaryEntry> {
   const cnchar = await loadCnchar();
   if (!cnchar) throw new Error("汉字数据加载失败，请重试。");
-  const heads = [...new Set([term, cnchar.convert.simpleToTrad(term), ...(variantHeads[term] ?? [])])];
-  const [openData, moeData] = await Promise.all([
+  // Conversion only selects lookup keys; each source record remains unchanged.
+  const heads = [...new Set([term, cnchar.convert.simpleToTrad(term), cnchar.convert.tradToSimple(term), ...(variantHeads[term] ?? [])])];
+  const sources = ["开放词库", "简编本", "修订本", "第三方整理"];
+  const [open, moe, revised, xinhua] = await Promise.allSettled([
     fetchData<Record<string, string>>(`/dictionary/${dictionaryShard(term)}.json`),
-    Promise.all(heads.map(head => fetchData<Record<string, MoeEntry[]>>(`/dictionary/moe/${dictionaryShard(head)}.json`))),
+    sourceEntries<MoeEntry>("moe", heads),
+    sourceEntries<RevisedEntry>("revised", heads),
+    sourceEntries<XinhuaEntry>("xinhua", heads),
   ]);
-  const seen = new Set<string>();
-  const moe = heads.flatMap((head, index) => {
-    const value = moeData[index][head];
-    return Array.isArray(value) ? value.filter(entry => { if (seen.has(entry["字詞號"])) return false; seen.add(entry["字詞號"]); return true; }) : [];
-  });
-  return { term, spelling: getTextPinyin(term), character: Array.from(term).length === 1 ? getCharacterInfo(term) : null, openDefinition: typeof openData[term] === "string" ? openData[term] : "", moe };
+  const results = [open, moe, revised, xinhua];
+  if (results.every(result => result.status === "rejected")) throw new Error("词典数据加载失败，请重试。");
+  return {
+    term, spelling: getTextPinyin(term), character: Array.from(term).length === 1 ? getCharacterInfo(term) : null,
+    openDefinition: open.status === "fulfilled" && typeof open.value[term] === "string" ? open.value[term] : "",
+    moe: moe.status === "fulfilled" ? moe.value : [],
+    revised: revised.status === "fulfilled" ? revised.value : [],
+    xinhua: xinhua.status === "fulfilled" ? xinhua.value : [],
+    unavailableSources: sources.filter((_, index) => results[index].status === "rejected"),
+  };
 }

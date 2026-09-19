@@ -16,3 +16,23 @@ See Noto-Sans-SC-OFL.txt and Noto-Serif-SC-OFL.txt.
 Pinyin MP3 files: supplied by the project owner. The owner confirmed oral
 authorization on 2026-09-01; a written authorization statement will be added.
 These recordings are not covered by the source code's MIT license.
+
+Additional dictionary sources
+-----------------------------
+1. 中華民國教育部（Ministry of Education, R.O.C.）。《重編國語辭典修訂本》。
+   https://dict.revised.moe.edu.tw/
+   Upstream edition: 中華民國110年11月臺灣學術網路第六版 (as stated in upstream README).
+   JSON snapshot: g0v/moedict-data a6dc997417507eb510fc29822bc514de2c92728c.
+   Source text: CC BY-ND 3.0 TW; g0v format/editing contribution: CC0.
+   Original records and all fields are retained without simplified rewriting.
+   See MOE-Revised-Usage.txt for the complete usage notice and original PDF link,
+   and moedict-data-README.txt for the upstream edition and attribution.
+   moedict-process is a processing tool, not an additional dictionary source.
+
+2. pwxcoo/chinese-xinhua, fe6d6c2e8baa82187f4c96bbe042e43f96c05666.
+   https://github.com/pwxcoo/chinese-xinhua
+   Third-party internet-collected character, word and idiom records; not an
+   official Xinhua Dictionary edition. The repository carries MIT License;
+   rights to individual collected texts have not been independently verified.
+   See chinese-xinhua-MIT.txt and the full upstream Copyright statement in
+   chinese-xinhua-README.txt. Source records, including duplicates, are retained.

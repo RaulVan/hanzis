@@ -1,0 +1,46 @@
+[
+  {
+    "id": "revised",
+    "repository": "g0v/moedict-data",
+    "revision": "a6dc997417507eb510fc29822bc514de2c92728c",
+    "url": "https://raw.githubusercontent.com/g0v/moedict-data/a6dc997417507eb510fc29822bc514de2c92728c/dict-revised.json.xz",
+    "sourceSha256": "5cc4ec0efd7e549621edf9b46d261989230c1729d9dc2c8e2056f4b21c8a93da",
+    "snapshot": "data/revised-source.json.gz",
+    "snapshotSha256": "91c9820cbcf3122ea6a0911eb262dc75a3fb234992ac43f1e9de2efdef914720",
+    "entries": 161194,
+    "uniqueHeads": 161194
+  },
+  {
+    "id": "xinhua-character",
+    "repository": "pwxcoo/chinese-xinhua",
+    "revision": "fe6d6c2e8baa82187f4c96bbe042e43f96c05666",
+    "url": "https://raw.githubusercontent.com/pwxcoo/chinese-xinhua/fe6d6c2e8baa82187f4c96bbe042e43f96c05666/data/word.json",
+    "sourceSha256": "8ae3453eacc5b0f3fdfba47eac8bb686cd73914d278e8b851ae6ef81082f80e7",
+    "snapshot": "data/xinhua-character-source.json.gz",
+    "snapshotSha256": "7f4ff045d2ef3d360324dabf110a0ee7a9fab35c1e342bbd25b58fb0890db7c5",
+    "entries": 16142,
+    "uniqueHeads": 14810
+  },
+  {
+    "id": "xinhua-word",
+    "repository": "pwxcoo/chinese-xinhua",
+    "revision": "fe6d6c2e8baa82187f4c96bbe042e43f96c05666",
+    "url": "https://raw.githubusercontent.com/pwxcoo/chinese-xinhua/fe6d6c2e8baa82187f4c96bbe042e43f96c05666/data/ci.json",
+    "sourceSha256": "739e086d61dc9b95cd1df92095720e6391f952a41c476d3281ef95ebed869a09",
+    "snapshot": "data/xinhua-word-source.json.gz",
+    "snapshotSha256": "6b2489b89474fb2fdaca9c186a558aeeb6f44d3785a9a755d4ee570f06244c83",
+    "entries": 264434,
+    "uniqueHeads": 264374
+  },
+  {
+    "id": "xinhua-idiom",
+    "repository": "pwxcoo/chinese-xinhua",
+    "revision": "fe6d6c2e8baa82187f4c96bbe042e43f96c05666",
+    "url": "https://raw.githubusercontent.com/pwxcoo/chinese-xinhua/fe6d6c2e8baa82187f4c96bbe042e43f96c05666/data/idiom.json",
+    "sourceSha256": "1d4b4f454ce1c416d6a1ab2369d6e66c0ff99e04390172eef70790499e21ce19",
+    "snapshot": "data/xinhua-idiom-source.json.gz",
+    "snapshotSha256": "7c1d0996226a56e3eab782ce76bbd4c6eb1b926449af85897784c3c10afd49a0",
+    "entries": 30895,
+    "uniqueHeads": 30895
+  }
+]

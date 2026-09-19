@@ -17,7 +17,7 @@ export default function DictionaryPage() {
     <LearningGuide id="dictionary-guide" title="在线中文字典查询方法" steps={[
       { title: "按汉字或词语查找", text: "输入想了解的汉字、词语或成语，查看读音与释义。遇到不熟悉的字，可以继续打开笔顺动画，或将它加入书写字帖。" },
       { title: "按拼音、部首或笔画查询", text: "知道读音时可使用拼音查找；不确定读音时，可按部首或笔画筛选候选汉字，再结合字形辨认。" },
-      { title: "理解资料的适用范围", text: "字词释义来自开放词库及教育部《国语辞典简编本》。部分词条可能没有释义，页面会明确提示；原始资料与网站学习提示分开呈现。" },
+      { title: "理解资料的适用范围", text: "字词释义按来源分别显示：教育部简编本、修订本、第三方整理 chinese-xinhua 与开放词库，可展开对照。保留原文与地区音读差异；未收录与加载失败分别提示。" },
     ]} links={[{ href: "/pinyin/", label: "学习拼音与发音" }, { href: "/stroke/", label: "查看汉字笔顺" }, { href: "/about/#sources", label: "查看字典数据来源" }]} />
   </>;
 }

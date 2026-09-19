@@ -47,3 +47,31 @@
 - 其他 npm 软件依赖的许可随各自包分发；它们不改变上述学习数据与录音的授权范围。
 
 `scripts/prepare-assets.mjs` 会校验两个词典源快照的 SHA-256，生成 `data/asset-manifest.json`，并把许可文件复制到公开的 `/licenses/`。快照或归属信息发生变化时，构建会失败，必须先复核来源再更新校验值。
+
+## 新增多来源字典（2026-09-19）
+
+各来源独立呈现；同名记录、异读和原字段保留，跨来源不合并释义或改写繁体原文。检索时做简繁查询键映射，单源网络失败显示提示和重试，其他来源仍可阅读。部首、笔画、拼音过滤仍基于 cnchar 基础字形资料，不代表各词典完整覆盖这些检索字段。
+
+| 来源 | 固定版本 | 实际导入记录数 |
+| --- | --- | ---: |
+| [g0v/moedict-data 修订本](https://github.com/g0v/moedict-data/tree/a6dc997417507eb510fc29822bc514de2c92728c) | a6dc997417507eb510fc29822bc514de2c92728c | 161,194 |
+| [pwxcoo/chinese-xinhua](https://github.com/pwxcoo/chinese-xinhua/tree/fe6d6c2e8baa82187f4c96bbe042e43f96c05666) 汉字 | fe6d6c2e8baa82187f4c96bbe042e43f96c05666 | 16,142（14,810 个不同词头） |
+| 同上，词语 | 同上 | 264,434（264,374 个不同词头） |
+| 同上，成语 | 同上 | 30,895 |
+
+- 修订本使用 `dict-revised.json.xz`，未使用混合其他翻译辞典的 translated 或 pack 数据。上游 README 标示版次为「中華民國110年11月臺灣學術網路第六版」，不把 GitHub 提交时间当作官方数据版本。原始罕用字标记如 `{[8ff0]}` 保留，未猜测替换。
+- [moedict-process](https://github.com/g0v/moedict-process/tree/735443d3e19bbda117c3dab6fa18039ed73f4246) 是该数据生态的处理工具，不是第三套独立释义。本项目采用 moedict-data 已转换的 JSON，未运行其转换器；本地只作无损压缩、按词头分片。
+- 修订本正文版权归教育部，CC BY-ND 3.0 TW；上游格式整理部分 CC0。保留 `licenses/moedict-data-README.txt` 与完整授权说明 `licenses/MOE-Revised-Usage.txt`（官方 PDF 全文转录，仅调整换行）。
+- chinese-xinhua 明确标注第三方网络整理，非官方《新华字典》版本。保留仓库 MIT License 与上游完整 README 的 Copyright 声明；MIT 不代表已逐条核验所抓取内容的权利。本次不含歇后语。
+- 上游 README 标称成语 31,648 条，但固定提交的 JSON 实际为 30,895 条，以文件实测为准。三类共 311,471 条记录；多音、多条同名数据均保留，数字不表示独立字词数量。
+
+### 复现
+
+`data/dictionary-sources.json` 记录下载 URL、提交、原始文件 SHA-256、gzip 快照 SHA-256 和记录数。将四个 URL 对应文件下载为 `dict-revised.json.xz`、`word.json`、`ci.json`、`idiom.json` 后运行：
+
+```sh
+python3 scripts/import-dictionary-sources.py /path/to/downloads
+npm run assets
+```
+
+导入前校验固定上游 SHA-256；gzip 固定 mtime，解压后与上游 JSON 字节一致。正常构建只读取仓库快照，核验校验和与条目数，然后生成每来源 128 个同源静态分片。修订本、第三方字典另有完整词头索引，成语附分类索引。快照不作为前端 bundle 导入。

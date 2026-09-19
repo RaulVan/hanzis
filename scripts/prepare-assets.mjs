@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { createRequire } from "node:module";
 
+import { prepareDictionarySources } from "./prepare-dictionary-sources.mjs";
+
 const root = fileURLToPath(new URL("../", import.meta.url));
 const require = createRequire(import.meta.url);
 const json = (path, value) => writeFile(join(root, path), JSON.stringify(value));
@@ -50,8 +52,10 @@ await mkdir(join(root, "public/dictionary/moe"), { recursive: true });
 await json("public/dictionary/moe/index.json", [...moeGroups.keys()].sort());
 for (let index = 0; index < moeShards.length; index += 1) await json(`public/dictionary/moe/${index.toString(16).padStart(2, "0")}.json`, Object.fromEntries(moeShards[index]));
 
+const additionalSources = await prepareDictionarySources(root);
+
 const audioFiles = (await readdir(join(root, "public/voice"))).filter(name => /^[a-z]+[1-4]\.mp3$/.test(name)).sort();
 await json("data/audio-manifest.json", audioFiles);
-await json("data/asset-manifest.json", { hanzi: characters.length, dictionary: keys.length, audio: audioFiles.length, moeEntries: moeSource.entries.length, moeCharacters: [...moeGroups.keys()].filter(title => Array.from(title).length === 1).length, moeVersion: moeSource.version, dictionarySourceSha256: sourceHash, moeSourceSha256: moeHash });
+await json("data/asset-manifest.json", { ...additionalSources, hanzi: characters.length, dictionary: keys.length, audio: audioFiles.length, moeEntries: moeSource.entries.length, moeCharacters: [...moeGroups.keys()].filter(title => Array.from(title).length === 1).length, moeVersion: moeSource.version, dictionarySourceSha256: sourceHash, moeSourceSha256: moeHash });
 await cp(join(root, "licenses"), join(root, "public/licenses"), { recursive: true });
 console.log(`Prepared ${characters.length} stroke files, ${keys.length} open explanations, ${moeSource.entries.length} unmodified MOE entries, ${audioFiles.length} recordings and license notices.`);

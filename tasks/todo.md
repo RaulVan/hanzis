@@ -91,3 +91,18 @@
 - 真实未知路由返回 404/noindex，MP3 Range 返回 206/32 字节，汉字/字典 JSON、manifest MIME 及 CSP/nosniff 正常。
 - Playwright Chromium 1440×1000、390×844：首页与诗词详情无溢出，目录 → 静夜思 → 刷新 → 面包屑返回通过，控制台/运行错误均为 0；另以禁用 JavaScript 的上下文确认诗词标题直接可见。
 - 证据：`/tmp/hanzis-seo-qa/production-result.json` 与同目录 `production-*.png`；搜索引擎实际收录/排名变化仍需后续观察，不作为部署成功条件。
+
+## 2026-09-19：字典新增修订本与第三方整理来源
+
+- 范围：保留现有简编本与开放词库，新增 g0v 修订本及 pwxcoo/chinese-xinhua 的汉字、词语、成语资料；各来源独立展示，不改写原文，不推送/部署。
+- [x] 固定上游版本，导入可复现压缩快照与来源/许可说明。
+- [x] 构建本地静态分片，扩展统一检索与按来源加载，隔离单源失败。
+- [x] 沿用现有设计展示修订本、第三方释义及来源信息，更新帮助与数据说明。
+- [x] 执行数据完整性/检索测试、构建、静态校验与桌面/手机浏览器验证。
+- [x] 精确暂存并创建本地提交，保留其他任务改动。
+
+- 数据：修订本 `a6dc997`，161,194 条；chinese-xinhua `fe6d6c2`，汉字 16,142、词语 264,434、成语 30,895，共 311,471 条记录，保留重复词头与原始字段。moedict-process 为上游处理工具，不另计来源。
+- 验证：`npm run check`（lint、typecheck、33 项测试）通过；全量新增记录与 256 个分片逐条一致。`npm run build`、`npm run release:verify` 通过；导出 12,864 个文件、285,314,845 字节，四来源各 128 分片及许可文件完整。
+- Playwright：`npx playwright test tests/e2e/dictionary-sources.spec.ts` 7/7 通过；覆盖 1440×900、375×812 四来源展开/原始异读、修订本独有查询、第三方汉字/成语字段、索引单源失败、释义单源失败、全释义失败与重试。两尺寸无横向溢出、无运行异常，axe WCAG A/AA 自动检查无违规。
+- 视觉证据：`/tmp/hanzis-dictionary-1440.png`、`/tmp/hanzis-dictionary-375.png`，已检查来源分区、原文与窄屏换行。
+- 本次仅本地提交，未推送或部署；保留既有游戏调研任务及 `docs/hanzi-game-research.md`。

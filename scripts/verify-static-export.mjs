@@ -60,6 +60,16 @@ const moeFiles = (await readdir(join(outputRoot, "dictionary", "moe"))).filter(f
 if (dictionaryFiles.length !== 128) failures.push(`open dictionary shard count ${dictionaryFiles.length} != 128`);
 if (moeFiles.length !== 128) failures.push(`MOE shard count ${moeFiles.length} != 128`);
 
+for (const source of ["revised", "xinhua"]) {
+  const directory = join(outputRoot, "dictionary", source);
+  const shards = (await readdir(directory)).filter(file => /^[0-9a-f]{2}\.json$/.test(file));
+  if (shards.length !== 128) failures.push(`${source} shard count ${shards.length} != 128`);
+  if (!(await exists(join(directory, "index.json")))) failures.push(`${source}: missing index`);
+}
+for (const path of ["dictionary/xinhua/idioms.json", "licenses/MOE-Revised-Usage.txt", "licenses/moedict-data-README.txt", "licenses/chinese-xinhua-README.txt", "licenses/chinese-xinhua-MIT.txt"]) {
+  if (!(await exists(join(outputRoot, path)))) failures.push(`missing ${path}`);
+}
+
 if (failures.length) {
   console.error(`Static export verification failed (${failures.length}):`);
   for (const failure of failures.slice(0, 50)) console.error(`- ${failure}`);
