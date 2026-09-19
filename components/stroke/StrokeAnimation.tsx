@@ -87,7 +87,7 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
     setCompletedStrokes(0);
     setQuizMessage("");
 
-    void import("hanzi-writer").then((module) => {
+    void import("hanzi-writer").then(async (module) => {
       if (!active) return;
       const styles = {
         foreground: readDesignToken("--foreground"),
@@ -112,9 +112,6 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
         strokeFadeDuration: reducedMotion ? 0 : 400,
         drawingFadeDuration: reducedMotion ? 0 : 300,
         charDataLoader: createLocalStrokeDataLoader(char, data),
-        onLoadCharDataSuccess: () => {
-          if (active) setEngineState("ready");
-        },
         onLoadCharDataError: () => {
           if (active) {
             setEngineState("error");
@@ -123,6 +120,17 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
         },
       });
       writerRef.current = writer;
+      const character = await writer.getCharacterData();
+      if (!active || !character) return;
+      // Hanzi Writer captures the current URL before client navigation can finish.
+      // Keep masks local so later query changes cannot break stroke clipping.
+      for (const path of container.querySelectorAll("path[clip-path]")) {
+        const id = path.getAttribute("clip-path")?.match(/#([^"')]+)["']?\)$/)?.[1];
+        if (id && container.querySelector(`clipPath[id="${CSS.escape(id)}"]`)) {
+          path.setAttribute("clip-path", `url(#${id})`);
+        }
+      }
+      setEngineState("ready");
     }).catch(() => {
       if (active) {
         setEngineState("error");
