@@ -11,7 +11,7 @@ async function fetchPoetry<T>(file: string): Promise<T> {
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
       const response = await fetch(`/poetry/haitang/${file}?v=${manifest.snapshotSha256.slice(0, 12)}`, { signal: controller.signal });
-      if (!response.ok) throw new Error("海棠诗词资料暂时无法读取，请重试。");
+      if (!response.ok) throw new Error("诗词资料暂时无法读取，请重试。");
       return await response.json() as T;
     } catch (error) { cache.delete(file); throw error; }
     finally { clearTimeout(timeout); }
@@ -32,6 +32,6 @@ export async function getHaitangPoem(slug: string) {
   const id = haitangId(slug);
   if (id === null) throw new Error("诗词编号无效。");
   const shard = await fetchPoetry<Record<string, HaitangWork>>(`${(id % 128).toString(16).padStart(2, "0")}.json`);
-  if (!shard[id]) throw new Error("当前海棠资料未收录这篇作品，可能已在来源更新时移除。");
+  if (!shard[id]) throw new Error("当前诗词库未收录这篇作品，可能已在来源更新时移除。");
   return haitangPoem(shard[id]);
 }

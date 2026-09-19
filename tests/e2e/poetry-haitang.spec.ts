@@ -10,6 +10,8 @@ for (const width of [1440, 375]) {
     await page.goto("/poetry/?poem=haitang-10103");
     const article = page.getByRole("article", { name: "春江花月夜原文与注释" });
     await expect(article).toBeVisible();
+    await expect(page.locator("body")).not.toContainText(/海棠诗社|海棠资料|leozxl\/haitang|西窗烛/);
+    await expect(article.getByRole("link", { name: "chinese-poetry/chinese-poetry" })).toHaveAttribute("href", "https://github.com/chinese-poetry/chinese-poetry");
     await expect(article.locator(".poem-verses")).toContainText("春江潮水连海平");
     await expect(article.getByText("来源未提供拼音", { exact: true })).toBeVisible();
     await expect(article.getByRole("switch", { name: "显示拼音" })).toHaveCount(0);
@@ -32,7 +34,7 @@ for (const width of [1440, 375]) {
   });
 }
 
-test("source/dynasty/collection filters and pagination find real works without a giant DOM", async ({ page }) => {
+test("unified scope/dynasty/collection filters and pagination find real works without a giant DOM", async ({ page }) => {
   await page.goto("/poetry/");
   await expect(page.getByRole("status").filter({ hasText: "当前" })).toContainText("11,437");
   const nav = page.getByRole("navigation", { name: "诗词目录" });
@@ -41,16 +43,16 @@ test("source/dynasty/collection filters and pagination find real works without a
   await expect(page.getByText(/2 \/ \d+ 页/)).toBeVisible();
   await page.getByRole("searchbox", { name: "搜索诗词" }).fill("静夜思");
   await expect(nav.getByRole("button")).toHaveCount(2);
-  await page.getByRole("radiogroup", { name: "诗词来源" }).getByRole("radio", { name: "海棠资料" }).click();
-  await expect(nav.getByRole("button")).toHaveCount(1);
+  await expect(page.getByRole("radiogroup", { name: "诗词范围" }).getByRole("radio")).toHaveCount(2);
+  await nav.getByRole("button").last().click();
   await expect(page.getByRole("article")).toContainText("来源未提供拼音");
   await page.getByRole("searchbox", { name: "搜索诗词" }).fill("");
   await page.getByRole("combobox", { name: "朝代", exact: true }).click();
   await page.getByRole("option", { name: "唐", exact: true }).click();
-  await expect(page.getByRole("status").filter({ hasText: "当前" })).toContainText("1,619");
+  await expect(page.getByRole("status").filter({ hasText: "当前" })).toContainText("1,639");
   await page.getByRole("combobox", { name: "选集与主题" }).click();
   await page.getByRole("option", { name: /^唐诗三百首（/ }).click();
-  await expect(page.getByRole("status").filter({ hasText: "当前" })).not.toContainText("1,619");
+  await expect(page.getByRole("status").filter({ hasText: "当前" })).not.toContainText("1,639");
   await expect(nav.getByRole("button")).toHaveCount(24);
 });
 
@@ -58,7 +60,7 @@ test("existing and new favorites coexist, survive reload and reopen by stable ID
   await page.addInitScript(() => localStorage.setItem("hanzis-poetry-favorites-v1", '["jing-ye-si"]'));
   await page.goto("/poetry/?poem=haitang-10156");
   const article = page.getByRole("article", { name: "静夜思原文与注释" });
-  await expect(article).toContainText("海棠诗社资料");
+  await expect(article).toContainText("床前明月光");
   await article.getByRole("button", { name: "收藏", exact: true }).click();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("hanzis-poetry-favorites-v1")!))).toEqual(["jing-ye-si", "haitang-10156"]);
   // Remove initialization for the reload by using the same context's new page.
@@ -66,7 +68,7 @@ test("existing and new favorites coexist, survive reload and reopen by stable ID
   await reopened.goto("/poetry/?poem=haitang-10156");
   await reopened.reload();
   await expect(reopened.getByRole("article").getByRole("button", { name: "已收藏", exact: true })).toBeVisible();
-  await reopened.getByRole("radiogroup", { name: "诗词来源" }).getByRole("radio", { name: /收藏/ }).click();
+  await reopened.getByRole("radiogroup", { name: "诗词范围" }).getByRole("radio", { name: /收藏/ }).click();
   await expect(reopened.getByRole("navigation", { name: "诗词目录" }).getByRole("button")).toHaveCount(2);
   await reopened.close();
 });
@@ -83,7 +85,7 @@ test("missing annotations stay absent and curated readings retain their checked 
 test("index and detail network failures retry independently and unknown IDs show a clear error", async ({ page }) => {
   await page.route("**/poetry/haitang/index.json*", route => route.abort());
   await page.goto("/poetry/");
-  await expect(page.getByText("海棠诗词索引暂时无法读取", { exact: false })).toBeVisible();
+  await expect(page.getByText("诗词索引暂时无法读取", { exact: false })).toBeVisible();
   await expect(page.getByRole("article", { name: "静夜思原文与注释" })).toBeVisible();
   await page.unroute("**/poetry/haitang/index.json*");
   await page.getByRole("button", { name: "重试诗词索引" }).click();
@@ -127,9 +129,25 @@ test("a slow imported detail cannot replace a newly selected curated poem", asyn
   await requested;
   await page.getByRole("searchbox", { name: "搜索诗词" }).fill("静夜思");
   const response = page.waitForResponse(response => response.url().includes(`/poetry/haitang/${shard}.json`));
-  await expect(page.getByRole("article")).toContainText("本站校对精选");
+  await expect(page.getByRole("article")).toContainText("显示拼音");
   release();
   await response;
   await expect(page.getByRole("article", { name: "静夜思原文与注释" })).toBeVisible();
   await expect(page.getByRole("article", { name: "春江花月夜原文与注释" })).toHaveCount(0);
+});
+
+
+test("platform credits disappear while literary text and the new source link remain", async ({ page }) => {
+  await page.goto("/poetry/?poem=haitang-10510");
+  const article = page.getByRole("article");
+  await expect(article).toBeVisible();
+  await article.locator("summary").filter({ hasText: /^注解$/ }).click();
+  await expect(article.locator("details[open]")).toContainText("版本据《韩昌黎诗系年集释》卷二");
+  await expect(article).not.toContainText("西窗烛版本");
+  await expect(article).toContainText("诗词来源：chinese-poetry/chinese-poetry");
+  await page.goto("/poetry/?poem=haitang-10024");
+  await expect(page.locator(".poem-verses")).toContainText("何当共剪西窗烛，却话巴山夜雨时。");
+  await page.goto("/about/");
+  await expect(page.locator("body")).not.toContainText(/海棠|西窗烛|leozxl\/haitang/);
+  await expect(page.getByRole("link", { name: "chinese-poetry/chinese-poetry" })).toHaveAttribute("href", "https://github.com/chinese-poetry/chinese-poetry");
 });
