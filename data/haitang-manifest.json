@@ -1,0 +1,194 @@
+{
+  "repository": "https://github.com/leozxl/haitang",
+  "revision": "8b0ac46f8a69764ec561591f06095c9ccc67503f",
+  "databaseVersion": [
+    {
+      "version": "gvToP2VKK60l16PozICg",
+      "generated_at": "2023-12-08 00:41:10"
+    }
+  ],
+  "counts": {
+    "works": 11407,
+    "authors": 2402,
+    "dynasties": 18,
+    "collections": 663,
+    "collection_kinds": 15,
+    "collection_works": 14261,
+    "quotes": 7216,
+    "collection_quotes": 8300,
+    "version": 1
+  },
+  "missingReferences": {
+    "workAuthors": 0,
+    "collectionWorks": 145,
+    "quoteWorks": 0,
+    "collectionQuotes": 0
+  },
+  "jsonComparison": {
+    "works": {
+      "jsonRows": 11407,
+      "sqliteRows": 11407,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": [
+        "appreciations"
+      ]
+    },
+    "authors": {
+      "jsonRows": 2402,
+      "sqliteRows": 2402,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": []
+    },
+    "dynasties": {
+      "jsonRows": 18,
+      "sqliteRows": 18,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": []
+    },
+    "collections": {
+      "jsonRows": 663,
+      "sqliteRows": 663,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": []
+    },
+    "collection_kinds": {
+      "jsonRows": 15,
+      "sqliteRows": 15,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": []
+    },
+    "collection_works": {
+      "jsonRows": 14261,
+      "sqliteRows": 14261,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": []
+    },
+    "quotes": {
+      "jsonRows": 7216,
+      "sqliteRows": 7216,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": [
+        "fangouf_error",
+        "fangouj_error",
+        "huangcao_error",
+        "huangkaif_error",
+        "huangkaij_error",
+        "hwfs_error",
+        "hyqtsf_error",
+        "hyqtsj_error",
+        "libian_error",
+        "liutif_error",
+        "liutij_error",
+        "longzhaof_error",
+        "longzhaoj_error",
+        "outi_error",
+        "qingkaif_error",
+        "qingkaij_error",
+        "qitif_error",
+        "qitij_error",
+        "qkbysj_error",
+        "sfxs_error",
+        "skbxkf_error",
+        "skbxkj_error",
+        "syst_error",
+        "wygtfs_error",
+        "xijinlingf_error",
+        "xijinlingj_error",
+        "yanti_error",
+        "yingxuef_error",
+        "yingxuej_error"
+      ]
+    },
+    "collection_quotes": {
+      "jsonRows": 8300,
+      "sqliteRows": 8300,
+      "onlyJsonIds": [
+        "1"
+      ],
+      "onlySqliteIds": [
+        "dd"
+      ],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": [
+        "quote_caoshu_error",
+        "quote_fangouf_error",
+        "quote_fangouj_error",
+        "quote_huangkaif_error",
+        "quote_huangkaij_error",
+        "quote_hwfs_error",
+        "quote_hyqtsf_error",
+        "quote_hyqtsj_error",
+        "quote_libian_error",
+        "quote_liutif_error",
+        "quote_liutij_error",
+        "quote_longzhaof_error",
+        "quote_longzhaoj_error",
+        "quote_outi_error",
+        "quote_qingkaif_error",
+        "quote_qingkaij_error",
+        "quote_qitif_error",
+        "quote_qitij_error",
+        "quote_qkbysj_error",
+        "quote_sfxs_error",
+        "quote_skbxkf_error",
+        "quote_skbxkj_error",
+        "quote_syst_error",
+        "quote_wygtfs_error",
+        "quote_xijinlingf_error",
+        "quote_xijinlingj_error",
+        "quote_yanti_error",
+        "quote_yingxuef_error",
+        "quote_yingxuej_error"
+      ]
+    },
+    "version": {
+      "jsonRows": 1,
+      "sqliteRows": 1,
+      "onlyJsonIds": [],
+      "onlySqliteIds": [],
+      "sharedValueDifferences": 0,
+      "differentIds": [],
+      "sqliteOnlyFields": []
+    }
+  },
+  "sourceSha256": {
+    "src/database/poetry.db": "cb5280ced98dad61d775de563d150a20dcbbf9ecbde1b791d2c13bd5dcec942c",
+    "src/database/json/works.json": "40d9c26bf9842dd1dc7e1785607f34863c1dd12883b5b1ab2572bc28b7178ad5",
+    "src/database/json/authors.json": "dfb978e8a7dce217a3b6211fa0a99087513495b4ceeb1e516b5387e0b3dcc29b",
+    "src/database/json/dynasties.json": "b300a81e5703f495630850e2c4af144bc1d1e082ae2d1f00acb4a900af426abb",
+    "src/database/json/collections.json": "6d23406213038340c8a122265f08081bb92f954174db9575a1f49866dac81ea4",
+    "src/database/json/collection_kinds.json": "54c30d3fef57930f8aa32052e89c4866c58ed41f83a9ce41923fdb21a086613f",
+    "src/database/json/collection_works.json": "25d6a1865c6d9bc72c59ead485ee736894d7d142e2561edf87c3fc9939b82f35",
+    "src/database/json/quotes.json": "5312d44e7d0605b48da73c540b58d7f149550d3403b65c9841e1c842d8292f0b",
+    "src/database/json/collection_quotes.json": "dbc6bd0b002bbf37513d3c40ad33af038412a920c18eadf2e0cee07b1979928c",
+    "src/database/json/version.json": "c12a7d065482463273cd858624da7db8110aa76648b73642a11d556741d697e2",
+    "LICENSE": "712f27f39b1d2d1ccf9dd36a04eb05cede2d73a86638fdfc49b785f849908e12",
+    "README.md": "a0690f986aaefd369c490e64cd29ffe232d41614d2dcb35138a3d6ea364c2e23"
+  },
+  "snapshot": "data/haitang-source.json.gz",
+  "snapshotSha256": "e8e1a34de9723e0654f8e1bfe67d04c7afcae015ba99a16acb7333ff7c090240",
+  "rawSha256": "5798ba8b0d19f9a5de6dad36208f9e80c37475d84f0e88e342043d124ffea6d4",
+  "formatVersion": 1
+}

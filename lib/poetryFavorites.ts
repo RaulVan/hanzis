@@ -5,6 +5,7 @@ import { poems } from "@/data/poems";
 
 const key = "hanzis-poetry-favorites-v1";
 const validSlugs = new Set(poems.map(poem => poem.slug));
+const isValidSlug = (slug: string) => validSlugs.has(slug) || /^haitang-[1-9]\d{0,9}$/.test(slug);
 const empty: readonly string[] = [];
 let favorites: readonly string[] = empty;
 let lastRaw: string | null | undefined;
@@ -18,7 +19,7 @@ function getSnapshot(): readonly string[] {
     if (raw === lastRaw) return favorites;
     lastRaw = raw;
     const value: unknown = raw ? JSON.parse(raw) : [];
-    favorites = Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string" && validSlugs.has(id)))] : empty;
+    favorites = Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string" && isValidSlug(id)))] : empty;
   } catch { memoryOnly = true; }
   return favorites;
 }
@@ -33,7 +34,7 @@ function subscribe(listener: () => void) {
 export function usePoetryFavorites() {
   const slugs = useSyncExternalStore(subscribe, getSnapshot, () => empty);
   function toggle(slug: string): boolean {
-    if (!validSlugs.has(slug)) return false;
+    if (!isValidSlug(slug)) return false;
     const current = getSnapshot();
     favorites = current.includes(slug) ? current.filter(id => id !== slug) : [...current, slug];
     try { lastRaw = JSON.stringify(favorites); window.localStorage.setItem(key, lastRaw); }

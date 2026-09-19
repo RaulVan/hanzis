@@ -1,12 +1,15 @@
+import type { HaitangWork } from "@/lib/haitangTypes";
+
 export interface Poem {
   slug: string;
   title: string;
   author: string;
-  dynasty: "唐" | "宋";
+  dynasty: string;
   theme: string;
   lines: { text: string; pinyin: string[] }[];
   translation: string;
   notes: { word: string; meaning: string }[];
+  haitang?: HaitangWork;
 }
 
 function poem(slug: string, title: string, author: string, dynasty: Poem["dynasty"], theme: string, verses: [string, string][], translation: string, notes: [string, string][]): Poem {

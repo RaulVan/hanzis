@@ -75,3 +75,13 @@ npm run assets
 ```
 
 导入前校验固定上游 SHA-256；gzip 固定 mtime，解压后与上游 JSON 字节一致。正常构建只读取仓库快照，核验校验和与条目数，然后生成每来源 128 个同源静态分片。修订本、第三方字典另有完整词头索引，成语附分类索引。快照不作为前端 bundle 导入。
+
+## 海棠诗社扩展诗词资料
+
+- 固定 [leozxl/haitang 8b0ac46](https://github.com/leozxl/haitang/tree/8b0ac46f8a69764ec561591f06095c9ccc67503f/src/database)，从 SQLite 只读导出全部 9 张表，共 11,407 篇作品、2,402 位作者、18 个朝代、663 个选集、7,216 条佳句。完整记录保留于 `data/haitang-source.json.gz`，来源文件与快照校验值记录于 `data/haitang-manifest.json`。
+- 数据库 `version` 表标记日期为 2023-12-08，GitHub 2026-09-15 提交时间不表示资料更新时间。数据含诗、词、文、曲、赋及当代作品；不把整库声明为公版古诗。
+- 上游 README 注明数据来自西窗烛，并明确「Code License: MIT」，未给数据库全部文字单独许可；保留 `licenses/haitang-MIT.txt`、`licenses/haitang-README.txt`。不联网抓取图片、鉴赏书籍或 `online_data=1` 指向的外部内容。
+- 网站保留 30 首本站校对精选及原有 URL、收藏。扩展作品使用 `haitang-<id>`，同名不同作者或同作不同来源不按标题去重。按需加载 128 个详情分片，目录分页展示。数据库没有拼音字段，不自动填造；译文、注解缺失时如实提示。
+- 完整性边界：145 条选集关系指向库外作品；保留于源快照，目录不生成不存在作品。`collection_quotes` 的一条主键在 JSON 为 `1`、SQLite 为 `dd`，只读保留并明确记录，不自动改动源库。
+- 上方扩展目录检索标题、作者、朝代、类别、开篇 120 字；未宣称整库全文搜索。扩展作品通过 `/poetry/?poem=haitang-<id>` 分享，不为 11,407 篇逐一生成静态 HTML，以保留当前部署文件预算；原 30 首静态正文、结构化数据及 sitemap 路由保持。
+- 完整架构、差异审计、上游更新和本站导入步骤见 [docs/haitang-database.md](docs/haitang-database.md)。

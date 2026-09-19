@@ -1,3 +1,4 @@
+import haitang from "@/data/haitang-manifest.json";
 import sources from "@/data/dictionary-sources.json";
 import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
@@ -37,7 +38,7 @@ export default function AboutPage() {
         <div><h3 className="font-semibold text-foreground">教育部《国语辞典简编本》</h3><p>本地保留版本 2014_20260626 的 45,130 条原始繁体条目及全部字段；网站的简体检索映射和学习提示与原始资料分开呈现。来源为<a href="https://dict.concised.moe.edu.tw/" rel="noreferrer" className="underline underline-offset-4">教育部《国语辞典简编本》</a>，依 CC BY-ND 3.0 TW 及官方公众授权说明使用。</p></div>
         <div><h3 className="font-semibold text-foreground">教育部《重編國語辭典修訂本》</h3><p>通过 <a href="https://github.com/g0v/moedict-data/tree/a6dc997417507eb510fc29822bc514de2c92728c" className="underline underline-offset-4">g0v/moedict-data</a> 收录 {sources[0].entries.toLocaleString("zh-CN")} 条资料，保留繁体原文、异读、例句与引文。上游标示为中華民國110年11月臺灣學術網路第六版，依 CC BY-ND 3.0 TW 使用。moedict-process 为相关处理工具，不另算一个来源。</p></div>
         <div><h3 className="font-semibold text-foreground">第三方整理字典 · chinese-xinhua</h3><p>来自 <a href="https://github.com/pwxcoo/chinese-xinhua/tree/fe6d6c2e8baa82187f4c96bbe042e43f96c05666" className="underline underline-offset-4">pwxcoo/chinese-xinhua</a>：{sources[1].entries.toLocaleString("zh-CN")} 条汉字、{sources[2].entries.toLocaleString("zh-CN")} 条词语与 {sources[3].entries.toLocaleString("zh-CN")} 条成语记录，包含同字异读与重复词头。这是网络收集整理资料，非官方《新华字典》版本；仓库附 MIT License，原始内容权利归属未逐条核验。各来源分别显示，便于对照。</p></div>
-        <div><h3 className="font-semibold text-foreground">诗词与注音</h3><p>首发收录 30 首公版唐宋诗词。简体文本、拼音、译文和学习注释在项目中逐条校核；注音标本调，实际朗读可能发生变调。</p></div>
+        <div><h3 className="font-semibold text-foreground">诗词与注音</h3><p>本站保留 30 首校对精选，另从 <a href="https://github.com/leozxl/haitang" className="underline underline-offset-4">海棠诗社</a> 接入 {haitang.counts.works.toLocaleString("zh-CN")} 篇作品（含诗、词、文、曲、赋），按来源分别保留。上游注明数据来自西窗烛，数据库标记日期为 2023-12-08；仓库 MIT 许可针对代码，资料文本不据此宣称全为公版。海棠资料未提供拼音，部分译文与注解缺失；精选注音标本调，实际朗读可能变调。</p></div>
       </CardContent></Card>
     </section>
 

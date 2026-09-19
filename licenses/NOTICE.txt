@@ -36,3 +36,18 @@ Additional dictionary sources
    rights to individual collected texts have not been independently verified.
    See chinese-xinhua-MIT.txt and the full upstream Copyright statement in
    chinese-xinhua-README.txt. Source records, including duplicates, are retained.
+
+Haitang poetry database
+-----------------------
+Source: https://github.com/leozxl/haitang
+Snapshot: 8b0ac46f8a69764ec561591f06095c9ccc67503f, src/database/poetry.db.
+Database version: gvToP2VKK60l16PozICg, generated_at 2023-12-08 00:41:10.
+Upstream credits 西窗烛 (https://www.xczim.com/) for poetry data.
+The upstream README specifies a code MIT license. It does not separately
+license all database text, modern translations, commentary, or contemporary
+works. This project does not label that material as public domain or infer
+blanket database rights from the code license. See haitang-MIT.txt and
+haitang-README.txt for complete upstream notices.
+The original SQLite records are retained in a versioned compressed snapshot.
+The site displays source text without inventing missing annotations or pinyin.
+External images, linked appreciation books and online-only content are not fetched.

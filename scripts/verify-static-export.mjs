@@ -70,6 +70,14 @@ for (const path of ["dictionary/xinhua/idioms.json", "licenses/MOE-Revised-Usage
   if (!(await exists(join(outputRoot, path)))) failures.push(`missing ${path}`);
 }
 
+const poetryDir = join(outputRoot, "poetry", "haitang");
+const poetryShards = (await readdir(poetryDir)).filter(file => /^[0-9a-f]{2}\.json$/.test(file));
+if (poetryShards.length !== 128) failures.push(`poetry shard count ${poetryShards.length} != 128`);
+const poetryIndex = JSON.parse(await readFile(join(poetryDir, "index.json"), "utf8"));
+const poetryManifest = JSON.parse(await readFile(join(projectRoot, "data/haitang-manifest.json"), "utf8"));
+if (poetryIndex.works.length !== poetryManifest.counts.works || poetryIndex.revision !== poetryManifest.revision) failures.push("poetry export does not match source manifest");
+for (const name of ["haitang-MIT.txt", "haitang-README.txt"]) if (!(await exists(join(outputRoot, "licenses", name)))) failures.push(`missing poetry notice ${name}`);
+
 if (failures.length) {
   console.error(`Static export verification failed (${failures.length}):`);
   for (const failure of failures.slice(0, 50)) console.error(`- ${failure}`);

@@ -106,3 +106,21 @@
 - Playwright：`npx playwright test tests/e2e/dictionary-sources.spec.ts` 7/7 通过；覆盖 1440×900、375×812 四来源展开/原始异读、修订本独有查询、第三方汉字/成语字段、索引单源失败、释义单源失败、全释义失败与重试。两尺寸无横向溢出、无运行异常，axe WCAG A/AA 自动检查无违规。
 - 视觉证据：`/tmp/hanzis-dictionary-1440.png`、`/tmp/hanzis-dictionary-375.png`，已检查来源分区、原文与窄屏换行。
 - 本次仅本地提交，未推送或部署；保留既有游戏调研任务及 `docs/hanzi-game-research.md`。
+
+## 2026-09-19：接入海棠诗社诗词资料与更新流程
+
+- 范围：深入核对 leozxl/haitang database 的结构、实际读取链路及更新缺口；固定源版本，补充诗词资料，保留现有 30 首校对内容与链接；仅本地提交。
+- [x] 对比 SQLite/JSON、统计数据与缺失项，记录许可、来源和可复现更新流程。
+- [x] 添加只读导入/差异检查工具、完整压缩源快照与校验元数据；构建不联网。
+- [x] 以分页检索、按需分片扩展诗词阅读，支持来源/朝代/选集筛选、收藏、原文与现有学习入口。
+- [x] 完成数据完整性、更新流程、构建/静态预算及桌面/手机交互验证。
+- [x] 精确提交本次文件，保留既有游戏调研改动；不推送、不部署。
+
+- 源版本：`leozxl/haitang@8b0ac46f8a69764ec561591f06095c9ccc67503f`。库内版本 `gvToP2VKK60l16PozICg` 标记为 2023-12-08；完整保留 9 表、11,407 篇作品、2,402 位作者，页面可浏览 387 个有本地作品的选集。
+- 审计：SQLite integrity_check=ok；记录 145 条库外作品关联、collection_quotes 主键 1/dd 差异，保留 SQLite 原记录。仓库无完整抓取/同步更新脚本；Code MIT 不作为整库文字独立许可，保留西窗烛来源与上游声明。
+- 更新：`scripts/import-haitang.py` 默认预览，报告新增/修改/删除 ID 与源文件校验值；`--write` 显式导入，SQLite/JSON 不一致须审阅并明确使用 `--allow-json-drift`。同版本再次预览各表变化均为 0。具体操作见 `docs/haitang-database.md`。
+- 数据/代码检查：`npm run check` 36 项测试通过；新增源数据测试核对全部作品与 128 分片、原文/缺失字段、稳定 ID 筛选；导入 CLI 的 3 个隔离测试验证只读预览、版本差异、确定性 gzip、源库脏改动与差异阻断。最后改动后补跑相关数据/CLI 检查。
+- 生产构建 `npm run build` 与 `npm run release:verify` 通过，导出 12,996 文件、334,435,532 字节。原 30 首静态页面、元数据、结构化数据与 sitemap 保留，新增资料使用 query 地址和按需分片，未生成 11,407 份 HTML。
+- Browser plugin not available，使用项目 Playwright：诗词 8 场景通过，另 SEO 2 场景通过。覆盖 1440×900/375×812、译注/无拼音提示、朝代/选集/来源与分页、旧新收藏与重载、失败重试、无效 ID、长篇可编辑 200 字选段、作品链接/背诵、慢请求不覆盖当前作品。首次定位器角色错误已修正并复跑通过。
+- 视觉证据：`/tmp/hanzis-haitang-1440.png`、`/tmp/hanzis-haitang-375.png`；已检查，两个尺寸无横向溢出、无浏览器运行或控制台错误，axe WCAG A/AA 自动检查无违规。
+- 本次仅提交诗词接入及说明，保留已有游戏调研任务与 `docs/hanzi-game-research.md`。未推送、未部署，生产状态未作本次验收。

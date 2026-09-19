@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { createRequire } from "node:module";
 
+import { prepareHaitang } from "./prepare-haitang.mjs";
 import { prepareDictionarySources } from "./prepare-dictionary-sources.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
@@ -53,6 +54,7 @@ await json("public/dictionary/moe/index.json", [...moeGroups.keys()].sort());
 for (let index = 0; index < moeShards.length; index += 1) await json(`public/dictionary/moe/${index.toString(16).padStart(2, "0")}.json`, Object.fromEntries(moeShards[index]));
 
 const additionalSources = await prepareDictionarySources(root);
+await prepareHaitang(root);
 
 const audioFiles = (await readdir(join(root, "public/voice"))).filter(name => /^[a-z]+[1-4]\.mp3$/.test(name)).sort();
 await json("data/audio-manifest.json", audioFiles);
