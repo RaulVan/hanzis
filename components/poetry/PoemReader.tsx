@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Bookmark, BookOpen, ArrowUpRight, PenLine } from "lucide-react";
+import { Bookmark, BookOpen, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
 import { type Poem, poemText } from "@/data/poems";
 import { isChinese } from "@/lib/utils";
@@ -45,8 +45,8 @@ export function PoemReader({ poem, standalone = false }: { poem: Poem; standalon
     <PoemVerses readUntil={readUntil} poem={poem} readings={poem.haitang ? annotation.entry?.lines ?? [] : poem.lines.map(line => line.pinyin)} showPinyin={showPinyin && (!poem.haitang || annotation.status === "ready")} />
     <Separator />
     {poem.haitang ? <HaitangNotes work={poem.haitang} /> : <section className="flex flex-col gap-3"><h3 className="section-title">诗意与注释</h3><p className="body-copy">{poem.translation}</p><dl className="flex flex-col gap-2 text-sm leading-7">{poem.notes.map(note => <div key={note.word}><dt className="inline font-semibold">{note.word}：</dt><dd className="inline text-muted-foreground">{note.meaning}</dd></div>)}</dl></section>}
-    <div className="flex flex-wrap items-center justify-center gap-3"><PoemWorksheetAction text={text} /><Button variant="ghost" asChild><Link href={`/stroke/?char=${encodeURIComponent(Array.from(text).find(isChinese) || "学")}`}><PenLine aria-hidden="true" />查看汉字笔顺</Link></Button>{!standalone && <Button variant="ghost" asChild><Link href={poem.haitang ? `/poetry/?poem=${poem.slug}` : `/poetry/${poem.slug}/`}>{poem.haitang ? "打开作品链接" : "独立阅读"}<ArrowUpRight aria-hidden="true" /></Link></Button>}</div>
-    <p className="text-center text-xs leading-6 text-muted-foreground">{poem.haitang ? "可通过“打开作品链接”分享这篇作品。" : <>注音标本调，朗读中可能有变调；点击诗中的汉字可查字典。<br />原文采用常见简体版本，译文与注释为学习提示。</>}{!canPractice && <><br />本篇段落较长，暂不支持逐句默写，可选段生成字帖。</>}</p>
+    <div className="flex flex-wrap items-center justify-center gap-3"><PoemWorksheetAction text={text} />{!standalone && <Button variant="ghost" asChild><Link href={poem.haitang ? `/poetry/read/?poem=${poem.slug}` : `/poetry/${poem.slug}/`}>{poem.haitang ? "打开作品链接" : "独立阅读"}<ArrowUpRight aria-hidden="true" /></Link></Button>}</div>
+    <p className="text-center text-xs leading-6 text-muted-foreground">{poem.haitang ? `点击诗中的汉字可查字典；${standalone ? "可复制当前页面地址分享这篇作品。" : "可通过“打开作品链接”进入独立阅读页。"}` : <>注音标本调，朗读中可能有变调；点击诗中的汉字可查字典。<br />原文采用常见简体版本，译文与注释为学习提示。</>}{!canPractice && <><br />本篇段落较长，暂不支持逐句默写，可选段生成字帖。</>}</p>
     {practice && <RecitationPractice poem={practicePoem} onClose={() => setPractice(false)} />}
   </article>;
 }

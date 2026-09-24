@@ -1,0 +1,110 @@
+import { expect, test } from "@playwright/test";
+
+for (const width of [1440, 375]) test(`imported poems offer single-character lookup and real standalone reading at ${width}px`, async ({ page }) => {
+  await page.setViewportSize({ width, height: width === 375 ? 812 : 1000 });
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/poetry/?poem=haitang-10095");
+  const article = page.getByRole("article", { name: "望岳原文与注释" });
+  const character = article.locator('.poem-verses a[href="/dictionary/?q=%E5%B2%B1"]').first();
+  await expect(character).toHaveText("岱");
+  await expect(article.getByRole("link", { name: "查看汉字笔顺" })).toHaveCount(0);
+  await character.click();
+  await expect(page).toHaveURL(/\/dictionary\/\?q=%E5%B2%B1/);
+  await expect(page.getByRole("article", { name: "岱的释义" })).toBeVisible();
+  await page.goBack();
+  await article.getByRole("switch", { name: "显示拼音" }).click();
+  await expect(character.locator("rt")).toHaveText("dài");
+  await character.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/dictionary\/\?q=%E5%B2%B1/);
+  await page.goBack();
+  await article.getByRole("link", { name: "打开作品链接" }).click();
+  await expect(page).toHaveURL(/\/poetry\/read\/\?poem=haitang-10095$/);
+  await expect(page.getByRole("navigation", { name: "诗词目录", exact: true })).toHaveCount(0);
+  await expect(page.locator("main h1")).toHaveText("望岳");
+  await expect(article.getByRole("link", { name: "打开作品链接" })).toHaveCount(0);
+  await expect(article.getByRole("link", { name: "查看汉字笔顺" })).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator("main h1")).toHaveText("望岳");
+  await expect(character.locator("rt")).toHaveText("dài");
+  await article.screenshot({ path: `/tmp/hanzis-poetry-actions-${width}.png` });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole("link", { name: "返回诗词目录" }).click();
+  await expect(page).toHaveURL(/\/poetry\/\?poem=haitang-10095$/);
+  await expect(article).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("curated and imported worksheet actions immediately generate content while preserving saved layout", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("textbox", { name: "练习内容" }).fill("旧的练习");
+  await page.getByRole("radio", { name: "米字格", exact: true }).click();
+  await page.goto("/poetry/jing-ye-si/");
+  await expect(page.getByRole("link", { name: "查看汉字笔顺" })).toHaveCount(0);
+  await page.getByRole("link", { name: "生成诗词字帖" }).click();
+  await expect(page.getByRole("textbox", { name: "练习内容" })).toHaveValue(/床前明月光/);
+  await expect(page.getByRole("button", { name: "使用这段文字" })).toHaveCount(0);
+  await expect(page.locator("#worksheet-preview")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator("#worksheet-preview svg")).toBeVisible();
+  await expect(page.locator("#worksheet-preview desc")).toContainText("本页练习：床、前、明、月、光");
+  await expect(page.getByRole("button", { name: "导出 PDF" })).toBeEnabled();
+  await expect(page.getByRole("radio", { name: "米字格", exact: true })).toBeChecked();
+  await expect(page).toHaveURL(/\/$/);
+  await page.getByRole("textbox", { name: "练习内容" }).fill("后续修改");
+  await page.reload();
+  await expect(page.getByRole("textbox", { name: "练习内容" })).toHaveValue("后续修改");
+  await page.goto("/poetry/read/?poem=haitang-10095");
+  await page.getByRole("link", { name: "生成诗词字帖" }).click();
+  await expect(page.getByRole("textbox", { name: "练习内容" })).toHaveValue(/岱宗夫如何/);
+  await expect(page.locator("#worksheet-preview desc")).toContainText("本页练习：岱、宗、夫、如、何");
+  await page.screenshot({ path: "/tmp/hanzis-poetry-worksheet-direct.png" });
+  await expect(page.getByRole("button", { name: "使用这段文字" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "导出 PDF" })).toBeEnabled();
+  await expect(page.getByRole("radio", { name: "米字格", exact: true })).toBeChecked();
+});
+
+test("long works retain the excerpt limit and generate the selected excerpt without a second confirmation", async ({ page }) => {
+  await page.goto("/poetry/read/?poem=haitang-10103");
+  await page.getByRole("button", { name: "选段生成字帖", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "选择字帖练习片段" });
+  await dialog.getByRole("textbox", { name: "练习片段" }).fill("江".repeat(201));
+  await expect(dialog.getByRole("button", { name: "用选段生成字帖" })).toBeDisabled();
+  const excerpt = "春江潮水连海平，海上明月共潮生。";
+  await dialog.getByRole("textbox", { name: "练习片段" }).fill(excerpt);
+  await dialog.getByRole("link", { name: "用选段生成字帖" }).click();
+  await expect(page.getByRole("textbox", { name: "练习内容" })).toHaveValue(excerpt);
+  await expect(page.locator("#worksheet-preview desc")).toContainText("本页练习：春、江、潮、水、连、海、平");
+  await expect(page.getByRole("button", { name: "使用这段文字" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "导出 PDF" })).toBeEnabled();
+});
+
+test("standalone reading handles missing works and retry without loading the catalog", async ({ page }) => {
+  const requested: string[] = [];
+  page.on("request", request => requested.push(request.url()));
+  await page.goto("/poetry/read/");
+  await expect(page.getByText("请从诗词目录选择一篇作品。")).toBeVisible();
+  await page.goto("/poetry/read/?poem=haitang-999999999");
+  await expect(page.getByText("当前诗词库未收录这篇作品", { exact: false })).toBeVisible();
+  await page.route("**/poetry/haitang/77.json*", route => route.abort());
+  await page.goto("/poetry/read/?poem=haitang-10103");
+  await expect(page.getByRole("button", { name: "重新加载诗词" })).toBeVisible();
+  await page.unroute("**/poetry/haitang/77.json*");
+  await page.getByRole("button", { name: "重新加载诗词" }).click();
+  await expect(page.locator("main h1")).toHaveText("春江花月夜");
+  expect(requested.some(url => url.includes("/haitang/index.json"))).toBe(false);
+});
+
+test("direct worksheet loading works without storage and ordinary text imports still request confirmation", async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(window, "localStorage", { get() { throw new DOMException("Blocked", "SecurityError"); } }));
+  await page.goto("/poetry/read/?poem=haitang-10133");
+  await page.getByRole("link", { name: "生成诗词字帖" }).click();
+  await expect(page.getByRole("textbox", { name: "练习内容" })).toHaveValue(/鹅，鹅，鹅/);
+  await expect(page.getByRole("button", { name: "使用这段文字" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "导出 PDF" })).toBeEnabled();
+  await page.goto(`/?text=${encodeURIComponent("明月")}`);
+  await expect(page.getByRole("button", { name: "使用这段文字" })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "练习内容" })).not.toHaveValue("明月");
+  await page.getByRole("button", { name: "使用这段文字" }).click();
+  await expect(page.getByRole("textbox", { name: "练习内容" })).toHaveValue("明月");
+});

@@ -107,7 +107,7 @@ test("a search preview offers the correct stable work link and short-source reci
   await expect(page.getByRole("status").filter({ hasText: "当前" })).toContainText("11,437");
   await page.getByRole("searchbox", { name: "搜索诗词" }).fill("春江花月夜");
   const link = page.getByRole("article").getByRole("link", { name: "打开作品链接" });
-  await expect(link).toHaveAttribute("href", "/poetry/?poem=haitang-10103");
+  await expect(link).toHaveAttribute("href", "/poetry/read/?poem=haitang-10103");
   await link.click();
   await expect(page).toHaveURL(/poem=haitang-10103$/);
   await page.reload();

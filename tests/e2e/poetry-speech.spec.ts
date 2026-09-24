@@ -79,11 +79,11 @@ for (const width of [1440, 375]) test(`poetry read progress uses solid theme red
   await expect(verses.locator('[data-read="true"]')).toHaveCount(8);
   await article.screenshot({ path: `/tmp/hanzis-poetry-speech-${width}.png` });
   await article.getByRole("switch", { name: "显示拼音" }).click();
-  await expect(verses.locator('[data-read="true"]')).toHaveText("岱宗夫如何？齐鲁");
-  await expect(verses.locator('[data-read="true"]')).toHaveCSS("color", red);
+  await expect.poll(async () => (await verses.locator('[data-read="true"]').allTextContents()).join("")).toBe("岱宗夫如何？齐鲁");
+  await expect(verses.locator('[data-read="true"]').first()).toHaveCSS("color", red);
   await article.getByRole("button", { name: "停止朗读" }).click();
   await page.evaluate(() => window.speechTest.late());
-  await expect(verses.locator('[data-read="true"]')).toHaveText("岱宗夫如何？齐鲁");
+  await expect.poll(async () => (await verses.locator('[data-read="true"]').allTextContents()).join("")).toBe("岱宗夫如何？齐鲁");
   expect(await page.evaluate(() => window.speechTest.texts.length)).toBe(2);
   await article.getByRole("button", { name: "朗读", exact: true }).click();
   await expect(verses.locator('[data-read="true"]')).toHaveCount(0);
@@ -93,9 +93,9 @@ for (const width of [1440, 375]) test(`poetry read progress uses solid theme red
     if (i < 7) await expect.poll(() => page.evaluate(() => window.speechTest.texts.length)).toBe(i + 4);
   }
   await expect(article.getByRole("button", { name: "朗读", exact: true })).toBeVisible();
-  await expect(verses.locator('[data-read="true"]')).toHaveCount(4);
+  await expect(verses.locator('[data-read="true"]')).toHaveCount(48);
   const allText = await verses.textContent();
-  expect(await verses.locator('[data-read="true"]').allTextContents()).toEqual(["岱宗夫如何？齐鲁青未了。", "造化钟神秀，阴阳割昏晓。", "荡胸生曾云，决眦入归鸟。", "会当凌绝顶，一览众山小。"]);
+  expect((await verses.locator('[data-read="true"]').allTextContents()).join("")).toBe("岱宗夫如何？齐鲁青未了。造化钟神秀，阴阳割昏晓。荡胸生曾云，决眦入归鸟。会当凌绝顶，一览众山小。");
   expect(allText).toContain("会当凌绝顶");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);

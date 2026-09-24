@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PoemReader } from "./PoemReader";
 
-function ImportedPoem({ slug }: { slug: string }) {
+function ImportedPoem({ slug, standalone }: { slug: string; standalone: boolean }) {
   const [poem, setPoem] = useState<Poem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
@@ -20,9 +20,9 @@ function ImportedPoem({ slug }: { slug: string }) {
   }, [slug, revision]);
   if (error) return <Alert variant="destructive"><AlertDescription>{error}<Button variant="outline" onClick={() => { setError(null); setRevision(value => value + 1); }}>重新加载诗词</Button></AlertDescription></Alert>;
   if (!poem) return <div className="study-panel p-8" role="status" aria-label="正在加载诗词"><Skeleton className="h-96" /></div>;
-  return <PoemReader key={slug} poem={poem} />;
+  return <PoemReader key={slug} poem={poem} standalone={standalone} />;
 }
-export function PoetrySelection({ slug }: { slug: string }) {
+export function PoetrySelection({ slug, standalone = false }: { slug: string; standalone?: boolean }) {
   const curated = getPoem(slug);
-  return curated ? <PoemReader key={slug} poem={curated} /> : <ImportedPoem key={slug} slug={slug} />;
+  return curated ? <PoemReader key={slug} poem={curated} standalone={standalone} /> : <ImportedPoem key={slug} slug={slug} standalone={standalone} />;
 }
