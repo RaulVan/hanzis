@@ -59,7 +59,7 @@ export function PoetryLibrary({ heading }: { heading: ReactNode }) {
           <div className="min-w-0 space-y-2"><Label htmlFor="poetry-dynasty">朝代</Label><Select value={dynasty} onValueChange={setDynasty}><SelectTrigger id="poetry-dynasty" className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">全部朝代</SelectItem>{(catalog?.dynasties ?? ["唐", "宋"]).map(name => <SelectItem value={name} key={name}>{name}</SelectItem>)}</SelectContent></Select></div>
           <div className="min-w-0 space-y-2"><Label htmlFor="poetry-collection">选集与主题</Label><Select value={collection} onValueChange={setCollection} disabled={!catalog}><SelectTrigger id="poetry-collection" className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">全部选集</SelectItem>{catalog?.collections.map(item => <SelectItem value={String(item.id)} key={item.id}>{item.name}（{item.count}）</SelectItem>)}</SelectContent></Select></div>
         </div>
-        <p className="text-xs leading-6 text-muted-foreground">检索覆盖标题、作者和开篇诗句；原文按需加载，部分作品提供拼音。</p>
+        <p className="text-xs leading-6 text-muted-foreground">检索覆盖标题、作者和开篇诗句；原文与拼音按需加载；扩展作品提供自动注音，部分多音字待校对。</p>
       </div>
     </div>
     {!catalog && !error && <p className="text-sm text-muted-foreground" role="status">正在加载诗词索引，可先阅读已加载的作品…</p>}

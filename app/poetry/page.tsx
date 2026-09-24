@@ -10,7 +10,7 @@ import { poems } from "@/data/poems";
 export const metadata = pageMetadata(
   "/poetry/",
   "古诗词学习 · 诗词原文、拼音与注释",
-  "阅读诗词原文与注释，按朝代、作者和选集查找作品；部分作品提供拼音，支持朗读、收藏、背诵和选段生成字帖。",
+  "阅读诗词原文与注释，按朝代、作者和选集查找作品；提供拼音辅助阅读，支持朗读、收藏、背诵和选段生成字帖。",
 );
 export default function PoetryPage() {
   const heading = <PageHeading className="poetry-page-heading" title="读一首诗，记一段时光。" description="读原文、看注释，在熟悉的诗句里认识汉字。" />;

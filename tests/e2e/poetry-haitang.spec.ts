@@ -13,8 +13,8 @@ for (const width of [1440, 375]) {
     await expect(page.locator("body")).not.toContainText(/海棠诗社|海棠资料|leozxl\/haitang|西窗烛/);
     await expect(article.getByRole("link", { name: "chinese-poetry/chinese-poetry" })).toHaveAttribute("href", "https://github.com/chinese-poetry/chinese-poetry");
     await expect(article.locator(".poem-verses")).toContainText("春江潮水连海平");
-    await expect(article.getByText("来源未提供拼音", { exact: true })).toBeVisible();
-    await expect(article.getByRole("switch", { name: "显示拼音" })).toHaveCount(0);
+    await expect(article).toContainText("自动注音");
+    await expect(article.getByRole("switch", { name: "显示拼音" })).not.toBeChecked();
     await article.locator("summary").filter({ hasText: /^译文$/ }).click();
     await expect(article.locator("details[open]")).toContainText("春天");
     await expect(page.getByRole("navigation", { name: "诗词目录" }).getByRole("button")).toHaveCount(24);
@@ -45,7 +45,7 @@ test("unified scope/dynasty/collection filters and pagination find real works wi
   await expect(nav.getByRole("button")).toHaveCount(2);
   await expect(page.getByRole("radiogroup", { name: "诗词范围" }).getByRole("radio")).toHaveCount(2);
   await nav.getByRole("button").last().click();
-  await expect(page.getByRole("article")).toContainText("来源未提供拼音");
+  await expect(page.getByRole("article")).toContainText("自动注音");
   await page.getByRole("searchbox", { name: "搜索诗词" }).fill("");
   await page.getByRole("combobox", { name: "朝代", exact: true }).click();
   await page.getByRole("option", { name: "唐", exact: true }).click();

@@ -51,3 +51,11 @@ haitang-README.txt for complete upstream notices.
 The original SQLite records are retained in a versioned compressed snapshot.
 The site displays source text without inventing missing annotations or pinyin.
 External images, linked appreciation books and online-only content are not fetched.
+
+Poetry pronunciation generation
+- pinyin-pro 3.29.4, Copyright (c) 2022-present zh-lx, MIT License.
+- https://github.com/zh-lx/pinyin-pro
+- Full license: pinyin-pro-MIT.txt.
+- Pronunciation annotations are generated separately from the original poetry data.
+  They are machine-generated reading aids, with Hanzis curated-line and explicit
+  pronunciation overrides; coverage does not imply editorial verification.

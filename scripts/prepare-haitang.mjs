@@ -1,3 +1,4 @@
+import { preparePoetryPinyin } from "./prepare-poetry-pinyin.ts";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -46,5 +47,6 @@ export async function prepareHaitang(root) {
   await mkdir(directory, { recursive: true });
   await writeFile(join(directory, "index.json"), JSON.stringify(catalog));
   for (const [index, shard] of shards.entries()) await writeFile(join(directory, `${index.toString(16).padStart(2, "0")}.json`), JSON.stringify(shard));
+  await preparePoetryPinyin(root, tables.works, manifest.snapshotSha256);
   console.log(`Prepared ${works.size} Haitang works, ${catalog.collections.length} collections with local works, 128 poetry shards.`);
 }

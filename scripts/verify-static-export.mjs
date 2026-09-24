@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -77,6 +78,15 @@ const poetryIndex = JSON.parse(await readFile(join(poetryDir, "index.json"), "ut
 const poetryManifest = JSON.parse(await readFile(join(projectRoot, "data/haitang-manifest.json"), "utf8"));
 if (poetryIndex.works.length !== poetryManifest.counts.works || poetryIndex.revision !== poetryManifest.revision) failures.push("poetry export does not match source manifest");
 for (const name of ["haitang-MIT.txt", "haitang-README.txt"]) if (!(await exists(join(outputRoot, "licenses", name)))) failures.push(`missing poetry notice ${name}`);
+
+const pinyinManifest = JSON.parse(await readFile(join(projectRoot, "data/poetry-pinyin-manifest.json"), "utf8"));
+const exportedPinyinManifest = JSON.parse(await readFile(join(outputRoot, "poetry/pinyin/manifest.json"), "utf8"));
+if (JSON.stringify(pinyinManifest) !== JSON.stringify(exportedPinyinManifest)) failures.push("poetry pinyin manifest mismatch");
+for (const [file, hash] of Object.entries(pinyinManifest.shards)) {
+  const bytes = await readFile(join(outputRoot, "poetry/pinyin", file));
+  if (createHash("sha256").update(bytes).digest("hex") !== hash) failures.push(`poetry pinyin checksum mismatch: ${file}`);
+}
+if (!(await exists(join(outputRoot, "licenses/pinyin-pro-MIT.txt")))) failures.push("missing pinyin-pro notice");
 
 if (failures.length) {
   console.error(`Static export verification failed (${failures.length}):`);
