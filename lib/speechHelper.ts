@@ -1,4 +1,5 @@
 import { getPinyinAudioUrl } from "./pinyinAudio";
+import { speechBoundaryEnd, speechChunks } from "./speechProgress";
 
 type PlaybackScope = {
   isActive: () => boolean;
@@ -60,7 +61,7 @@ function waitForVoice(synth: SpeechSynthesis, lang: string, scope: PlaybackScope
 }
 
 /** Uses an explicitly selected system voice and resolves only after the utterance ends. */
-export function speak(text: string, options: { rate?: number; lang?: string } = {}): Promise<void> {
+export function speak(text: string, options: { rate?: number; lang?: string; onProgress?: (end: number) => void } = {}): Promise<void> {
   return startPlayback(async (scope) => {
     if (!text.trim()) throw new Error("没有可以朗读的文字。");
     if (!isSpeechSupported()) throw new Error("当前浏览器不支持系统语音。拼音页仍可播放已有本地录音。");
@@ -69,22 +70,47 @@ export function speak(text: string, options: { rate?: number; lang?: string } = 
     const voice = await waitForVoice(synth, lang, scope);
     if (!scope.isActive()) return;
     if (!voice) throw new Error("当前设备没有可用的中文语音，请安装系统中文语音包后重试。");
-    const utterance = new SpeechSynthesisUtterance(text.trim());
-    utterance.voice = voice;
-    utterance.lang = voice.lang || lang;
-    utterance.rate = Number.isFinite(options.rate) ? Math.min(1.5, Math.max(0.5, options.rate!)) : 0.8;
-    utterance.onend = () => scope.finish();
-    utterance.onerror = (event) => scope.finish(new Error(event.error === "not-allowed"
-      ? "浏览器未允许播放声音，请点击朗读按钮重试。" : "系统中文语音播放失败，请检查设备语音设置后重试。"));
-    const timeout = setTimeout(() => scope.finish(new Error("系统语音没有完成播放，请重试。")),
-      Math.max(15000, Math.min(240000, Array.from(text).length * 1500 / utterance.rate)));
-    scope.cleanup(() => {
-      clearTimeout(timeout);
-      utterance.onend = null;
-      utterance.onerror = null;
-      synth.cancel();
-    });
-    synth.speak(utterance);
+    // Progress readers use short clauses, so voices without boundary events still advance
+    // on actual completion and long prose does not hit a whole-document timeout.
+    const chunks = options.onProgress ? speechChunks(text) : [{ text: text.trim(), start: 0, end: text.length }];
+    let dispose = () => {};
+    let progress = 0;
+    const report = (end: number) => {
+      if (!scope.isActive() || end <= progress) return;
+      progress = end; options.onProgress?.(end);
+    };
+    scope.cleanup(() => { dispose(); synth.cancel(); });
+    for (const chunk of chunks) {
+      if (!scope.isActive()) return;
+      await new Promise<void>((resolve, reject) => {
+        const utterance = new SpeechSynthesisUtterance(chunk.text);
+        utterance.voice = voice;
+        utterance.lang = voice.lang || lang;
+        utterance.rate = Number.isFinite(options.rate) ? Math.min(1.5, Math.max(0.5, options.rate!)) : 0.8;
+        let active = true;
+        const timeout = setTimeout(() => {
+          reject(new Error("系统语音没有完成播放，请重试。")); dispose();
+        }, Math.max(15000, Math.min(240000, Array.from(chunk.text).length * 1500 / utterance.rate)));
+        dispose = () => {
+          active = false; clearTimeout(timeout);
+          utterance.onend = null; utterance.onerror = null; utterance.onboundary = null;
+          resolve();
+        };
+        utterance.onboundary = (event) => {
+          if (!active || !scope.isActive()) return;
+          const end = speechBoundaryEnd(chunk.text, event.charIndex, event.charLength, event.name);
+          if (end !== null) report(chunk.start + end);
+        };
+        utterance.onend = () => { if (active && scope.isActive()) { report(chunk.end); dispose(); } };
+        utterance.onerror = (event) => {
+          if (!active || !scope.isActive()) return;
+          reject(new Error(event.error === "not-allowed" ? "浏览器未允许播放声音，请点击朗读按钮重试。" : "系统中文语音播放失败，请检查设备语音设置后重试。"));
+          dispose();
+        };
+        synth.speak(utterance);
+      });
+    }
+    if (scope.isActive()) { report(text.length); scope.finish(); }
   });
 }
 
