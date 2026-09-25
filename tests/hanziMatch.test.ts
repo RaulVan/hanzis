@@ -170,6 +170,11 @@ test("hints highlight a solvable pair, record the word for review, and cost star
   const [first, second] = state.hinted;
   assert.equal(state.tiles[first].char + state.tiles[second].char, "天空");
   assert.deepEqual(state.review, ["天空"]);
+  const repeated = applyHanziMatchHint(item, selectHanziMatchTile(item, state, first));
+  assert.equal(repeated.hints, 1, "asking again for the same unresolved hint must not cost another star");
+  assert.deepEqual(repeated.hinted, [first, second]);
+  assert.equal(repeated.selected, null);
+  assert.deepEqual(repeated.feedback, { kind: "hint", word: "天空" });
   state = selectHanziMatchTile(item, selectHanziMatchTile(item, state, first), second);
   assert.equal(state.feedback.kind, "found");
   assert.deepEqual(state.hinted, []);

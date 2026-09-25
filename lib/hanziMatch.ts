@@ -144,6 +144,11 @@ export function findHintTiles(level: HanziMatchLevel, state: HanziMatchState): {
 
 export function applyHanziMatchHint(level: HanziMatchLevel, state: HanziMatchState): HanziMatchState {
   if (isHanziMatchComplete(level, state)) return state;
+  // An unresolved hint is still on the board; asking again repeats it without costing another star.
+  if (state.hinted.length > 0) {
+    const word = state.hinted.map(id => state.tiles[id].char).join("");
+    return { ...state, selected: null, feedback: { kind: "hint", word } };
+  }
   const hint = findHintTiles(level, state);
   if (!hint) return state;
   return {

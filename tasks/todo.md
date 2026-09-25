@@ -264,3 +264,14 @@
 - 截图已查看：`/tmp/hanzis-hanzi-match-select-1440.png`、`/tmp/hanzis-hanzi-match-play-1440.png`、`/tmp/hanzis-hanzi-match-result-1440.png`、`/tmp/hanzis-hanzi-match-play-375.png`、`/tmp/hanzis-hanzi-match-result-375.png`。
 - 范围外既有问题（仅报告）：Noto Sans SC 在较大字号下，第一声 ā、ē 的长音符号会偏到字母右侧（诗词页“guāng”放大到 28px 同样出现；ruby 注音字号小，不明显）。站点字体子集的 `latin` 面有组合长音符 U+0304 但没有预组字形，Chromium 疑似拆成 a + U+0304 渲染；小游戏字卡注音 12–14px 可辨认，但同样受影响。建议另开任务统一处理拼音字体。
 - 未执行：推送、部署；真实中文输入法与真机未验证（本游戏不需要文字输入）；题库人工审校待完成。
+
+## 2026-09-25：汉字词语消除上线复测与修复
+
+- 范围：用户已推送 `e6507d5`；复测线上与本地，修复发现的问题。仅本地提交，不推送。
+- [x] 线上：Cloudflare Pages check `108114728365`、Workers Builds `108114646697` 成功；`https://hanzis.com/games/hanzi-match/` 200，sitemap 含新页；375px 真实浏览器通关 3 星、刷新保留、无溢出与脚本错误。
+- [x] 修复全站第一声错位：Chromium 在拉丁字母连写时用 Noto Sans SC `latin` 子集把 ā 拆成 a + 分离的 U+0304，长音符号偏右约半个字母宽（ǖ 同样受影响）。将同一字体的 latin-ext 子集注册为 “Hanzis Pinyin Sans” 置于 `--font-sans` 首位；构建复用原字体文件，不增加体积。新增像素级回归测试（“n+声调字母”测长音与元音中心偏移），修复前 ā/ē/ī/ō/ū 偏移 0.45–0.56，修复后通过。字帖导出的 canvas 字体栈经测量不受影响，未改。
+- [x] 修复连点“提示”重复扣星：未解决的提示再次请求只重复高亮与说明，不增加提示次数；单测覆盖。
+- [x] 修复短横屏（812×375）只能看到棋盘首行：棋盘按视口高度限宽（字卡不小于 44px）、反馈与按钮移到棋盘右侧、开局滚动到棋盘区并将焦点放在标题（preventScroll），横屏字号降一档；新增横屏 E2E。
+- 探索测试另覆盖纯键盘通关（Tab + Enter/Space，焦点进入标题与结果标题）、200% 根字号、深色偏好与减少动效：无溢出、字卡无裁切。
+- 验证：`npm run check`（55 项单测）、生产构建、`npm run release:verify`（13,149 文件）、完整 Playwright 47 项通过。截图已查看：`/tmp/hm-board-fixed.png`、`/tmp/hanzis-hanzi-match-landscape-812.png`、`/tmp/hanzis-hanzi-match-play-375.png`、`/tmp/hanzis-hanzi-match-play-1440.png`。
+- 未执行：推送与部署本次修复；WebKit/Safari 与真机未验证。
