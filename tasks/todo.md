@@ -54,6 +54,14 @@
 - [x] 通过静态检查、构建和真实浏览器核对字帖、诗词、字典、笔顺输入框。
 - [x] 推送 GitHub 并完成 Cloudflare 生产部署冒烟。
 
+## 2026-09-19：GitHub 汉字类网页游戏调研
+
+- [x] 按汉字、拼音、成语、词语、古诗词主题检索 GitHub 候选项目。
+- [x] 核对 README、关键源码入口、GitHub API 活跃度字段与许可证信息。
+- [x] 输出调研与自研建议文档：[docs/hanzi-game-research.md](../docs/hanzi-game-research.md)。
+- [ ] 获得明确产品决策后，再选择 P0 游戏进入实现；本次不改业务代码。
+- 2026-09-25 决策：仅提交调研文档与任务记录，暂不实施任何游戏；实施方案见文档第 5、7 节，落地路径为 `app/games/hanzi-match` + `components/games/hanzi-match` + `data/games/` 题库 + 版本化本地进度 store。
+
 ## 2026-09-19：网站 SEO 优化
 
 - 范围：现有静态路由的搜索与分享元数据、可抓取正文/内链、真实内容结构化数据；沿用现有设计，不部署或推送。
@@ -167,6 +175,21 @@
 - 视觉证据已查看：`/tmp/hanzis-poetry-pinyin-1440.png`、`/tmp/hanzis-poetry-pinyin-375.png`。更新/纠音流程见 `docs/poetry-pinyin.md`；自动注音准确率未作全库人工验收，页面已提示多音字待校对。
 - 仅本地提交，未推送/部署，线上状态未验收；保留游戏调研既有未提交文件及任务记录。字帖、系统朗读、标题与译注自动注音不在本轮范围。
 
+## 2026-09-25：笔顺与扩展诗词拼音生产发布
+
+- 范围：将已提交的笔顺裁剪修复 `6638c48` 与扩展诗词自动拼音 `0c7cecd` 推送至 GitHub `origin/main`，经 Cloudflare Pages 发布至 `https://hanzis.com/`；保留游戏调研未提交文件。
+- [x] Node.js 20 检查、静态生产构建与发布物校验。
+- [x] 推送并确认 GitHub/Cloudflare 部署成功。
+- [x] 在正式域名验证新增诗词拼音及笔顺修复资源。
+
+- 提交：`6638c483e0d040326e058658a4c687797ff72e9e`、`0c7cecd12157a0cb27f84da1534536d511f7e965`；已推送至 `origin/main`。
+- 验证：Node.js 20.20.2 下 `npm run check`（ESLint、TypeScript、39/39 单测）、`npm run build` 与 `npm run release:verify` 均通过；静态导出 13,127 文件、45 个 HTML。
+- Cloudflare：Pages check `107778054368` 与 Workers Builds check `107778435532` 均成功；Pages 预览 `https://a3835996.hanzis.pages.dev/`；Workers build `da38c852-ce37-451b-a881-5643644caf9f`。
+- 正式域名响应：主页/诗词页/编码后的字典查询/字典 JSON/Manifest 为 200；MP3 Range 为 206、32 字节；未知路径为真实 404。安全头与 Manifest MIME 正常。
+- 拼音交互：手机宽度访问 `?poem=haitang-10133`，开启拼音后 `/poetry/pinyin/15.json` 返回 200、读音 `qū` 正确；无 JS 错误或横向溢出。线上 Manifest 与分片 SHA-256 分别为 `ff60a8db2dfe8a948d8975159d4e6ee9e9b7b32e3c041e5c9153ddf6c600b934`、`683e317a309b9626e955535cf03da87eadc727e9e1d01c8d165ac1e184b2e37b`，与本地构建一致。
+- 笔顺交互：1440×1000 和 375×812 下反复切换“说/学”，每笔裁剪都指向当前页面现存 clipPath；无控制台/运行错误或横向溢出。笔顺资源 SHA-256 与本地一致。
+- 诗词 HTML 与本地静态导出除 Cloudflare 每次构建生成的 build token 外逐字节相同；输出与 Pages 预览对应本次 `0c7cecd`。
+
 ## 2026-09-25：诗词朗读进度主题色
 
 - 范围：诗词正文及拼音随实际朗读进度累计变为主题朱红，保留现有朗读/停止控件；重播重置、切换作品取消旧进度。不改变字典、拼音录音等其他播放入口。
@@ -181,6 +204,7 @@
 - Browser plugin not available，沿用 Playwright；本地 `http://127.0.0.1:4317/poetry/?poem=haitang-10095` 的 1440×1000、375×812 测试，以及切换精选/失败恢复、原拼音与 SEO 回归共 10 场景通过。核对页面标题、非空正文、无错误覆盖层、无控制台/运行错误、无横向溢出；实测字与拼音颜色为 `rgb(180, 67, 53)`。
 - 已查看截图：`/tmp/hanzis-poetry-speech-1440.png`、`/tmp/hanzis-poetry-speech-375.png`。对应用户截图要求使用正文实色，未采用选区的淡红背景。
 - 证据边界：自动化 Chromium 的系统语音列表为空，浏览器同步验证使用受控 `boundary/end/error` 事件，不等于真机音频与字词时间逐一验收。设备不提供字词事件时按句末回退；浏览器支持参考 MDN SpeechSynthesisUtterance boundary event 文档。未推送/部署，保留已有游戏调研和生产发布记录的未提交改动。
+- 后续发布（2026-09-25）：`dcc649d2736ed2c617062236b8a4534adf1f72eb` 已推送；Cloudflare Pages check `107788429455` 与 Workers build `cdf15348-b530-4bba-a344-1afd53d23c80` 成功。正式域名 375px 朗读进度冒烟使用受控语音边界事件，正文及拼音随进度变朱红，无脚本错误或横向溢出；真实设备音频仍未验收。
 
 ## 2026-09-25：修复诗词单字、独立阅读与字帖流程
 
