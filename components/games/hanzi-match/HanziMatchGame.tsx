@@ -32,8 +32,10 @@ export function HanziMatchGame() {
 
   useEffect(() => {
     if (!moved.current) return;
-    heading.current?.focus();
-    heading.current?.scrollIntoView({ block: "nearest" });
+    heading.current?.focus({ preventScroll: true });
+    // During play the board, not the heading, must be on screen; on short landscape phones only one of them fits.
+    const target = viewKey.startsWith("play:") ? document.getElementById("hanzi-match-board-area") : heading.current;
+    target?.scrollIntoView({ block: "nearest" });
   }, [viewKey]);
 
   function start(level: HanziMatchLevel) {

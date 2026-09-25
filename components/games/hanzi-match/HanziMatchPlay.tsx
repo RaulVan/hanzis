@@ -47,51 +47,55 @@ export const HanziMatchPlay = forwardRef<HTMLHeadingElement, {
           <div className="flex gap-1"><dt>提示</dt><dd className="font-semibold text-foreground">{state.hints}</dd></div>
         </dl>
 
-        <div role="group" aria-label="字卡棋盘" className="mx-auto grid w-full max-w-[28rem] grid-cols-4 gap-2 sm:gap-3">
-          {state.tiles.map(tile => {
-            const row = Math.floor(tile.id / HANZI_MATCH_COLUMNS) + 1;
-            const column = (tile.id % HANZI_MATCH_COLUMNS) + 1;
-            if (state.removed.includes(tile.id)) {
-              return <div key={tile.id} aria-hidden="true" className="aspect-square rounded-lg border border-dashed bg-muted/60" />;
-            }
-            const selected = state.selected === tile.id;
-            const hinted = state.hinted.includes(tile.id);
-            return (
-              <button
-                key={tile.id}
-                type="button"
-                aria-pressed={selected}
-                aria-label={`${tile.char}${showPinyin ? ` ${tile.pinyin}` : ""}，第 ${row} 行第 ${column} 列${hinted ? "，提示" : ""}`}
-                onClick={() => onSelect(tile.id)}
-                className={cn(
-                  "flex aspect-square min-h-14 flex-col items-center justify-center rounded-lg border bg-card font-serif text-3xl leading-none transition-colors hover:border-primary hover:text-primary sm:text-4xl",
-                  hinted && "border-2 border-dashed border-primary",
-                  selected && "border-2 border-primary bg-accent text-accent-foreground",
-                )}
-              >
-                {showPinyin && <span className="mb-1 font-sans text-xs font-normal text-muted-foreground sm:text-sm">{tile.pinyin}</span>}
-                <span>{tile.char}</span>
-              </button>
-            );
-          })}
-        </div>
+        <div id="hanzi-match-board-area" className="grid gap-5 [@media(max-height:500px)_and_(orientation:landscape)]:grid-cols-[auto_minmax(0,1fr)] [@media(max-height:500px)_and_(orientation:landscape)]:items-start">
+          <div role="group" aria-label="字卡棋盘" className="mx-auto grid w-full max-w-[max(13rem,min(28rem,calc(100dvh-8rem)))] grid-cols-4 gap-2 sm:gap-3 [@media(max-height:500px)_and_(orientation:landscape)]:w-[max(13rem,calc(100dvh-8rem))]">
+            {state.tiles.map(tile => {
+              const row = Math.floor(tile.id / HANZI_MATCH_COLUMNS) + 1;
+              const column = (tile.id % HANZI_MATCH_COLUMNS) + 1;
+              if (state.removed.includes(tile.id)) {
+                return <div key={tile.id} aria-hidden="true" className="aspect-square rounded-lg border border-dashed bg-muted/60" />;
+              }
+              const selected = state.selected === tile.id;
+              const hinted = state.hinted.includes(tile.id);
+              return (
+                <button
+                  key={tile.id}
+                  type="button"
+                  aria-pressed={selected}
+                  aria-label={`${tile.char}${showPinyin ? ` ${tile.pinyin}` : ""}，第 ${row} 行第 ${column} 列${hinted ? "，提示" : ""}`}
+                  onClick={() => onSelect(tile.id)}
+                  className={cn(
+                    "flex aspect-square min-h-14 flex-col items-center justify-center rounded-lg border bg-card font-serif text-3xl leading-none transition-colors hover:border-primary hover:text-primary sm:text-4xl [@media(max-height:500px)_and_(orientation:landscape)]:text-2xl",
+                    hinted && "border-2 border-dashed border-primary",
+                    selected && "border-2 border-primary bg-accent text-accent-foreground",
+                  )}
+                >
+                  {showPinyin && <span className="mb-1 font-sans text-xs font-normal text-muted-foreground sm:text-sm">{tile.pinyin}</span>}
+                  <span>{tile.char}</span>
+                </button>
+              );
+            })}
+          </div>
 
-        <p role="status" aria-live="polite" className={cn("flex min-h-12 items-start gap-2 rounded-lg border px-3 py-2.5 text-sm", kind === "found" && "border-success/40 text-success", error && "border-destructive/40 text-destructive", !error && kind !== "found" && "text-muted-foreground")}>
-          <FeedbackIcon aria-hidden="true" className="mt-0.5 size-4" />
-          <span>{describeHanziMatchFeedback(state.feedback)}</span>
-        </p>
+          <div className="flex min-w-0 flex-col gap-5">
+            <p role="status" aria-live="polite" className={cn("flex min-h-12 items-start gap-2 rounded-lg border px-3 py-2.5 text-sm", kind === "found" && "border-success/40 text-success", error && "border-destructive/40 text-destructive", !error && kind !== "found" && "text-muted-foreground")}>
+              <FeedbackIcon aria-hidden="true" className="mt-0.5 size-4" />
+              <span>{describeHanziMatchFeedback(state.feedback)}</span>
+            </p>
 
-        <div className="flex flex-wrap gap-3">
-          <Button variant="outline" onClick={onHint}>
-            <Lightbulb data-icon="inline-start" aria-hidden="true" />
-            提示
-          </Button>
-          <Button variant="outline" onClick={onRestart}>
-            <RotateCcw data-icon="inline-start" aria-hidden="true" />
-            重新开始
-          </Button>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" onClick={onHint}>
+                <Lightbulb data-icon="inline-start" aria-hidden="true" />
+                提示
+              </Button>
+              <Button variant="outline" onClick={onRestart}>
+                <RotateCcw data-icon="inline-start" aria-hidden="true" />
+                重新开始
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground">每用一次提示少一颗星，每失误 3 次少一颗星，通关至少保留一颗星。</p>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground">每用一次提示少一颗星，每失误 3 次少一颗星，通关至少保留一颗星。</p>
       </div>
 
       <aside aria-labelledby="hanzi-match-found-title" className="study-panel flex min-w-0 flex-col gap-3 p-5 sm:p-6">

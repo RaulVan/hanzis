@@ -121,3 +121,31 @@ test("blocked storage still lets the level finish and says progress was not save
   await expect(page.getByText("进度未能保存")).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test("short landscape phone shows the whole board and feedback without scrolling during play", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 812, height: 375 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  const errors = trackErrors(page);
+  await page.goto("/games/hanzi-match/");
+  await page.getByRole("button", { name: /^第 1 关 看看天地/ }).tap();
+  await expect(page.getByRole("heading", { name: "第 1 关 · 看看天地" })).toBeFocused();
+  const layout = await page.evaluate(() => {
+    const header = document.querySelector(".site-header")!.getBoundingClientRect().bottom;
+    const board = document.querySelector('[aria-label="字卡棋盘"]')!.getBoundingClientRect();
+    const status = document.querySelector('[role="status"]')!.getBoundingClientRect();
+    const tiles = [...document.querySelectorAll('[aria-label="字卡棋盘"] button')].map(tile => tile.getBoundingClientRect().width);
+    return { header, boardTop: board.top, boardBottom: board.bottom, statusTop: status.top, statusBottom: status.bottom, minTile: Math.min(...tiles), height: innerHeight };
+  });
+  expect(layout.boardTop).toBeGreaterThanOrEqual(layout.header);
+  expect(layout.boardBottom).toBeLessThanOrEqual(layout.height);
+  expect(layout.statusTop).toBeGreaterThanOrEqual(layout.header);
+  expect(layout.statusBottom).toBeLessThanOrEqual(layout.height);
+  expect(layout.minTile).toBeGreaterThanOrEqual(44);
+  await expectNoHorizontalOverflow(page);
+  await tile(page, "火").tap();
+  await tile(page, "车").tap();
+  await expect(page.getByRole("status")).toContainText("找到了「火车」");
+  await page.screenshot({ path: "/tmp/hanzis-hanzi-match-landscape-812.png" });
+  expect(errors).toEqual([]);
+  await context.close();
+});
