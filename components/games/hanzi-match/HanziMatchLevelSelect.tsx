@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { forwardRef } from "react";
 import { Lock } from "lucide-react";
-import { HanziMatchStars } from "@/components/games/hanzi-match/HanziMatchStars";
+import { GameStars } from "@/components/games/GameStars";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
@@ -60,7 +60,7 @@ export const HanziMatchLevelSelect = forwardRef<HTMLHeadingElement, {
                 >
                   <span className="text-sm text-muted-foreground">第 {level.number} 关</span>
                   <span className="font-serif text-lg">{level.theme}</span>
-                  {record ? <HanziMatchStars stars={record.stars} /> : unlocked
+                  {record ? <GameStars stars={record.stars} /> : unlocked
                     ? <span className="text-sm font-normal text-muted-foreground">未完成</span>
                     : <span className="inline-flex items-center gap-1 text-sm font-normal text-muted-foreground"><Lock aria-hidden="true" />完成上一关后解锁</span>}
                 </Button>
