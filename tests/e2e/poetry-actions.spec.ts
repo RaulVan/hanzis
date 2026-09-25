@@ -10,6 +10,7 @@ for (const width of [1440, 375]) test(`imported poems offer single-character loo
   await expect(character).toHaveText("岱");
   await expect(article.getByRole("link", { name: "查看汉字笔顺" })).toHaveCount(0);
   await character.click();
+  await page.getByRole("dialog", { name: "“岱”的字典" }).getByRole("link", { name: "显示详细" }).click();
   await expect(page).toHaveURL(/\/dictionary\/\?q=%E5%B2%B1/);
   await expect(page.getByRole("article", { name: "岱的释义" })).toBeVisible();
   await page.goBack();
@@ -17,6 +18,7 @@ for (const width of [1440, 375]) test(`imported poems offer single-character loo
   await expect(character.locator("rt")).toHaveText("dài");
   await character.focus();
   await page.keyboard.press("Enter");
+  await page.getByRole("dialog", { name: "“岱”的字典" }).getByRole("link", { name: "显示详细" }).click();
   await expect(page).toHaveURL(/\/dictionary\/\?q=%E5%B2%B1/);
   await page.goBack();
   await article.getByRole("link", { name: "打开作品链接" }).click();

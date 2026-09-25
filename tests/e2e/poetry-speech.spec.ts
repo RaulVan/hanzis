@@ -63,7 +63,12 @@ for (const width of [1440, 375]) test(`poetry read progress uses solid theme red
   await expect.poll(() => page.evaluate(() => window.speechTest.texts[0])).toBe("岱宗夫如何？");
   await page.evaluate(() => window.speechTest.boundary(0, 6, "sentence"));
   await expect(verses.locator('[data-read="true"]')).toHaveCount(0);
+  await verses.locator('a[data-poetry-character="岱"]').click();
+  await expect(page.getByRole("dialog", { name: "“岱”的字典" })).toBeVisible();
   await page.evaluate(() => window.speechTest.boundary(0, 1));
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(article.getByRole("button", { name: "停止朗读" })).toBeVisible();
   await expect(verses.locator('[data-read="true"]')).toHaveCount(1);
   await expect(verses.locator('[data-read="true"] ruby')).toHaveCSS("color", red);
   await expect(verses.locator('[data-read="true"] rt')).toHaveCSS("color", red);

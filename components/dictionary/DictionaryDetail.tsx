@@ -13,14 +13,16 @@ import { ReadAloudButton } from "@/components/learning/ReadAloudButton";
 import { RevisedDefinition } from "./RevisedDefinition";
 import { XinhuaDefinition } from "./XinhuaDefinition";
 import { MoeDefinition } from "./MoeDefinition";
+import { DictionaryPreview } from "./DictionaryPreview";
 
-export function DictionaryDetail({ term }: { term: string }) {
+export function DictionaryDetail({ term, preview = false }: { term: string; preview?: boolean }) {
   const [entry, setEntry] = useState<DictionaryEntry | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
   useEffect(() => { let active = true; getDictionaryEntry(term).then(value => { if (active) { setEntry(value); setError(null); } }).catch(() => { if (active) setError("释义数据暂时无法读取，请检查连接后重试。"); }); return () => { active = false; }; }, [term, revision]);
   if (error) return <Alert variant="destructive"><AlertDescription>{error}<Button variant="outline" onClick={() => { setError(null); setRevision(value => value + 1); }}>重新加载</Button></AlertDescription></Alert>;
   if (!entry) return <div className="study-panel flex flex-col gap-5 p-8" role="status" aria-label="正在加载释义"><Skeleton className="size-28" /><Skeleton className="h-9 w-2/3" /><Skeleton className="h-64 w-full" /></div>;
+  if (preview) return <DictionaryPreview entry={entry} onRetry={() => { setEntry(null); setRevision(value => value + 1); }} />;
   const info = entry.character;
   const characters = getUniqueCharacters(term);
   return <article className="study-panel flex min-w-0 flex-col gap-6 p-5 sm:p-8" aria-label={`${term}的释义`}>

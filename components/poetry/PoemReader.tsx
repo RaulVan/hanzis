@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Bookmark, BookOpen, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
@@ -20,10 +21,14 @@ import { usePoemPinyin } from "./usePoemPinyin";
 import { usePoetryPinyinPreference } from "@/lib/poetryPinyinPreference";
 import { RecitationPractice } from "./RecitationPractice";
 
+const PoemDictionaryDialog = dynamic(() => import("./PoemDictionaryDialog").then(module => module.PoemDictionaryDialog), { ssr: false });
+
 export function PoemReader({ poem, standalone = false }: { poem: Poem; standalone?: boolean }) {
   const [showPinyin, setShowPinyin] = usePoetryPinyinPreference(!poem.haitang);
   const annotation = usePoemPinyin(poem, showPinyin);
   const [practice, setPractice] = useState(false);
+  const [lookup, setLookup] = useState<{ character: string; trigger: HTMLElement } | null>(null);
+  const selectCharacter = useCallback((character: string, trigger: HTMLElement) => setLookup({ character, trigger }), []);
   const [readUntil, setReadUntil] = useState(0);
   const { favorites, toggle } = usePoetryFavorites();
   const saved = favorites.includes(poem.slug);
@@ -42,11 +47,12 @@ export function PoemReader({ poem, standalone = false }: { poem: Poem; standalon
     {poem.haitang && <p className="text-xs leading-6 text-muted-foreground">自动注音，部分多音字待校对；标注本调，不合并儿化音。{annotation.status === "ready" && annotation.entry.missing > 0 && ` 本篇有 ${annotation.entry.missing} 个字暂缺读音，保留原字显示。`}</p>}
     {poem.haitang && showPinyin && annotation.status === "loading" && <p role="status" className="text-sm text-muted-foreground">正在加载拼音，原文仍可阅读…</p>}
     {poem.haitang && showPinyin && annotation.status === "error" && <div role="status" className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">拼音暂时无法加载，原文仍可阅读。<Button variant="outline" onClick={annotation.retry}>重试拼音</Button></div>}
-    <PoemVerses readUntil={readUntil} poem={poem} readings={poem.haitang ? annotation.entry?.lines ?? [] : poem.lines.map(line => line.pinyin)} showPinyin={showPinyin && (!poem.haitang || annotation.status === "ready")} />
+    <PoemVerses onCharacterSelect={selectCharacter} readUntil={readUntil} poem={poem} readings={poem.haitang ? annotation.entry?.lines ?? [] : poem.lines.map(line => line.pinyin)} showPinyin={showPinyin && (!poem.haitang || annotation.status === "ready")} />
     <Separator />
     {poem.haitang ? <HaitangNotes work={poem.haitang} /> : <section className="flex flex-col gap-3"><h3 className="section-title">诗意与注释</h3><p className="body-copy">{poem.translation}</p><dl className="flex flex-col gap-2 text-sm leading-7">{poem.notes.map(note => <div key={note.word}><dt className="inline font-semibold">{note.word}：</dt><dd className="inline text-muted-foreground">{note.meaning}</dd></div>)}</dl></section>}
     <div className="flex flex-wrap items-center justify-center gap-3"><PoemWorksheetAction text={text} />{!standalone && <Button variant="ghost" asChild><Link href={poem.haitang ? `/poetry/read/?poem=${poem.slug}` : `/poetry/${poem.slug}/`}>{poem.haitang ? "打开作品链接" : "独立阅读"}<ArrowUpRight aria-hidden="true" /></Link></Button>}</div>
     <p className="text-center text-xs leading-6 text-muted-foreground">{poem.haitang ? `点击诗中的汉字可查字典；${standalone ? "可复制当前页面地址分享这篇作品。" : "可通过“打开作品链接”进入独立阅读页。"}` : <>注音标本调，朗读中可能有变调；点击诗中的汉字可查字典。<br />原文采用常见简体版本，译文与注释为学习提示。</>}{!canPractice && <><br />本篇段落较长，暂不支持逐句默写，可选段生成字帖。</>}</p>
+    {lookup && <PoemDictionaryDialog character={lookup.character} trigger={lookup.trigger} onClose={() => setLookup(null)} />}
     {practice && <RecitationPractice poem={practicePoem} onClose={() => setPractice(false)} />}
   </article>;
 }
