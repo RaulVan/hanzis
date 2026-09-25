@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { forwardRef } from "react";
 import { ArrowRight, CircleAlert, RotateCcw, Trophy } from "lucide-react";
-import { HanziMatchStars } from "@/components/games/hanzi-match/HanziMatchStars";
+import { GameStars } from "@/components/games/GameStars";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +29,7 @@ export const HanziMatchResult = forwardRef<HTMLHeadingElement, {
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-2 text-center">
-            <HanziMatchStars stars={completion.stars} className="[&_svg]:size-7" />
+            <GameStars stars={completion.stars} className="[&_svg]:size-7" />
             <p className="text-sm text-muted-foreground">失误 {completion.mistakes} 次 · 提示 {completion.hints} 次</p>
           </div>
           {!persisted && (

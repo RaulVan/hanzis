@@ -13,7 +13,7 @@ const navItems = [
   { href: "/stroke/", label: "汉字笔顺" },
   { href: "/poetry/", label: "古诗词" },
   { href: "/dictionary/", label: "中文字典" },
-  { href: "/games/hanzi-match/", label: "汉字游戏" },
+  { href: "/games/", label: "汉字游戏" },
 ];
 
 export function Navigation() {

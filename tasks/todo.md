@@ -275,3 +275,26 @@
 - 探索测试另覆盖纯键盘通关（Tab + Enter/Space，焦点进入标题与结果标题）、200% 根字号、深色偏好与减少动效：无溢出、字卡无裁切。
 - 验证：`npm run check`（55 项单测）、生产构建、`npm run release:verify`（13,149 文件）、完整 Playwright 47 项通过。截图已查看：`/tmp/hm-board-fixed.png`、`/tmp/hanzis-hanzi-match-landscape-812.png`、`/tmp/hanzis-hanzi-match-play-375.png`、`/tmp/hanzis-hanzi-match-play-1440.png`。
 - 未执行：推送与部署本次修复；WebKit/Safari 与真机未验证。
+
+## 2026-09-25：继续开发「拼音快答」与「飞花令 · 诗句填空」
+
+- 范围：按 `docs/hanzi-game-research.md` 第 8 节顺序，新增 `/games/pinyin-quiz/`（P0）与 `/games/feihua/`（P1），并新增 `/games/` 游戏目录，导航指向目录。沿用汉字词语消除的设计与本地进度约定；不引入音频、广告、账号；仅本地提交。
+- 拼音快答：看字 / 词输入拼音；不标调（默认）与标调（数字或调号皆可）；90 秒、180 秒与不限时 20 题（满足可关闭时限）；ü 可输入 v，j/q/x/y 后 u/v 等价，轻声可省略或写 0/5；错误分“声调不对 / 声母对了 / 拼写不对”；跳过显示答案；结果页回看答错与跳过项；本地最佳成绩。题源复用词语消除 120 词及其中非多音、非轻声的单字，读音由单测与 pinyin-pro 校验。
+- 飞花令：选关键字与难度，每轮 8 句含关键字的名句，关键字高亮，挖空 1 字（入门）或 2 字（进阶）四选一；错选说明并移除该选项；答完展示整句、篇名、作者与读全诗链接；结果星级与本地最佳。题源由脚本从已导入的海棠快照抽取：入门取“小学古诗词”，进阶取唐诗三百首、千家诗、初中古诗词的五 / 七言整句，生成可复现静态题库并校验。
+- 成功标准：新增单测、lint、类型、构建、静态校验通过；Playwright 覆盖两游戏桌面 / 手机 / 横屏、键盘、错误反馈、结果与刷新保留、axe 无违规；既有回归通过。
+- [x] 共用：目录页、导航、sitemap、星级组件与本地存储工厂。
+- [x] 拼音快答：题源、判定逻辑、界面、测试。
+- [x] 飞花令：题库生成脚本、出题逻辑、界面、测试。
+- [x] 全量验证、文档与本地提交。
+
+- 共用：`hooks/createLocalStore.ts` 统一本机存储与内存降级（词语消除改用它，行为不变）；`lib/seededRandom.ts` 统一确定性洗牌（重构前后 15 关 × 3 局棋盘逐字相同）；`lib/gameStars.ts` 与 `components/games/GameStars.tsx` 统一星级；`/games/` 目录页，导航指向目录；sitemap 新增 3 页（SEO 计数 16 + 30）；关于页、README、Design.md 同步。
+- 拼音快答：题源复用 120 词，以及其中只有一个读音、且不读轻声的 132 个单字（`data/pinyinQuizItems.ts`，单测逐字与 pinyin-pro 核对）。`lib/pinyinQuiz.ts` 判定：忽略空格、大小写与隔音符；ü 可写作 v、u:，j/q/x/y 后 u/v 等价；标调模式接受数字或调号，轻声可省略或写 0/5；空输入与中文字符不计错。反馈分声调不对 / 声母对了 / 拼写不对。限时轮次按截止时间计算，时间到自动结算；各设置分别保存最好成绩与最长连对。
+- 飞花令：`scripts/prepare-feihua.ts` 加 `npm run feihua:data`，从校验过 SHA-256 的海棠快照生成 `data/feihuaLines.json`（728 句，约 92 KB，gzip 后约 20 KB）。入门 12 字取自“小学古诗词”全部相关句；进阶取唐诗三百首、千家诗、初中古诗词，每字前 48 句，且不含入门已用作品。排除近现代作品（最初生成时有 2 篇 9 句）。单测确认提交的题库与脚本重新生成的结果一致。出题时不挖关键字，干扰字优先取同一关键字其他诗句同位置的字，并排除本句已有的字、以及替换后恰好拼成题库中另一句的字。
+- 检查：`npm run check` 通过 ESLint、TypeScript 与 67 项单测（新增拼音快答 7 项、飞花令 5 项）；生产构建与 `npm run release:verify` 通过（13,164 个文件、50 个 HTML）；完整 Playwright 51 项通过。新增用例：
+  - 拼音快答桌面：目录与导航、中文输入提示、三类错误反馈、跳过、20 题结算、刷新后最好成绩。
+  - 拼音快答手机：用假时钟快进 90 秒，确认自动结算与计时显示。
+  - 飞花令桌面：错选划掉后焦点留在候选、全程键盘通关、读全诗页出现原句、刷新后星级。
+  - 飞花令手机：进阶七言单行、两个空按顺序填。
+  - 三个页面的 axe 检查均无违规。
+- 截图已查看：`/tmp/hanzis-pinyin-quiz-play-1440.png`、`/tmp/hanzis-pinyin-quiz-play-375.png`、`/tmp/hanzis-pinyin-quiz-result-1440.png`、`/tmp/hm-quiz-timer.png`、`/tmp/hanzis-feihua-play-1440.png`、`/tmp/hanzis-feihua-play-375.png`、`/tmp/hanzis-feihua-result-375.png`、`/tmp/hanzis-games-hub-1440.png`、`/tmp/hanzis-games-hub-375.png`。发现的问题：计时条原用原生 progress，Chromium 下显示为绿色，已改为 primary 色细条。
+- 未执行：推送与部署；真实中文输入法、真机与 WebKit 未验证。飞花令自由输入、主题档与人机对句未做，已写入调研文档。

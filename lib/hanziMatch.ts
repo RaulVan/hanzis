@@ -1,7 +1,8 @@
 import type { HanziMatchLevel, HanziMatchWord } from "@/data/hanziMatchLevels";
+import { getGameStars } from "@/lib/gameStars";
+import { hashString, shuffleWithSeed } from "@/lib/seededRandom";
 
 export const HANZI_MATCH_COLUMNS = 4;
-export const MAX_STARS = 3;
 
 export interface HanziMatchTile {
   id: number;
@@ -33,23 +34,6 @@ export interface HanziMatchState {
   feedback: HanziMatchFeedback;
 }
 
-function mulberry32(seed: number): () => number {
-  let value = seed >>> 0;
-  return () => {
-    value = (value + 0x6d2b79f5) >>> 0;
-    let next = value;
-    next = Math.imul(next ^ (next >>> 15), next | 1);
-    next ^= next + Math.imul(next ^ (next >>> 7), next | 61);
-    return ((next ^ (next >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function hashString(value: string): number {
-  let hash = 2166136261;
-  for (const char of value) hash = Math.imul(hash ^ char.codePointAt(0)!, 16777619);
-  return hash >>> 0;
-}
-
 function syllables(pinyin: string): string[] {
   return pinyin.split(" ");
 }
@@ -60,14 +44,9 @@ export function createHanziMatchState(level: HanziMatchLevel, attempt: number): 
     const readings = syllables(word.pinyin);
     return [...word.word].map((char, index) => ({ char, pinyin: readings[index] }));
   });
-  const random = mulberry32(hashString(`${level.id}:${attempt}`));
-  for (let index = dealt.length - 1; index > 0; index -= 1) {
-    const swap = Math.floor(random() * (index + 1));
-    [dealt[index], dealt[swap]] = [dealt[swap], dealt[index]];
-  }
   return {
     levelId: level.id,
-    tiles: dealt.map((tile, id) => ({ id, ...tile })),
+    tiles: shuffleWithSeed(dealt, hashString(`${level.id}:${attempt}`)).map((tile, id) => ({ id, ...tile })),
     removed: [],
     found: [],
     selected: null,
@@ -161,9 +140,8 @@ export function applyHanziMatchHint(level: HanziMatchLevel, state: HanziMatchSta
   };
 }
 
-/** Each hint costs one star and every three mistakes cost one star; a finished level keeps at least one. */
 export function getHanziMatchStars(mistakes: number, hints: number): number {
-  return Math.max(1, MAX_STARS - hints - Math.floor(mistakes / 3));
+  return getGameStars(mistakes, hints);
 }
 
 /** Beginner tiles may show pinyin only when every copy of a character on the board has the same reading. */

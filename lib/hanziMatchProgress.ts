@@ -1,5 +1,5 @@
 import { HANZI_MATCH_CONTENT_VERSION, hanziMatchLevels, type HanziMatchLevel } from "@/data/hanziMatchLevels";
-import { MAX_STARS } from "@/lib/hanziMatch";
+import { MAX_STARS } from "@/lib/gameStars";
 
 export const HANZI_MATCH_PROGRESS_KEY = "hanzis-games-hanzi-match-v1";
 export const MAX_REVIEW_WORDS = 24;
