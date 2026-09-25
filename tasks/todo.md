@@ -233,3 +233,16 @@
 - 验证：`npm run check`（ESLint、TypeScript、42 项单测）、生产构建与静态导出校验通过（13,141 文件、46 个 HTML、371,789,538 字节）。相关 Playwright 共 24 个场景通过，覆盖桌面/手机、精选/扩展、无障碍、详细跳转、完整/部分请求失败与重试、缺失释义、迟到响应及既有字典/SEO/诗词操作。首轮发现关闭弹窗后鼠标悬停导致已读文字颜色变化，补充已读 hover 主题色后，弹窗与朗读 9 场景复跑全部通过。
 - Browser plugin not available，使用项目 Playwright；已查看 `/tmp/hanzis-poem-dictionary-curated-1440.png` 与 `/tmp/hanzis-poem-dictionary-imported-375.png`，确认自适应尺寸、正文滚动和固定操作栏。朗读连续性使用受控语音事件验证，真实设备音频未验收。
 - 仅本地提交，未推送部署；保留此前游戏调研文件和生产发布等既有任务记录的未提交改动。
+
+## 2026-09-25：汉字游戏竞品扩展调研
+
+- 范围：在 09-19 GitHub 调研基础上，跨搜索引擎、X、App Store、Google Play、Chrome Web Store 与 2025 年后新增 GitHub 仓库补充竞品，受众覆盖母语儿童与对外汉语学习者；只读调研，不改业务代码。
+- [x] 六类来源并行检索并筛选候选，原始抓取记录落在 `/tmp/hanzi-game-competitors/`。
+- [x] 逐条核实商店页、README、许可证与活跃度字段，标记未获取项。
+- [x] 选 8 项跨类型竞品按统一六维度深度拆解。
+- [x] 更新 `docs/hanzi-game-research.md`（172 → 356 行，未超 800 行，未拆分）：新增按来源分组的候选总览、深度拆解、借鉴模式、自研优先级调整、授权与证据边界。
+- [x] 本地提交，不推送。
+
+- 入库：GitHub 原有 8 项保留；新增 App Store 12 项、Google Play 4 项、Chrome Web Store 3 项、独立网页 8 项、GitHub 新仓库 7 项。深度拆解：洪恩识字+拼音、悟空识字、Dobest 成语消消消+成语接龙、西窗烛、飞花令 App、每日成语 Wordle 网页群（wordlechinese / recatools / cnwordle）、HelloChinese（附 Skritter）、dhjz/hanzi-study。
+- 结论调整：飞花令 / 诗句填空提升为 P1 首位（现有 11,407 篇诗词与自动拼音可直接复用，玩法经西窗烛与多个 2026 网页项目验证）；P0 仍为汉字词语消除，新增“错题待重练”“题面不泄露答案”“无广告/追踪/付费墙”验收项。
+- 证据边界：商店评分、评论数、版本与价格为抓取当日页面值；X 站内检索返回 0 结果且正文需登录，未获取一手数据；Google Play 部分页面无评分数值，Hanzi.gg 返回 500，Skritter 主页 404 改取评论子页；未安装或付费体验任何 App。59 个外链 GET 检查均可访问。
