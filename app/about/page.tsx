@@ -18,6 +18,7 @@ const helpItems = [
   { href: "/stroke/", title: "汉字笔顺", text: "输入一个汉字，播放笔顺动画、逐笔观察并在画布中跟写。" },
   { href: "/poetry/", title: "古诗词", text: "搜索唐宋诗词、切换拼音、朗读和背诵，也可以将整首诗带入字帖。" },
   { href: "/dictionary/", title: "中文字典", text: "按汉字、词语、拼音、部首或笔画查询，再前往字帖和笔顺练习。" },
+  { href: "/games/hanzi-match/", title: "汉字词语消除", text: "在字卡中按先后顺序点出二字词语，通关后查看拼音、意思和例句，进度只保存在本机。" },
 ];
 
 export default function AboutPage() {
@@ -39,6 +40,7 @@ export default function AboutPage() {
         <div><h3 className="font-semibold text-foreground">教育部《重編國語辭典修訂本》</h3><p>通过 <a href="https://github.com/g0v/moedict-data/tree/a6dc997417507eb510fc29822bc514de2c92728c" className="underline underline-offset-4">g0v/moedict-data</a> 收录 {sources[0].entries.toLocaleString("zh-CN")} 条资料，保留繁体原文、异读、例句与引文。上游标示为中華民國110年11月臺灣學術網路第六版，依 CC BY-ND 3.0 TW 使用。moedict-process 为相关处理工具，不另算一个来源。</p></div>
         <div><h3 className="font-semibold text-foreground">第三方整理字典 · chinese-xinhua</h3><p>来自 <a href="https://github.com/pwxcoo/chinese-xinhua/tree/fe6d6c2e8baa82187f4c96bbe042e43f96c05666" className="underline underline-offset-4">pwxcoo/chinese-xinhua</a>：{sources[1].entries.toLocaleString("zh-CN")} 条汉字、{sources[2].entries.toLocaleString("zh-CN")} 条词语与 {sources[3].entries.toLocaleString("zh-CN")} 条成语记录，包含同字异读与重复词头。这是网络收集整理资料，非官方《新华字典》版本；仓库附 MIT License，原始内容权利归属未逐条核验。各来源分别显示，便于对照。</p></div>
         <div><h3 className="font-semibold text-foreground">诗词与注音</h3><p>本站提供 30 首含拼音的校对诗词，以及 {haitang.counts.works.toLocaleString("zh-CN")} 篇作品（含诗、词、文、曲、赋）。扩展作品的拼音由 pinyin-pro 自动生成，并优先采用已有校对诗句；部分多音字待校对，未识别的字不注音。译文或注解可能缺失；注音标本调，实际朗读可能变调。诗词来源：<a href="https://github.com/chinese-poetry/chinese-poetry" className="underline underline-offset-4">chinese-poetry/chinese-poetry</a>。</p></div>
+        <div><h3 className="font-semibold text-foreground">汉字词语消除题库</h3><p>15 关共 120 个常用二字词及其释义、例句由汉字网编写，读音与 pinyin-pro 交叉校验，轻声等差异逐条人工确认；释义与例句尚未完成人工审校，发现问题欢迎反馈。</p></div>
       </CardContent></Card>
     </section>
 
