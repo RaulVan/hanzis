@@ -16,6 +16,7 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
   onExit: () => void;
 }) {
   const question = currentFeihuaQuestion(state)!;
+  const mark = question.highlight ?? state.key;
   const solved = isFeihuaLineSolved(state);
   const last = state.index === state.questions.length - 1;
   const chars = [...question.line.text];
@@ -64,7 +65,7 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
               key={index}
               className={cn(
                 "flex size-9 items-center justify-center rounded-md font-serif text-2xl min-[400px]:size-11 min-[400px]:text-3xl sm:size-14 sm:text-4xl",
-                char === state.key && "font-semibold text-primary",
+                char === mark && "font-semibold text-primary",
                 blank !== -1 && "border",
                 hidden && "border-dashed bg-muted/60",
                 active && "border-2 border-primary",
@@ -113,7 +114,7 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
 
       <p role="status" aria-live="polite" className={cn("flex min-h-12 items-start gap-2 rounded-lg border px-3 py-2.5 text-sm", (kind === "solved" || kind === "correct") && "border-success/40 text-success", kind === "wrong" && "border-destructive/40 text-destructive", kind === "idle" && "text-muted-foreground")}>
         <FeedbackIcon aria-hidden="true" className="mt-0.5 size-4" />
-        <span>{describeFeihuaFeedback(state.feedback, state.key)}</span>
+        <span>{describeFeihuaFeedback(state.feedback, mark)}</span>
       </p>
     </section>
   );
