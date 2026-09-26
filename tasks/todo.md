@@ -333,3 +333,6 @@
 - 检查：`npm run check` 通过 ESLint、TypeScript 与 84 项单测。`npm run release:verify` 通过（13,179 个文件、53 个 HTML）。Playwright 59 项中 58 项一次通过；诗词字典弹窗在 375px 的一次失败是 `ERR_NETWORK_CHANGED`，单独重跑通过。新增用例覆盖飞花令主题与未收录对句、每日成语的未收录、四维格子、释义、分享不含答案，以及手机宽度和 44px 触控。
 - 截图已查看：`/tmp/hanzis-feihua-recite-375.png`、`/tmp/hanzis-chengyu-wordle-375.png`。开发服务器上核对了练习题的“词库里没有这个成语”、看释义，以及飞花令主题列表。
 - 未执行：推送与部署；真机与 WebKit 未验证。听音辨字仍等待录音书面授权归档。
+
+- [x] 提示用完仍未猜对时显示「显示答案」。点下去结束这一局并写出成语，不算答对，不增加连续天数。
+- 检查：`npx tsx --test tests/chengyuWordle.test.ts` 6 项通过；`npx tsc --noEmit` 通过。开发服务器练习题上先确认提示未用完时没有该按钮，用完释义和四个声母后出现，点击后状态为「答案是盖棺论定，gài guān lùn dìng。」，结果标题为「答案是盖棺论定」。375px 无横向溢出。
