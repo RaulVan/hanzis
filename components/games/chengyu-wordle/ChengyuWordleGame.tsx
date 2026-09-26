@@ -13,6 +13,7 @@ import {
   createChengyuWordleState,
   indexChengyuDictionary,
   isChengyuWordleDate,
+  revealChengyuAnswer,
   revealChengyuInitial,
   showChengyuExplanation,
   submitChengyuGuess,
@@ -26,7 +27,15 @@ const data = wordleJson as ChengyuWordleData;
 function restoreRound(state: ChengyuWordleState, round: ChengyuWordleRound, dictionary: ReturnType<typeof indexChengyuDictionary>) {
   let next = state;
   for (const word of round.guesses) next = submitChengyuGuess(next, word, dictionary);
-  return { ...next, hints: round.hints, explanationShown: round.explanationShown, revealed: round.revealed };
+  return {
+    ...next,
+    hints: round.hints,
+    explanationShown: round.explanationShown,
+    revealed: round.revealed,
+    gaveUp: round.gaveUp,
+    done: next.done || round.gaveUp,
+    feedback: round.gaveUp && !next.won ? { kind: "loss" as const, text: `答案是${next.answer.word}，${next.answer.pinyin}。` } : next.feedback,
+  };
 }
 
 export function ChengyuWordleGame() {
@@ -64,6 +73,7 @@ export function ChengyuWordleGame() {
       explanationShown: next.explanationShown,
       revealed: [...next.revealed],
       won: next.won,
+      gaveUp: next.gaveUp,
     };
     const persisted = next.practice ? true : save(recordChengyuWordleRound(read(), round, chengyuWordleDate()));
     setSession({ key: puzzleKey, state: next, persisted });
@@ -77,6 +87,7 @@ export function ChengyuWordleGame() {
         onSubmit={input => commit(submitChengyuGuess(active.state, input, dictionary))}
         onExplanation={() => commit(showChengyuExplanation(active.state))}
         onInitial={() => commit(revealChengyuInitial(active.state))}
+        onRevealAnswer={() => commit(revealChengyuAnswer(active.state))}
         onPractice={() => router.push(`/games/chengyu-wordle/?practice=${Date.now().toString(36)}`)}
         onToday={() => router.push("/games/chengyu-wordle/")}
       />

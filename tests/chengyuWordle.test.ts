@@ -16,6 +16,9 @@ import {
   getChengyuWordleStars,
   indexChengyuDictionary,
   isChengyuWordleDate,
+  chengyuHintsExhausted,
+  nextChengyuInitialHint,
+  revealChengyuAnswer,
   revealChengyuInitial,
   shareChengyuWordle,
   showChengyuExplanation,
@@ -137,7 +140,7 @@ test("six misses reveal the answer, and a win keeps the streak on the calendar d
   const won = submitChengyuGuess(createChengyuWordleState(answer, "2026-09-26", false), answer.word, dictionary);
   assert.equal(won.won, true);
   assert.equal(getChengyuWordleStars(won), 3);
-  const round = { date: "2026-09-25", guesses: [answer.word], hints: 0, explanationShown: false, revealed: [], won: true };
+  const round = { date: "2026-09-25", guesses: [answer.word], hints: 0, explanationShown: false, revealed: [], won: true, gaveUp: false };
   let progress = recordChengyuWordleRound(emptyChengyuWordleProgress, round, "2026-09-25");
   progress = recordChengyuWordleRound(progress, { ...round, date: "2026-09-26" }, "2026-09-26");
   assert.equal(progress.streak, 2);
@@ -147,4 +150,34 @@ test("six misses reveal the answer, and a win keeps the streak on the calendar d
   assert.equal(progress.streak, 2);
   assert.equal(progress.lastSolved, "2026-09-26");
   assert.equal(parseChengyuWordleProgress("{").streak, 0);
+});
+
+test("showing the answer waits until every hint is used and does not count as a win", () => {
+  const dictionary = indexChengyuDictionary(data.dictionary);
+  const answer = data.answers[0];
+  const wrong = data.dictionary.find(item => item.word !== answer.word)!;
+  let state = submitChengyuGuess(createChengyuWordleState(answer, "2026-09-26", false), wrong.word, dictionary);
+  assert.equal(chengyuHintsExhausted(state), false);
+  assert.equal(revealChengyuAnswer(state), state);
+  state = showChengyuExplanation(state);
+  while (nextChengyuInitialHint(state) !== undefined) state = revealChengyuInitial(state);
+  assert.equal(chengyuHintsExhausted(state), true);
+  const shown = revealChengyuAnswer(state);
+  assert.equal(shown.gaveUp, true);
+  assert.equal(shown.done, true);
+  assert.equal(shown.won, false);
+  assert.match(shown.feedback.text, new RegExp(answer.word));
+  assert.equal(revealChengyuAnswer(shown), shown);
+  assert.equal(shareChengyuWordle(shown).includes(answer.word), false);
+  const saved = recordChengyuWordleRound(emptyChengyuWordleProgress, {
+    date: "2026-09-26",
+    guesses: shown.guesses.map(guess => guess.word),
+    hints: shown.hints,
+    explanationShown: true,
+    revealed: [...shown.revealed],
+    won: false,
+    gaveUp: true,
+  }, "2026-09-26");
+  assert.equal(saved.streak, 0);
+  assert.equal(parseChengyuWordleProgress(JSON.stringify({ ...saved, rounds: { "2026-09-26": { ...saved.rounds["2026-09-26"], gaveUp: undefined } } })).rounds["2026-09-26"].gaveUp, false);
 });

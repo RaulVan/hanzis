@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   CHENGYU_WORDLE_TRIES,
+  chengyuHintsExhausted,
   describeChengyuMark,
   initialLabel,
+  nextChengyuInitialHint,
   type ChengyuMark,
   type ChengyuWordleState,
 } from "@/lib/chengyuWordle";
@@ -20,12 +22,13 @@ const markClass: Record<ChengyuMark, string> = {
   absent: "border-border text-muted-foreground",
 };
 
-export function ChengyuWordlePlay({ state, streak, onSubmit, onExplanation, onInitial, onPractice, onToday }: {
+export function ChengyuWordlePlay({ state, streak, onSubmit, onExplanation, onInitial, onRevealAnswer, onPractice, onToday }: {
   state: ChengyuWordleState;
   streak: number;
   onSubmit: (input: string) => void;
   onExplanation: () => void;
   onInitial: () => void;
+  onRevealAnswer: () => void;
   onPractice: () => void;
   onToday: () => void;
 }) {
@@ -129,7 +132,8 @@ export function ChengyuWordlePlay({ state, streak, onSubmit, onExplanation, onIn
           </form>
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" onClick={onExplanation} disabled={state.explanationShown}>{state.explanationShown ? "释义已显示" : "看释义"}</Button>
-            <Button type="button" variant="outline" onClick={onInitial}>看一个声母</Button>
+            <Button type="button" variant="outline" onClick={onInitial} disabled={nextChengyuInitialHint(state) === undefined}>{nextChengyuInitialHint(state) === undefined ? "声母已提示" : "看一个声母"}</Button>
+            {chengyuHintsExhausted(state) && <Button type="button" onClick={onRevealAnswer}>显示答案</Button>}
           </div>
         </>
       )}

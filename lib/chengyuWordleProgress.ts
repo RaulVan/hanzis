@@ -9,6 +9,7 @@ export interface ChengyuWordleRound {
   explanationShown: boolean;
   revealed: number[];
   won: boolean;
+  gaveUp: boolean;
 }
 
 export interface ChengyuWordleProgress {
@@ -34,7 +35,7 @@ function parseRound(date: string, value: unknown): ChengyuWordleRound | null {
   if (!Number.isInteger(round.hints) || (round.hints ?? -1) < 0 || (round.hints ?? 0) > 8) return null;
   if (typeof round.explanationShown !== "boolean" || typeof round.won !== "boolean") return null;
   if (!Array.isArray(round.revealed) || round.revealed.some(index => !Number.isInteger(index) || index < 0 || index > 3)) return null;
-  return { date, guesses: [...round.guesses], hints: round.hints ?? 0, explanationShown: round.explanationShown, revealed: [...round.revealed], won: round.won };
+  return { date, guesses: [...round.guesses], hints: round.hints ?? 0, explanationShown: round.explanationShown, revealed: [...round.revealed], won: round.won, gaveUp: round.gaveUp === true };
 }
 
 export function parseChengyuWordleProgress(raw: string | null): ChengyuWordleProgress {

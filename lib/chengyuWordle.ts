@@ -31,6 +31,8 @@ export interface ChengyuWordleState {
   hints: number;
   explanationShown: boolean;
   revealed: readonly number[];
+  /** The player asked to see the answer after every hint. */
+  gaveUp: boolean;
   done: boolean;
   won: boolean;
   feedback: ChengyuWordleFeedback;
@@ -127,6 +129,7 @@ export function createChengyuWordleState(answer: ChengyuWordleAnswer, date: stri
     hints: 0,
     explanationShown: false,
     revealed: [],
+    gaveUp: false,
     done: false,
     won: false,
     feedback: { kind: "idle", text: practice ? "练习题。猜一个四字成语，共 6 次。" : `${date} 的成语。猜一个四字成语，共 6 次。` },
@@ -162,11 +165,20 @@ export function showChengyuExplanation(state: ChengyuWordleState): ChengyuWordle
   return { ...state, hints: state.hints + 1, explanationShown: true, feedback: { kind: "guess", text: `释义：${state.answer.explanation}` } };
 }
 
-export function revealChengyuInitial(state: ChengyuWordleState): ChengyuWordleState {
-  if (state.done) return state;
+export function nextChengyuInitialHint(state: ChengyuWordleState): number | undefined {
   const exact = new Set<number>();
   for (const guess of state.guesses) guess.marks.forEach((mark, index) => { if (mark.initial === "exact") exact.add(index); });
-  const next = [0, 1, 2, 3].find(index => !exact.has(index) && !state.revealed.includes(index));
+  return [0, 1, 2, 3].find(index => !exact.has(index) && !state.revealed.includes(index));
+}
+
+/** True when the explanation and every remaining initial are already shown, and the answer is still open. */
+export function chengyuHintsExhausted(state: ChengyuWordleState): boolean {
+  return state.explanationShown && nextChengyuInitialHint(state) === undefined && !state.done && !state.won;
+}
+
+export function revealChengyuInitial(state: ChengyuWordleState): ChengyuWordleState {
+  if (state.done) return state;
+  const next = nextChengyuInitialHint(state);
   if (next === undefined) return state;
   const label = initialLabel(state.syllables[next].initial);
   return {
@@ -174,6 +186,17 @@ export function revealChengyuInitial(state: ChengyuWordleState): ChengyuWordleSt
     hints: state.hints + 1,
     revealed: [...state.revealed, next],
     feedback: { kind: "guess", text: `第 ${next + 1} 个字的声母是${label}。` },
+  };
+}
+
+export function revealChengyuAnswer(state: ChengyuWordleState): ChengyuWordleState {
+  if (!chengyuHintsExhausted(state)) return state;
+  return {
+    ...state,
+    gaveUp: true,
+    done: true,
+    won: false,
+    feedback: { kind: "loss", text: `答案是${state.answer.word}，${state.answer.pinyin}。` },
   };
 }
 
