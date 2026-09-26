@@ -18,7 +18,7 @@ const helpItems = [
   { href: "/stroke/", title: "汉字笔顺", text: "输入一个汉字，播放笔顺动画、逐笔观察并在画布中跟写。" },
   { href: "/poetry/", title: "古诗词", text: "搜索唐宋诗词、切换拼音、朗读和背诵，也可以将整首诗带入字帖。" },
   { href: "/dictionary/", title: "中文字典", text: "按汉字、词语、拼音、部首或笔画查询，再前往字帖和笔顺练习。" },
-  { href: "/games/", title: "汉字小游戏", text: "汉字词语消除、拼音快答和飞花令：每局几分钟，答完查看拼音、释义和诗句出处，进度只保存在本机。" },
+  { href: "/games/", title: "汉字小游戏", text: "词语消除、拼音快答、飞花令、古诗词排序和成语接龙：每局几分钟，答完查看拼音、释义或出处，进度只保存在本机。" },
 ];
 
 export default function AboutPage() {
@@ -42,6 +42,8 @@ export default function AboutPage() {
         <div><h3 className="font-semibold text-foreground">诗词与注音</h3><p>本站提供 30 首含拼音的校对诗词，以及 {haitang.counts.works.toLocaleString("zh-CN")} 篇作品（含诗、词、文、曲、赋）。扩展作品的拼音由 pinyin-pro 自动生成，并优先采用已有校对诗句；部分多音字待校对，未识别的字不注音。译文或注解可能缺失；注音标本调，实际朗读可能变调。诗词来源：<a href="https://github.com/chinese-poetry/chinese-poetry" className="underline underline-offset-4">chinese-poetry/chinese-poetry</a>。</p></div>
         <div><h3 className="font-semibold text-foreground">汉字词语消除题库</h3><p>15 关共 120 个常用二字词及其释义、例句由汉字网编写，读音与 pinyin-pro 交叉校验，轻声等差异逐条人工确认；释义与例句尚未完成人工审校，发现问题欢迎反馈。拼音快答复用这批词语，以及其中只有一个读音、且不读轻声的 132 个单字。</p></div>
         <div><h3 className="font-semibold text-foreground">飞花令诗句</h3><p>从本站诗词资料中的“小学古诗词”“唐诗三百首”“千家诗”“初中古诗词”篇目抽取五言、七言整句，不含近现代作品；入门 12 个关键字全部收录，进阶每字取前 48 句。题库由脚本从已校验的资料快照生成，可重复构建。</p></div>
+        <div><h3 className="font-semibold text-foreground">古诗词排序</h3><p>用本站 30 首校对诗词里的五言、七言整句。一句不是五个或七个字的作品不进入这一局，例如《如梦令》。拼音、译文和注释沿用校对页。</p></div>
+        <div><h3 className="font-semibold text-foreground">成语接龙</h3><p>6 条链、每条 6 个四字成语，由汉字网编写。末字接下一个成语的首字。释义和例句尚未完成人工审校。</p></div>
       </CardContent></Card>
     </section>
 
