@@ -18,7 +18,7 @@ const helpItems = [
   { href: "/stroke/", title: "汉字笔顺", text: "输入一个汉字，播放笔顺动画、逐笔观察并在画布中跟写。" },
   { href: "/poetry/", title: "古诗词", text: "搜索唐宋诗词、切换拼音、朗读和背诵，也可以将整首诗带入字帖。" },
   { href: "/dictionary/", title: "中文字典", text: "按汉字、词语、拼音、部首或笔画查询，再前往字帖和笔顺练习。" },
-  { href: "/games/", title: "汉字小游戏", text: "词语消除、拼音快答、飞花令、古诗词排序和成语接龙：每局几分钟，答完查看拼音、释义或出处，进度只保存在本机。" },
+  { href: "/games/", title: "汉字小游戏", text: "词语消除、拼音快答、飞花令、古诗词排序、成语接龙和每日成语：每局几分钟，答完查看拼音、释义或出处，进度只保存在本机。" },
 ];
 
 export default function AboutPage() {
@@ -44,6 +44,7 @@ export default function AboutPage() {
         <div><h3 className="font-semibold text-foreground">飞花令诗句</h3><p>从本站诗词资料中的“小学古诗词”“唐诗三百首”“千家诗”“初中古诗词”篇目抽取五言、七言整句，不含近现代作品；入门 12 个关键字全部收录，进阶每字取前 48 句。题库由脚本从已校验的资料快照生成，可重复构建。</p></div>
         <div><h3 className="font-semibold text-foreground">古诗词排序</h3><p>用本站 30 首校对诗词里的五言、七言整句。一句不是五个或七个字的作品不进入这一局，例如《如梦令》。拼音、译文和注释沿用校对页。</p></div>
         <div><h3 className="font-semibold text-foreground">成语接龙</h3><p>6 条链、每条 6 个四字成语，由汉字网编写。末字接下一个成语的首字。释义和例句尚未完成人工审校。</p></div>
+        <div><h3 className="font-semibold text-foreground">每日成语</h3><p>可猜成语和每日答案来自 chinese-xinhua 成语快照，按 MIT License 使用。答案约 366 条，释义较短且不包含成语本身，便于当作提示。读音按本站 23 个声母拆开，y、w 算拼写字母。资料未经人工审校，每条只用快照里的一种读音。题目编号是日期，分享文字不含答案。</p></div>
       </CardContent></Card>
     </section>
 

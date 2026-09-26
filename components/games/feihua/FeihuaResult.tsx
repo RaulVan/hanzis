@@ -8,7 +8,7 @@ import { GameStars } from "@/components/games/GameStars";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { feihuaWorkHref, type FeihuaAnswer } from "@/lib/feihua";
+import { feihuaWorkHref, type FeihuaAnswer, type FeihuaMode } from "@/lib/feihua";
 import type { FeihuaTier } from "@/lib/feihuaTypes";
 
 function Verse({ text, keyChar }: { text: string; keyChar: string }) {
@@ -18,19 +18,20 @@ function Verse({ text, keyChar }: { text: string; keyChar: string }) {
 export const FeihuaResult = forwardRef<HTMLHeadingElement, {
   keyChar: string;
   tier: FeihuaTier;
+  mode?: FeihuaMode;
   stars: number;
   mistakes: number;
   answers: readonly FeihuaAnswer[];
   persisted: boolean;
   onReplay: () => void;
   onExit: () => void;
-}>(function FeihuaResult({ keyChar, tier, stars, mistakes, answers, persisted, onReplay, onExit }, headingRef) {
+}>(function FeihuaResult({ keyChar, tier, mode = "fill", stars, mistakes, answers, persisted, onReplay, onExit }, headingRef) {
   return (
     <section aria-labelledby="feihua-result-title" className="mx-auto w-full max-w-3xl min-w-0">
       <Card>
         <CardHeader className="items-center text-center">
           <Trophy aria-hidden="true" />
-          <CardTitle id="feihua-result-title" ref={headingRef} tabIndex={-1}>「{keyChar}」字令完成</CardTitle>
+          <CardTitle id="feihua-result-title" ref={headingRef} tabIndex={-1}>{mode === "theme" ? `「${keyChar}」主题完成` : mode === "recite" ? `「${keyChar}」对句完成` : `「${keyChar}」字令完成`}</CardTitle>
           <CardDescription>{feihuaTierLabels[tier]} · {answers.length} 句</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">

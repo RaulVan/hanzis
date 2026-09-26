@@ -20,7 +20,8 @@
     "check": "npm run lint && npm run typecheck && npm test",
     "poetry:import": "python3 scripts/import-haitang.py",
     "poetry:pinyin": "tsx scripts/prepare-poetry-pinyin-cli.ts",
-    "feihua:data": "tsx scripts/prepare-feihua-cli.ts"
+    "feihua:data": "tsx scripts/prepare-feihua-cli.ts",
+    "chengyu-wordle:data": "tsx scripts/prepare-chengyu-wordle-cli.ts"
   },
   "keywords": [
     "字帖",

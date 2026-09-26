@@ -6,17 +6,25 @@ import { gunzipSync } from "node:zlib";
 import feihuaJson from "../data/feihuaLines.json";
 import {
   chooseFeihuaOption,
+  createFeihuaReciteState,
   createFeihuaState,
+  createFeihuaThemeState,
   currentFeihuaQuestion,
   describeFeihuaFeedback,
   FEIHUA_OPTION_COUNT,
+  FEIHUA_RECITE_TURNS,
   FEIHUA_ROUND_LINES,
+  FEIHUA_THEMES,
   feihuaBlankCount,
   feihuaLinesFor,
+  feihuaThemeLines,
   feihuaWorkHref,
+  getFeihuaReciteStars,
   getFeihuaStars,
   isFeihuaComplete,
   nextFeihuaLine,
+  normalizeFeihuaInput,
+  submitFeihuaRecite,
   type FeihuaState,
 } from "../lib/feihua";
 import { emptyFeihuaProgress, parseFeihuaProgress, recordFeihuaRound } from "../lib/feihuaProgress";
@@ -124,4 +132,69 @@ test("feihua records keep the best stars per tier and key", () => {
   assert.deepEqual(progress, { "basic:月": 2 });
   assert.deepEqual(parseFeihuaProgress(JSON.stringify({ ...progress, "basic:龙": 3, "advanced:花": 4, "advanced:雪": 3 }), data.keys), { "basic:月": 2, "advanced:雪": 3 });
   assert.equal(parseFeihuaProgress("{", data.keys), emptyFeihuaProgress);
+  const themeIds = FEIHUA_THEMES.map(theme => theme.id);
+  const withModes = recordFeihuaRound(recordFeihuaRound(progress, "basic", "spring", 3, "theme"), "advanced", "月", 2, "recite");
+  assert.deepEqual(parseFeihuaProgress(JSON.stringify({ ...withModes, "theme:basic:unknown": 3, "recite:basic:龙": 1 }), data.keys, themeIds), {
+    "basic:月": 2,
+    "theme:basic:spring": 3,
+    "recite:advanced:月": 2,
+  });
+});
+
+test("every theme has eight playable lines and never blanks its keyword", () => {
+  for (const tier of tiers) {
+    for (const theme of FEIHUA_THEMES) {
+      assert.ok(feihuaThemeLines(data, tier, theme.id).length >= FEIHUA_ROUND_LINES, `${tier} ${theme.name}`);
+      const state = createFeihuaThemeState(data, tier, theme.id, 0);
+      assert.equal(state.questions.length, FEIHUA_ROUND_LINES);
+      assert.equal(state.mode, "theme");
+      for (const question of state.questions) {
+        const mark = question.highlight!;
+        assert.ok((theme.keys as readonly string[]).includes(mark));
+        assert.ok(question.line.text.includes(mark));
+        for (const blank of question.blanks) assert.notEqual([...question.line.text][blank], mark);
+      }
+    }
+  }
+});
+
+test("recite accepts a bank line, rejects an unknown line, and answers with another line", () => {
+  const state = createFeihuaReciteState(data, "basic", "月", 0);
+  const sample = [...state.bank.values()].find(line => {
+    const length = [...line.text].length;
+    return length === 5 || length === 7;
+  })!;
+  assert.equal(submitFeihuaRecite(state, "").feedback.kind, "empty");
+  assert.equal(submitFeihuaRecite(state, "").mistakes, 0);
+  assert.equal(submitFeihuaRecite(state, "月").feedback.kind, "format");
+  assert.equal(submitFeihuaRecite(state, "月").mistakes, 0);
+  const missing = submitFeihuaRecite(state, "春眠不觉晓");
+  assert.equal(missing.feedback.kind, "missing");
+  assert.equal(missing.mistakes, 1);
+  const invented = "自造月句一二三";
+  assert.equal(state.bank.has(invented), false);
+  const unknown = submitFeihuaRecite(state, invented);
+  assert.match(unknown.feedback.text, /^未收录/);
+  assert.equal(unknown.mistakes, 1);
+  assert.equal(normalizeFeihuaInput(`《${sample.text}》。`), sample.text);
+  const accepted = submitFeihuaRecite(state, `《${sample.text}》`);
+  assert.equal(accepted.feedback.kind, "accepted");
+  assert.equal(accepted.turns[0]?.line.text, sample.text);
+  assert.equal(accepted.turns[1]?.by, "system");
+  assert.notEqual(accepted.turns[1]?.line.text, sample.text);
+  assert.equal(accepted.mistakes, 0);
+  const repeated = submitFeihuaRecite(accepted, sample.text);
+  assert.equal(repeated.feedback.kind, "duplicate");
+  assert.equal(repeated.mistakes, 1);
+  let round = state;
+  while (!round.done) {
+    const next = [...round.bank.values()].find(line => {
+      const length = [...line.text].length;
+      return (length === 5 || length === 7) && !round.used.includes(line.text);
+    });
+    assert.ok(next);
+    round = submitFeihuaRecite(round, next.text);
+  }
+  assert.equal(round.turns.filter(turn => turn.by === "player").length, FEIHUA_RECITE_TURNS);
+  assert.equal(getFeihuaReciteStars(round), 3);
 });
