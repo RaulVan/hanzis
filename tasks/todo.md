@@ -298,3 +298,23 @@
   - 三个页面的 axe 检查均无违规。
 - 截图已查看：`/tmp/hanzis-pinyin-quiz-play-1440.png`、`/tmp/hanzis-pinyin-quiz-play-375.png`、`/tmp/hanzis-pinyin-quiz-result-1440.png`、`/tmp/hm-quiz-timer.png`、`/tmp/hanzis-feihua-play-1440.png`、`/tmp/hanzis-feihua-play-375.png`、`/tmp/hanzis-feihua-result-375.png`、`/tmp/hanzis-games-hub-1440.png`、`/tmp/hanzis-games-hub-375.png`。发现的问题：计时条原用原生 progress，Chromium 下显示为绿色，已改为 primary 色细条。
 - 未执行：推送与部署；真实中文输入法、真机与 WebKit 未验证。飞花令自由输入、主题档与人机对句未做，已写入调研文档。
+
+## 2026-09-26：继续开发「古诗词排序」与「成语接龙」
+
+- 范围：按 `docs/hanzi-game-research.md` 第 5 节尚未实现的两项 P1，新增 `/games/poem-sort/` 与 `/games/chengyu-chain/`。沿用目录页、星级、确定性洗牌和本地进度。不引入音频、广告、账号；不使用未经审校的成语大库；仅本地提交，不推送。
+- 成功标准：题库与规则单测通过；lint、类型、构建、静态校验通过；Playwright 覆盖两游戏的桌面 / 手机、错误反馈、提示、完成、刷新保留与 axe；既有回归通过。
+- [x] 古诗词排序：从校对诗词取五言、七言，点击复原，提示、星级、译文注释与原诗链接。
+- [x] 成语接龙：6 条自编链，四选一，接错说明首字，同一环提示不重复扣星。
+- [x] 目录、sitemap、关于页、README、设计文档与调研状态。
+- [x] 全量验证与本地提交。
+
+- 古诗词排序：29 首（30 首校对诗去掉句式不齐的《如梦令》）。入门 15 首，每句五字；进阶 14 首，每句七字。重复字按字形接受，不绑定某一个格子。点错只说“还不到这里”，不报出下一个字。每放对一个提示字少一颗星。
+- 成语接龙：6 条链、每条 6 个四字成语、5 次接龙。入门为守株待兔、画蛇添足、一心一意；进阶为卧薪尝胆、叶公好龙、滴水穿石。干扰项不与答案同首字。释义和例句由汉字网编写，`reviewStatus` 为 unreviewed。进度键带内容版本 `hanzis-games-chengyu-chain-v1`。
+- 检查：`npm run check` 通过 ESLint、TypeScript 与 76 项单测（新增排序 5 项、接龙 4 项）。生产构建与 `npm run release:verify` 通过（13,174 个文件、52 个 HTML）。完整 Playwright 55 项通过。新增用例：
+  - 排序桌面：点错不泄露下一字、键盘放入首字、排完《静夜思》得 3 星、打开原诗页能看到原句、返回后星级仍在。
+  - 排序手机：进阶七言格子同一行，字块不小于 44px，无横向溢出。
+  - 接龙桌面：接错说明要接的首字且不写出答案、划掉错项、接完 3 星、刷新后保留。
+  - 接龙手机：进阶链提示标出正确项，再点一次提示次数仍为 1，无横向溢出。
+  - 选关、对局、结果的 axe 检查无违规。sitemap 计数改为 18 + 30。
+- 截图已查看：`/tmp/hanzis-poem-sort-play-1440.png`、`/tmp/hanzis-poem-sort-play-375.png`、`/tmp/hanzis-poem-sort-result-1440.png`、`/tmp/hanzis-chengyu-chain-play-375.png`、`/tmp/hanzis-chengyu-chain-result-1440.png`。手机接龙截图里当前成语被滚出视口上沿，是点击提示后的滚动，格子和候选仍在屏内。
+- 未执行：推送与部署；真机与 WebKit 未验证。飞花令自由输入、主题档、人机对句，以及 P2 成语 Wordle、听音辨字仍未做。

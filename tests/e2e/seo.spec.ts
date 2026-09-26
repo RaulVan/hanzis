@@ -7,7 +7,7 @@ test("all sitemap pages expose unique canonical metadata without JavaScript", as
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.ok()).toBeTruthy();
   const urls = [...(await sitemap.text()).matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-  expect(urls).toHaveLength(16 + poems.length);
+  expect(urls).toHaveLength(18 + poems.length);
   expect(new Set(urls).size).toBe(urls.length);
   const titles = new Set<string>();
   const descriptions = new Set<string>();

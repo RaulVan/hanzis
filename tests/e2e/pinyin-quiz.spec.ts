@@ -39,7 +39,7 @@ test("desktop: toned word round explains each mistake, finishes untimed, and rem
   await page.goto("/games/");
   await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link", { name: "汉字游戏" })).toHaveAttribute("aria-current", "page");
   const list = page.getByRole("list", { name: "小游戏列表" });
-  await expect(list.getByRole("link", { name: /^开始玩/ })).toHaveCount(3);
+  await expect(list.getByRole("link", { name: /^开始玩/ })).toHaveCount(5);
   expect((await new AxeBuilder({ page }).withTags(axeTags).analyze()).violations).toEqual([]);
   await list.getByRole("link", { name: "开始玩拼音快答" }).click();
   await expect(page).toHaveURL(/\/games\/pinyin-quiz\/$/);
