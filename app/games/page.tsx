@@ -1,6 +1,7 @@
+import { StructuredData } from "@/components/seo/StructuredData";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, SITE_URL } from "@/lib/seo";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -22,6 +23,13 @@ const games = [
 export default function GamesPage() {
   return (
     <>
+      <StructuredData data={{
+        "@context": "https://schema.org", "@type": "CollectionPage",
+        name: "汉字小游戏", url: `${SITE_URL}/games/`, inLanguage: "zh-CN",
+        mainEntity: { "@type": "ItemList", itemListElement: games.map((game, index) => ({
+          "@type": "ListItem", position: index + 1, name: game.title, url: `${SITE_URL}${game.href}`,
+        })) },
+      }} />
       <PageHeading title="玩一局，记住几个字。" description="短短几分钟的汉字、拼音和诗词小游戏，无需注册，没有广告。" />
       <ul aria-label="小游戏列表" className="grid gap-4 md:grid-cols-3">
         {games.map(game => (

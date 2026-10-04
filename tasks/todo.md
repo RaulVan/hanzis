@@ -336,3 +336,18 @@
 
 - [x] 提示用完仍未猜对时显示「显示答案」。点下去结束这一局并写出成语，不算答对，不增加连续天数。
 - 检查：`npx tsx --test tests/chengyuWordle.test.ts` 6 项通过；`npx tsc --noEmit` 通过。开发服务器练习题上先确认提示未用完时没有该按钮，用完释义和四个声母后出现，点击后状态为「答案是盖棺论定，gài guān lùn dìng。」，结果标题为「答案是盖棺论定」。375px 无横向溢出。
+
+## 2026-10-04：补齐网站 SEO
+
+- 范围：沿用静态导出与现有设计；补齐社交分享图、拼音页独立 H1 和面包屑、目录结构化数据，以及抓取回归检查。仅本地提交。
+- [x] 核对当前路由、SEO 实现、Next.js 本地文档与工作区（main，初始干净）。
+- [x] 实现 metadata、分享图片与页面语义改进。
+- [x] 静态检查、构建、导出校验和禁用 JavaScript 的 SEO 浏览器验证。
+- [x] 核对 diff 并本地提交。
+- 未执行：线上部署、搜索引擎后台提交与实际收录验证。
+
+- 结果：全站分享大图（1200 × 630 PNG）与替代文本；6 个拼音页的独立 H1、说明、可见面包屑及同源 JSON-LD；诗词和游戏目录增加 CollectionPage / ItemList。保留原有 canonical、robots、sitemap 及扩展阅读页 noindex。
+- 验证：`npm run check` 通过（85 项单测），`npm run build` 与 `npm run release:verify` 通过（13,180 文件、53 HTML）；6 项 SEO Playwright 测试通过，覆盖 sitemap 的 49 页。最终增补测试再次通过 TypeScript 与 ESLint。
+- UI：已查看分享图、375px 和 1440px 拼音韵母页截图；无横向溢出，禁用 JavaScript 仍可读取标题、导航和课程内容。截图在 `test-results/seo-pinyin-headings-and-na-5a7c5-phone-and-desktop-viewports-chromium/`（忽略文件，不提交）。
+- 过程修正：移除拼音 layout 时旧生成类型仍引用它，改为保留透传 layout 后类型检查通过；新增测试的 import.meta 与现有 Playwright CJS 转换不兼容，改用 __dirname 后 6 项通过。构建的 Browserslist 数据过期和 Node 弃用警告未阻塞构建，本次未升级依赖。
+- 维护说明：`docs/seo.md` 记录路由覆盖、生成分享图命令和发布后独立验收。未验证搜索排名、真实收录或线上效果；扩展诗库静态作品页不在本次范围。

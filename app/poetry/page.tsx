@@ -1,4 +1,5 @@
-import { pageMetadata } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { pageMetadata, SITE_URL } from "@/lib/seo";
 import { Suspense } from "react";
 import { PageHeading } from "@/components/layout/PageHeading";
 import { PoetryLibrary } from "@/components/poetry/PoetryLibrary";
@@ -15,6 +16,13 @@ export const metadata = pageMetadata(
 export default function PoetryPage() {
   const heading = <PageHeading className="poetry-page-heading" title="读一首诗，记一段时光。" description="读原文、看注释，在熟悉的诗句里认识汉字。" />;
   return <>
+      <StructuredData data={{
+        "@context": "https://schema.org", "@type": "CollectionPage",
+        name: "古诗词学习", url: `${SITE_URL}/poetry/`, inLanguage: "zh-CN",
+        mainEntity: { "@type": "ItemList", itemListElement: poems.map((poem, index) => ({
+          "@type": "ListItem", position: index + 1, name: `${poem.title} · ${poem.author}`, url: `${SITE_URL}/poetry/${poem.slug}/`,
+        })) },
+      }} />
     <Suspense fallback={<>{heading}<Skeleton className="h-[600px] w-full" aria-label="正在加载诗词" /></>}><PoetryLibrary heading={heading} /></Suspense>
     <section aria-labelledby="poetry-reading-index" className="mt-12 space-y-5 border-t border-border pt-8">
       <h2 id="poetry-reading-index" className="section-title">唐宋古诗词阅读目录</h2>
