@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   openGraph: { siteName: "汉字网 Hanzis", locale: "zh_CN", type: "website", title: "汉字网 Hanzis", description: "从一笔一画开始，让汉字学习成为日常。" },
   robots: { index: true, follow: true },
   formatDetection: { telephone: false },
+  // Ownership verification only; this does not load ads or tracking scripts.
+  other: { "google-adsense-account": "ca-pub-3494180666301669" },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#F8F7F4" };

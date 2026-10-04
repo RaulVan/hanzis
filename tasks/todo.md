@@ -351,3 +351,14 @@
 - UI：已查看分享图、375px 和 1440px 拼音韵母页截图；无横向溢出，禁用 JavaScript 仍可读取标题、导航和课程内容。截图在 `test-results/seo-pinyin-headings-and-na-5a7c5-phone-and-desktop-viewports-chromium/`（忽略文件，不提交）。
 - 过程修正：移除拼音 layout 时旧生成类型仍引用它，改为保留透传 layout 后类型检查通过；新增测试的 import.meta 与现有 Playwright CJS 转换不兼容，改用 __dirname 后 6 项通过。构建的 Browserslist 数据过期和 Node 弃用警告未阻塞构建，本次未升级依赖。
 - 维护说明：`docs/seo.md` 记录路由覆盖、生成分享图命令和发布后独立验收。未验证搜索排名、真实收录或线上效果；扩展诗库静态作品页不在本次范围。
+
+## 2026-10-04：AdSense 网站关联准备
+
+- 范围：使用用户已登录的 Google AdSense 账号添加 hanzis.com；配置站点验证 meta 和 ads.txt；不加载广告脚本，不改变收款资料或接受新协议。
+- [x] 从后台确认发布商 ID，并成功添加 hanzis.com。
+- [x] 添加验证配置并核验静态产物。
+- [x] 本地提交验证配置。
+- [ ] 发布后执行网站所有权验证与审核申请。
+- 后台加载问题已恢复；hanzis.com 显示“需要审核”，已选择元标记验证。发布操作待明确授权，尚未执行所有权验证或申请审核。
+- 验证：ESLint、`npx next build`（含 TypeScript）通过；53 个导出 HTML 的账号 meta 全部匹配，ads.txt 正确且未加载广告脚本；`npm run release:verify` 通过（13,181 文件、53 HTML）。
+- 不适用：业务逻辑测试（本次只新增静态验证信息）；未执行推送、部署、广告投放、收款修改或协议接受。
