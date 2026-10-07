@@ -364,3 +364,16 @@
 - Google 显示“您的网站已通过验证”；申请审核后状态为“正在准备 / 已请求审核”。截图：/tmp/hanzis-adsense-review-requested.jpg。
 - 验证：ESLint、`npx next build`（含 TypeScript）通过；53 个导出 HTML 的账号 meta 全部匹配，ads.txt 正确且未加载广告脚本；`npm run release:verify` 通过（13,181 文件、53 HTML）。
 - 不适用：业务逻辑测试（本次只新增静态验证信息）；未执行广告投放、收款修改或新协议接受。审核通过、实际广告展示及收益仍未验证。
+
+## 2026-10-07：添加 Google Search Console
+
+- 范围：在已登录的 Google 账号添加 hanzis.com 域名资源，通过 Cloudflare TXT 验证所有权，并提交正式网站地图。
+- [x] 核对目标域名、现有资源与验证方式。
+- [x] 添加 DNS TXT 并验证域名所有权。
+- [x] 提交 https://hanzis.com/sitemap.xml 并记录后台结果。
+- [x] 核对任务记录并本地提交。
+- 不适用：源码构建与业务测试（仅外部后台配置）；实际收录和排名需等待 Google 抓取。
+- 结果：添加域名资源 sc-domain:hanzis.com，Cloudflare 根域新增 Google TXT，TTL 自动；Google 明确显示“已完成所有权验证”。截图：/tmp/hanzis-search-console-verified.jpg。
+- 站点地图提交与重提均显示“已成功提交站点地图”，但列表仍为“无法抓取 / 未知 / 已发现 0”。Google 读取成功尚未验证；未修改抓取或安全策略。截图：/tmp/hanzis-search-console-sitemap.jpg。
+- 独立线上检查：普通请求及 Googlebot User-Agent 的 sitemap.xml 均 HTTP 200、application/xml；xmllint 语法检查通过，含 49 个 loc。robots.txt HTTP 200，Allow: / 且 Sitemap 指向正式地图。伪装 User-Agent 不等于真实 Googlebot 已抓取成功。
+- 后续：等待 Google 再次处理；若仍无法抓取，结合 Cloudflare 安全事件与真实 Google 抓取结果定位。新资源概述提示数据处理约 1 天。本次仅本地记录，不推送。
