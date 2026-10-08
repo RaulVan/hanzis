@@ -377,3 +377,16 @@
 - 站点地图提交与重提均显示“已成功提交站点地图”，但列表仍为“无法抓取 / 未知 / 已发现 0”。Google 读取成功尚未验证；未修改抓取或安全策略。截图：/tmp/hanzis-search-console-sitemap.jpg。
 - 独立线上检查：普通请求及 Googlebot User-Agent 的 sitemap.xml 均 HTTP 200、application/xml；xmllint 语法检查通过，含 49 个 loc。robots.txt HTTP 200，Allow: / 且 Sitemap 指向正式地图。伪装 User-Agent 不等于真实 Googlebot 已抓取成功。
 - 后续：等待 Google 再次处理；若仍无法抓取，结合 Cloudflare 安全事件与真实 Google 抓取结果定位。新资源概述提示数据处理约 1 天。本次仅本地记录，不推送。
+
+## 2026-10-08：提交 Bing Webmaster Tools
+
+- 范围：添加正式网站 https://hanzis.com/，验证所有权并提交网站地图。
+- [x] 打开 Bing 官方后台并使用现有 Google 账号登录。
+- [ ] 添加网站并完成所有权验证。
+- [ ] 提交网站地图并核对后台结果。
+- [x] 记录当前结果并本地提交。
+- 不适用：业务逻辑测试；搜索引擎实际收录单独核验。
+- 部分完成：https://hanzis.com/ 已添加，Bing 列表显示 Not verified。CNAME 验证名称 e726c473ca8432bffdb3a7b924bfe0c0，目标 verify.bing.com，应设置仅 DNS。
+- 受阻：Cloudflare DNS 页面显示“请刷新页面后重试”；刷新及域名概述入口均未恢复。未添加 CNAME，未完成所有权验证，网站地图尚未提交。
+- 初次 Bing 连接被关闭，重试恢复并登录成功。未授权 Bing 读取 Google Search Console 数据；使用手动验证路径。
+- 恢复条件：Cloudflare 后台可访问后添加上述 CNAME，在保留的 Bing 页面点击 Verify，再提交 https://hanzis.com/sitemap.xml。截图：/tmp/hanzis-bing-verification-pending.jpg。
