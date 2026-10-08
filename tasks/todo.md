@@ -382,8 +382,8 @@
 
 - 范围：添加正式网站 https://hanzis.com/，验证所有权并提交网站地图。
 - [x] 打开 Bing 官方后台并使用现有 Google 账号登录。
-- [ ] 添加网站并完成所有权验证。
-- [ ] 提交网站地图并核对后台结果。
+- [x] 添加网站并完成所有权验证。
+- [x] 提交网站地图并核对后台结果。
 - [x] 记录当前结果并本地提交。
 - 不适用：业务逻辑测试；搜索引擎实际收录单独核验。
 - 部分完成：https://hanzis.com/ 已添加，Bing 列表显示 Not verified。CNAME 验证名称 e726c473ca8432bffdb3a7b924bfe0c0，目标 verify.bing.com，应设置仅 DNS。
@@ -392,6 +392,9 @@
 - 恢复条件：Cloudflare 后台可访问后添加上述 CNAME，在保留的 Bing 页面点击 Verify，再提交 https://hanzis.com/sitemap.xml。截图：/tmp/hanzis-bing-verification-pending.jpg。
 - 用户授权改用部署验证文件：下载 Bing 官方 BingSiteAuth.xml，放入 public/，通过 Git 推送发布后再验证，无需 DNS CNAME。
 - [x] 添加官方 XML 验证文件并检查 XML 格式。
-- [x] 构建并核对静态产物；准备提交推送。
-- [ ] 确认正式域名验证文件 HTTP 200 且与官方文件一致。
+- [x] 构建、核对静态产物并提交推送。
+- [x] 确认正式域名验证文件 HTTP 200 且与官方文件一致。
 - 验证：npx next build（含 TypeScript）通过，导出 BingSiteAuth.xml 与官方下载文件逐字一致；release:verify 通过。业务逻辑未改动，不增补单测。
+- 最终结果：9fe81f2 已推送，Cloudflare Pages 部署 018b90c4-d38a-46f2-b82f-fa6fc65bab7d 与 Workers Build 335805b2-94f3-441f-90a0-0f858d7a4d7a 均 success。正式 /BingSiteAuth.xml 返回 HTTP 200、application/xml，与官方文件 cmp 一致、XML 格式有效。
+- 部署确认后点击 XML File 的 Verify，Bing 进入 hanzis.com 站点 Home 后台，所有权验证通过；提交 sitemap.xml 后列表 Known sitemaps=1、状态 Processing，错误与警告均 0，发现 URL 数尚为 0。报表提示最多 48 小时处理，实际抓取与收录待验证。截图：/tmp/hanzis-bing-sitemap-submitted.jpg。
+- 保留 public/BingSiteAuth.xml 以维持验证；未添加 DNS CNAME。此前 Cloudflare DNS 后台阻塞已通过文件验证方式解决。
