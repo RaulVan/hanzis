@@ -390,3 +390,8 @@
 - 受阻：Cloudflare DNS 页面显示“请刷新页面后重试”；刷新及域名概述入口均未恢复。未添加 CNAME，未完成所有权验证，网站地图尚未提交。
 - 初次 Bing 连接被关闭，重试恢复并登录成功。未授权 Bing 读取 Google Search Console 数据；使用手动验证路径。
 - 恢复条件：Cloudflare 后台可访问后添加上述 CNAME，在保留的 Bing 页面点击 Verify，再提交 https://hanzis.com/sitemap.xml。截图：/tmp/hanzis-bing-verification-pending.jpg。
+- 用户授权改用部署验证文件：下载 Bing 官方 BingSiteAuth.xml，放入 public/，通过 Git 推送发布后再验证，无需 DNS CNAME。
+- [x] 添加官方 XML 验证文件并检查 XML 格式。
+- [x] 构建并核对静态产物；准备提交推送。
+- [ ] 确认正式域名验证文件 HTTP 200 且与官方文件一致。
+- 验证：npx next build（含 TypeScript）通过，导出 BingSiteAuth.xml 与官方下载文件逐字一致；release:verify 通过。业务逻辑未改动，不增补单测。
