@@ -436,6 +436,9 @@
 - 375×812 手机视口：框架 320×50、无横向溢出、不覆盖正文；桌面/手机截图 /tmp/hanzis-adsterra-default-game-desktop.jpg、/tmp/hanzis-adsterra-default-game-mobile.jpg。
 - 素材边界：正式 /ads/banner.html 仍 HTTP 404，尚未部署；加载脚本 HTTP 200、0 字节（普通请求和正式域名 Referer 请求一致）。本地也未显示真实素材，空响应原因未确认，不承诺固定展示时间。
 - 用户已授权推送部署（2026-10-09）：发布默认广告版本，部署后核对正式文件、响应头、练习与对局页面及真实素材状态。
-- [ ] 推送 main 并等待 Cloudflare 部署完成。
-- [ ] 验证正式域名广告文档、页面默认加载和素材返回情况。
+- [x] 推送 main 并等待 Cloudflare 部署完成。
+- [x] 验证正式域名广告文档、页面默认加载和素材返回情况。
 - 首轮 ee02cc8 部署成功：Pages 741ef837-57d0-409e-8146-ff621e7f159b、Workers c9eb0ca3-92f8-44fc-ac78-bd8076c6e190。发现 Pages 自动将 .html 重定向至 /ads/banner，最终 URL 仍继承主站 CSP，会拦截第三方脚本；补齐正式路径例外并改用正式 URL，重新部署验收。
+- 最终代码 c570a3b：Pages 8f170b67-56a8-4f8a-82e9-f7589ae71522、Workers b9e72af1-dddd-405f-803d-2540a11a17bc 均 success。正式 /ads/banner HTTP 200，与源码逐字一致，noindex/nofollow 生效，已移除错误继承的 CSP；主站拼音练习页保留原 CSP。
+- 正式浏览器：拼音练习与汉字词语消除真实对局各默认一个 320×50 sandbox 框架，框架位于正文后；关闭后框架为 0。1280×720 桌面无横向溢出。线上截图 /tmp/hanzis-adsterra-production.jpg；375×812 手机布局为前轮本地证据，本轮正式站点 viewport 覆盖未生效，不将桌面截图标成手机验收。
+- 素材未展示：框架内无广告图片/链接/嵌套 iframe，公开加载脚本仍 HTTP 200、空响应。已确认修复的 CSP 阻断与未确认原因的空响应分别记录；不宣称有真实曝光、收益或确定展示时间。Adsterra 后台仍 Approved/Active。
