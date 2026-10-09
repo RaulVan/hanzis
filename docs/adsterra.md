@@ -21,6 +21,7 @@
 - 2026-10-10 工单 #143499527 回复：Lina 称 403 表示 Adblock/杀毒或 VPN/代理拦截，建议关闭并询问站点平台；Jeremy 确认该站成人广告已关闭。已回复：确认 403 来自本机 VPN/机房出口；平台为 Cloudflare Pages 静态站、已加 data-cfasync；说明同源 iframe 接入细节，请求书面确认该方式允许且展示计费，否则给出认可的接入方式。工单状态“进行中”，等待答复。
 - 用户关闭 VPN 后实测：横幅区域空白但可点击并跳转广告主（状态栏显示 `glacierfamilyvivid.com` 点击链接）。说明脚本、广告请求与链接均已成功，仅创意未渲染。创意写入 `about:blank` 子框架并继承广告文档 CSP，原 CSP 不允许外部样式、字体、媒体等。广告文档 CSP 改为 `default-src https: data: blob: 'unsafe-inline'; object-src 'none'; base-uri 'none'`；主站 CSP 不变。
 - 用户关 VPN 后提供控制台报错：`invoke.js` 执行字符串代码触发 `EvalError`（CSP 无 `unsafe-eval`，此前依据存档样本认为仅做指纹的判断有误），已加入 `'unsafe-eval'`；同时 Adsterra 子脚本尝试导航顶层 `https://hanzis.com/`，被 sandbox 拦截（`allow-top-navigation` 未设置）。这证实 iframe 隔离在阻止页面劫持，该限制保持不放开。
+- 补 `unsafe-eval` 后用户关 VPN 实测：广告已完整渲染（链接与创意均生成），创意图 `cdn.storageimagedisplay.com`（CNAME `ahacdn.me`，45.133.45.x）在大陆直连下加载失败；阿里/腾讯/Cloudflare DoH 解析一致，经代理可取得 PNG，属大陆到该 CDN 的连接阻断。站点侧接入问题至此全部解决；创意 CDN 可达性取决于 Adsterra 投放的广告主素材与用户网络，站点无法也不应代理第三方创意。
 - 官方参考：[静态 HTML 接入](https://help-publishers.adsterra.com/en/articles/5210780-adding-ads-to-a-static-html-site)、[Cloudflare 接入](https://help-publishers.adsterra.com/en/articles/5213852-using-adsterra-ads-with-cloudflare)、[VPN/代理与展示差异](https://adsterra.com/blog/what-is-discrepancy/)。
 
 ## 当前版本与正式部署验证
