@@ -405,6 +405,7 @@
 - [x] 核对工作区（main，干净）、栏目、资料范围与 public 文件规则。
 - [x] 新增 public/llms.txt 并更新 SEO 维护说明。
 - [x] 核对链接、构建产物与提交内容，提交推送。
-- [ ] 确认部署成功与正式 /llms.txt 的 HTTP 状态和内容。
+- [x] 确认部署成功与正式 /llms.txt 的 HTTP 状态和内容。
 - 不适用：UI 与业务逻辑测试；AI 抓取、引用和搜索排名不由文件发布证明。
 - 验证：16 个正式链接均 HTTP 200；npx next build（含 TypeScript）、release:verify 通过；out/llms.txt 与源码 cmp 一致，git diff --check 通过。
+- 发布：375c0da 已推送；Cloudflare Pages 部署 6600afcf-500a-4b9a-8c23-6a6463525517 success。https://hanzis.com/llms.txt 返回 HTTP 200、text/plain; charset=utf-8，线上内容与 public/llms.txt cmp 一致。
