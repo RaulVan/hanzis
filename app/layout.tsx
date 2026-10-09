@@ -19,7 +19,10 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   formatDetection: { telephone: false },
   // Ownership verification only; this does not load ads or tracking scripts.
-  other: { "google-adsense-account": "ca-pub-3494180666301669" },
+  other: {
+    "google-adsense-account": "ca-pub-3494180666301669",
+    "baidu-site-verification": "codeva-EjyBlsmLxF",
+  },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#F8F7F4" };

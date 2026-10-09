@@ -2,6 +2,7 @@
 
 ## 当前实现
 
+- 百度搜索资源平台使用根 layout 的 `baidu-site-verification` 标签验证 https://hanzis.com；验证后保留标签。后台确认通过前不宣称验证成功，所有权验证不等于抓取或收录。
 - 正式域名为 `https://hanzis.com`，页面统一尾斜杠。`lib/seo.ts` 生成各页独立标题、描述、canonical、Open Graph 和 Twitter 大图卡片。
 - `public/social-card.png` 为 1200 × 630 PNG；调整品牌图后运行 `npx tsx scripts/generate-share-image.tsx`，检查图片并提交产物与源码。
 - sitemap 当前包含 19 个固定入口与 30 首精选诗词。新增可索引页面时同步 `app/sitemap.ts`；SEO 浏览器测试会检测固定页面遗漏。
