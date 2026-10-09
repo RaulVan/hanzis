@@ -24,6 +24,7 @@
 ## 隔离与维护
 
 - 广告加载在 `public/ads/banner.html` 中，iframe sandbox 仅允许脚本和弹出链接，不允许访问本站同源存储或导航顶层页面。
+- Cloudflare Pages 将 `.html` 自动重定向至无扩展名 URL；组件使用 `/ads/banner`，响应头例外同时覆盖该正式路径及原始 `.html` 路径，预览服务器使用同一映射。
 - 主站 CSP 保持不变。广告文档从全局 CSP 中排除，使用自身的 meta CSP，脚本来源仅允许官方代码所给的加载域名；嵌套广告 iframe 允许 HTTPS。
 - Cloudflare Pages `_headers` 多规则会合并重复 header，所以使用 detach 而非同时写第二个 CSP。参见 [Cloudflare Headers](https://developers.cloudflare.com/pages/configuration/headers/)。预览服务器模拟相同广告文档例外。
 - 广告文档 noindex/nofollow、不传 referrer，不进入 sitemap。现有 Google ads.txt 保留；未凭空新增未知的 Adsterra 授权销售声明。
