@@ -14,6 +14,7 @@
 - [x] 第二轮：依据存档 invoke.js 样本，确认广告文档 CSP 拦截轮换域名子脚本；script-src 改为 https: 'unsafe-inline'。
 - [x] 工单回复：平台确认 403 为 VPN/代理/拦截所致；已回复平台信息并请求书面确认 iframe 接入方式，等待答复。
 - [x] 用户关 VPN 实测：可点击跳转但素材空白；广告文档 CSP 放宽为任意 HTTPS 资源，保留 object/base 禁用。
+- [x] 控制台报错：补 `'unsafe-eval'`；确认 sandbox 拦截了广告脚本的顶层导航，保持不放开。
 - [ ] 线上真实网络（非机房/代理）验收广告素材展示，及后台 Impressions/CPM。
 
 ## 目标与边界
