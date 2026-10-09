@@ -453,3 +453,11 @@
 - 验证：Next 构建（含 TypeScript）、release:verify、git diff --check 通过；导出首页与正式首页的 head 均只有一个正确的百度验证标签，正式首页 HTTP 200。
 - 发布提交 66fbfbe：Pages 23a3ac3f-4881-474c-9ecd-dbb26f23ea5c、Workers 73d9c6fc-a63e-4f41-a177-80114ccfe30c 均 success。百度使用 HTML 标签方式验证成功，截图 /tmp/hanzis-baidu-verified.jpg。
 - 保留验证标签；未提交百度资源、未核验抓取与收录，验证成功不代表已经收录。
+## 2026-10-09：向百度提交 sitemap（额度受限）
+
+- [x] 切换百度目标站点至 https://hanzis.com/，进入普通收录 → sitemap。
+- [x] 核对正式 https://hanzis.com/sitemap.xml：HTTP 200、有效 urlset XML、49 个 URL、5900 字节；robots.txt 已声明相同地址，不是索引型 sitemap。
+- [x] 刷新并重新选择目标站点，确认 hanzis.com 今日提交上限/余额仍为 0，输入框和提交按钮均 disabled。
+- 受阻：百度当前没有可用 sitemap 提交额度，无法提交；后台列表没有文件记录。未绕过禁用控件，未改用 API 或手动提交替代 sitemap。
+- 恢复条件：百度为此站点提供正数提交额度且输入框开放后，提交 https://hanzis.com/sitemap.xml。平台提示真实主体备案号可提高每日上限，尚无已提供的备案信息，不代填。
+- 截图：/tmp/hanzis-baidu-sitemap-quota-zero-full.jpg；未改动网站代码，无需构建或部署。仅记录结果并本地提交。
