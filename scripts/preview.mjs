@@ -22,6 +22,12 @@ createServer(async (request, response) => {
   try {
     const url = new URL(request.url || "/", "http://localhost");
     const pathname = decodeURIComponent(url.pathname);
+    if (pathname === "/ads/banner.html") {
+      // This isolated document has its own restrictive CSP in HTML, like Pages.
+      response.removeHeader("Content-Security-Policy");
+      response.setHeader("Referrer-Policy", "no-referrer");
+      response.setHeader("X-Robots-Tag", "noindex, nofollow");
+    }
     let path = resolve(root, `.${pathname}`);
     if ((path !== resolve(root) && !path.startsWith(resolve(root) + sep)) || pathname.includes("\0")) { response.writeHead(403); response.end(); return; }
     let info = await stat(path).catch(() => null);

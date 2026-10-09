@@ -409,3 +409,17 @@
 - 不适用：UI 与业务逻辑测试；AI 抓取、引用和搜索排名不由文件发布证明。
 - 验证：16 个正式链接均 HTTP 200；npx next build（含 TypeScript）、release:verify 通过；out/llms.txt 与源码 cmp 一致，git diff --check 通过。
 - 发布：375c0da 已推送；Cloudflare Pages 部署 6600afcf-500a-4b9a-8c23-6a6463525517 success。https://hanzis.com/llms.txt 返回 HTTP 200、text/plain; charset=utf-8，线上内容与 public/llms.txt cmp 一致。
+
+## 2026-10-09：接入少量 Adsterra 广告
+
+- 范围：hanzis.com 仅申请一个 320×50 Banner，关闭成人广告，不接入 Popunder、Social Bar 或 Smartlink。页面底部单广告位，练习、游戏、隐私和关于页不展示，更新隐私披露。
+- [x] 核对工作区（main，干净）、当前 CSP 与无广告文案，提交平台网站与广告位申请。
+- [x] 平台审核通过后获取实际代码，核对过滤与配置：Site 6109024 Approved，广告位 31632666 Active，仅 Banner 320×50；申请时 Adult ads 关闭。
+- [x] 实现隔离的广告加载与访客选择，保留主页面安全策略；更新隐私与维护文档。
+- [x] 构建、桌面和手机布局、拒绝/允许/关闭/未返回素材验证。
+- [x] 完成本地提交准备与接入状态记录；正式上线待明确推送部署授权。
+- 验证：npm run check 通过（lint、TypeScript、85 个既有单测）；npx next build、release:verify、git diff --check 通过。广告文档导出为第 54 个 HTML。
+- 本地静态预览：默认 iframe=0；拒绝移除提示；允许后仅一个 320×50 sandbox iframe；关闭后移除；刷新重新选择。拼音练习、游戏目录和隐私页广告提示/框架均为 0。
+- 浏览器桌面与手机布局检查，320×50 框架无水平溢出；截图 /tmp/hanzis-adsterra-desktop.jpg、/tmp/hanzis-adsterra-mobile.jpg。后台审核截图 /tmp/hanzis-adsterra-approved.jpg。
+- 证据边界：本地 iframe 没有展示实际素材；公开 invoke.js 请求 HTTP 200、响应体 0 字节。未确认空响应原因，未将其归因于代码或域名限制。核心学习页面正常可用；不证明线上填充、广告点击转化、收益或素材适龄。
+- 未执行：正式部署与正式域名响应头/真实素材验收。本次请求授权接入，未明确授权本次推送部署，按项目 Git 规则保留本地提交。
