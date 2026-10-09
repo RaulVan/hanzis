@@ -447,6 +447,9 @@
 - 范围：https://hanzis.com 的百度所有权验证，使用后台当前提供的 HTML 标签；沿用同一正式网站已授权的推送部署流程。收录和排名不属于所有权验证结果。
 - [x] 核对 main 工作区干净，读取后台验证标签与本地 Next 元数据指南。
 - [x] 根 layout 添加公开 baidu-site-verification 标识 codeva-EjyBlsmLxF。
-- [ ] 构建并检查导出的首页 head 标签，提交推送并确认正式首页生效。
-- [ ] 点击百度“完成验证”，记录后台实际结果。
+- [x] 构建并检查导出的首页 head 标签，提交推送并确认正式首页生效。
+- [x] 点击百度“完成验证”，后台提示 https://hanzis.com 验证成功。
 - 不适用：业务逻辑单测；未改动学习工具、广告策略或网站地图。
+- 验证：Next 构建（含 TypeScript）、release:verify、git diff --check 通过；导出首页与正式首页的 head 均只有一个正确的百度验证标签，正式首页 HTTP 200。
+- 发布提交 66fbfbe：Pages 23a3ac3f-4881-474c-9ecd-dbb26f23ea5c、Workers 73d9c6fc-a63e-4f41-a177-80114ccfe30c 均 success。百度使用 HTML 标签方式验证成功，截图 /tmp/hanzis-baidu-verified.jpg。
+- 保留验证标签；未提交百度资源、未核验抓取与收录，验证成功不代表已经收录。
