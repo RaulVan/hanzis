@@ -1,0 +1,32 @@
+# 汉字网 Hanzis
+
+> 汉字网（https://hanzis.com/）提供无需注册的中文学习工具，包括可打印字帖、拼音学习、汉字笔顺、古诗词、中文字典和汉字小游戏。
+
+本站以简体中文界面提供学习工具，同时保留部分字典来源的繁体原文。页面中的来源标记、缺失提示和校对状态应与内容一并理解；自动生成的拼音、第三方整理资料及未经人工审校的题库不能视为全部经过权威核验。
+
+部分查询、动画、朗读和练习需要浏览器 JavaScript。工具入口介绍不等于任意查询结果都具有独立的静态页面。引用具体资料时，请查看原页面及其来源说明；本文件不授予第三方内容的额外使用许可。
+
+## 学习工具
+
+- [字帖生成](https://hanzis.com/): 输入汉字，选择字格、描红、拼音和纸张，下载 PDF 或图片，也可打印。
+- [拼音学习](https://hanzis.com/pinyin/): 声母、韵母、整体认读音节、声调与练习的课程入口。
+- [汉字笔顺](https://hanzis.com/stroke/): 单字笔顺动画、逐笔观察和跟写练习。
+- [古诗词](https://hanzis.com/poetry/): 诗词检索、拼音、朗读、背诵及字帖入口；精选诗词有独立作品页，扩展诗库部分内容在浏览器加载。
+- [中文字典](https://hanzis.com/dictionary/): 按汉字、词语、拼音、部首或笔画查询，分别呈现各资料来源。
+- [汉字小游戏](https://hanzis.com/games/): 词语消除、拼音快答、飞花令、古诗词排序、成语接龙和每日成语；游戏进度保存在本机。
+
+## 拼音课程
+
+- [声母](https://hanzis.com/pinyin/initials/): 声母学习与示例。
+- [韵母](https://hanzis.com/pinyin/finals/): 韵母学习与示例。
+- [整体认读音节](https://hanzis.com/pinyin/syllables/): 整体认读音节学习。
+- [声调](https://hanzis.com/pinyin/tones/): 声调与相关拼读说明。
+- [综合练习](https://hanzis.com/pinyin/practice/): 拼音学习练习入口。
+
+## 网站与资料说明
+
+- [关于与帮助](https://hanzis.com/about/): 使用方法、资料范围、校对限制和录音说明。
+- [数据来源与范围](https://hanzis.com/about/#sources): 字形、字词释义、教育部辞典、第三方整理字典、诗词与题库的来源说明。
+- [第三方资料说明](https://hanzis.com/licenses/NOTICE.txt): 第三方资料与许可说明。
+- [隐私说明](https://hanzis.com/privacy/): 网站的数据处理与本机存储说明。
+- [网站地图](https://hanzis.com/sitemap.xml): 可索引的正式页面入口列表；不包含所有交互查询或扩展诗库作品。

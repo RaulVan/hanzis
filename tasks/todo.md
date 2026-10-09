@@ -398,3 +398,13 @@
 - 最终结果：9fe81f2 已推送，Cloudflare Pages 部署 018b90c4-d38a-46f2-b82f-fa6fc65bab7d 与 Workers Build 335805b2-94f3-441f-90a0-0f858d7a4d7a 均 success。正式 /BingSiteAuth.xml 返回 HTTP 200、application/xml，与官方文件 cmp 一致、XML 格式有效。
 - 部署确认后点击 XML File 的 Verify，Bing 进入 hanzis.com 站点 Home 后台，所有权验证通过；提交 sitemap.xml 后列表 Known sitemaps=1、状态 Processing，错误与警告均 0，发现 URL 数尚为 0。报表提示最多 48 小时处理，实际抓取与收录待验证。截图：/tmp/hanzis-bing-sitemap-submitted.jpg。
 - 保留 public/BingSiteAuth.xml 以维持验证；未添加 DNS CNAME。此前 Cloudflare DNS 后台阻塞已通过文件验证方式解决。
+
+## 2026-10-09：添加 llms.txt 并发布
+
+- 范围：新增简洁的 AI 内容导航，沿用正式 URL 和现有资料说明；用户已授权提交、推送和部署。
+- [x] 核对工作区（main，干净）、栏目、资料范围与 public 文件规则。
+- [x] 新增 public/llms.txt 并更新 SEO 维护说明。
+- [x] 核对链接、构建产物与提交内容，提交推送。
+- [ ] 确认部署成功与正式 /llms.txt 的 HTTP 状态和内容。
+- 不适用：UI 与业务逻辑测试；AI 抓取、引用和搜索排名不由文件发布证明。
+- 验证：16 个正式链接均 HTTP 200；npx next build（含 TypeScript）、release:verify 通过；out/llms.txt 与源码 cmp 一致，git diff --check 通过。

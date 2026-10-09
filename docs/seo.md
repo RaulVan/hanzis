@@ -9,6 +9,7 @@
 - 查询参数页面沿用该工具页 canonical，不为每次查询、字帖内容或每日题目建立重复索引页。
 - `/poetry/read/` 保留 `noindex, follow` 且不进入 sitemap：扩展诗库在浏览器加载，当前不具备独立作品的静态正文与元数据。现有扩展作品可用、可分享，不等于每篇已具备搜索收录条件。后续扩展静态作品页需单独评估内容质量、重复作品与静态文件数量预算。
 - robots 允许抓取，不屏蔽上述 noindex 阅读页，确保爬虫能够读取 noindex 指令。404 保留 noindex。
+- `public/llms.txt` 发布为 `/llms.txt`，使用 Markdown 提供网站说明、栏目与课程链接、资料来源和使用限制。栏目、路径或来源说明变化时同步维护；它是 AI 工具的辅助导航，不替代 robots、sitemap 或真实正文，也不保证 AI 引用与收录。规范参考：[llms.txt 提案](https://llmstxt.org/)。
 
 ## 本地验证
 
