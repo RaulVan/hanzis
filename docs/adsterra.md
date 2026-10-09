@@ -14,6 +14,7 @@
 - 根因复核：本机出口经 Clash TUN 到 AWS 台湾机房 IP（hosting=true），Adsterra 对机房流量返回 403，本机 403 不代表真实用户。线上集成本身另有两处缺陷：外层 iframe 和广告文档均为 `no-referrer`，Adsterra 收不到 hanzis.com 来源；sandbox 无 `allow-same-origin`，广告文档为 opaque 源，Cookie/存储访问报错。
 - 修复（用户确认安全取舍）：sandbox 改为 `allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox`，仍不授予 `allow-top-navigation*`；iframe `strict-origin-when-cross-origin`，广告文档 `<meta name="referrer" content="origin">`，取消 `_headers` 中 Referrer-Policy 的 detach。同源后广告脚本可访问主站页面与本机字帖设置，隔离弱于此前方案。参考同类实战：[Adsterra iframe、Referer 与 CPM](https://www.runningbai.cn/projects/adsterra-banner-iframe-warhounds)。
 - 第二轮（9a53d06 后仍无素材）：取得 Internet Archive 存档的同域名 `invoke.js` 样本（他人公开 key，2026-09-25），确认脚本会从轮换广告域名动态注入子脚本（如 `//workdeadlinededicate.com/…/<key>.js`），并使用 `about:blank` iframe（继承广告文档 CSP）、Cookie 与 localStorage。原 meta CSP `script-src` 只允许 `www.highrevenueformat.com`，会拦截子脚本；域名轮换无法逐一列举，改为 `script-src https: 'unsafe-inline'`，其余指令不变。脚本中 `eval` 仅用于指纹检测，未放开 `unsafe-eval`。
+- 按官方 Cloudflare 指南，两段广告脚本均加 `data-cfasync="false"`，防止日后开启 Rocket Loader 改写；当前线上未发现改写。官方静态 HTML 指南：横幅放 body 任意位置即可，平台不提供 ads.txt，与现状一致。
 - 官方参考：[静态 HTML 接入](https://help-publishers.adsterra.com/en/articles/5210780-adding-ads-to-a-static-html-site)、[Cloudflare 接入](https://help-publishers.adsterra.com/en/articles/5213852-using-adsterra-ads-with-cloudflare)、[VPN/代理与展示差异](https://adsterra.com/blog/what-is-discrepancy/)。
 
 ## 当前版本与正式部署验证
