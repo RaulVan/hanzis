@@ -15,6 +15,9 @@
 - 修复（用户确认安全取舍）：sandbox 改为 `allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox`，仍不授予 `allow-top-navigation*`；iframe `strict-origin-when-cross-origin`，广告文档 `<meta name="referrer" content="origin">`，取消 `_headers` 中 Referrer-Policy 的 detach。同源后广告脚本可访问主站页面与本机字帖设置，隔离弱于此前方案。参考同类实战：[Adsterra iframe、Referer 与 CPM](https://www.runningbai.cn/projects/adsterra-banner-iframe-warhounds)。
 - 第二轮（9a53d06 后仍无素材）：取得 Internet Archive 存档的同域名 `invoke.js` 样本（他人公开 key，2026-09-25），确认脚本会从轮换广告域名动态注入子脚本（如 `//workdeadlinededicate.com/…/<key>.js`），并使用 `about:blank` iframe（继承广告文档 CSP）、Cookie 与 localStorage。原 meta CSP `script-src` 只允许 `www.highrevenueformat.com`，会拦截子脚本；域名轮换无法逐一列举，改为 `script-src https: 'unsafe-inline'`，其余指令不变。脚本中 `eval` 仅用于指纹检测，未放开 `unsafe-eval`。
 - 按官方 Cloudflare 指南，两段广告脚本均加 `data-cfasync="false"`，防止日后开启 Rocket Loader 改写；当前线上未发现改写。官方静态 HTML 指南：横幅放 body 任意位置即可，平台不提供 ads.txt，与现状一致。
+- 网络检索对照：多篇实测（如 [永夜：从 403 到正常展示](https://www.shuijingwanwq.com/2026/07/28/20461/)）确认开 VPN 时 invoke.js 403/空正文，关闭后 200；Adsterra 不统计代理、VPN、Tor 流量。本机 Clash TUN 出口 AWS，属同类，本机无法验收。
+- 存档样本中有一段在 `window!==window.top` 时直接 return 的逻辑，跳过的是 `kettledroopingcontinuation.com` 附加脚本（`_bbd`，劫持返回键/跳转类），横幅本身走 `watch.*` 请求，不受影响；外层 iframe 实际挡住了劫持行为。
+- 条款风险：Adsterra Publisher 条款要求未经书面同意不得修改广告代码，第三方资料称不得将广告代码放入 iframe。当前 iframe 包裹需向平台书面确认；未确认前存在展示不计费或账户风险。
 - 官方参考：[静态 HTML 接入](https://help-publishers.adsterra.com/en/articles/5210780-adding-ads-to-a-static-html-site)、[Cloudflare 接入](https://help-publishers.adsterra.com/en/articles/5213852-using-adsterra-ads-with-cloudflare)、[VPN/代理与展示差异](https://adsterra.com/blog/what-is-discrepancy/)。
 
 ## 当前版本与正式部署验证
