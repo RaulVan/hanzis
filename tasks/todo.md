@@ -12,6 +12,7 @@
 - [x] 复核根因：本机出口为 AWS 机房 IP，403 属平台拒绝机房流量；线上 iframe/广告文档 no-referrer 与 sandbox 缺少 allow-same-origin 为集成缺陷。
 - [x] 修复：sandbox 加 allow-same-origin、allow-popups-to-escape-sandbox；来源改为 strict-origin-when-cross-origin / origin；用户已确认同源隔离取舍与推送部署。
 - [x] 第二轮：依据存档 invoke.js 样本，确认广告文档 CSP 拦截轮换域名子脚本；script-src 改为 https: 'unsafe-inline'。
+- [x] 工单回复：平台确认 403 为 VPN/代理/拦截所致；已回复平台信息并请求书面确认 iframe 接入方式，等待答复。
 - [ ] 线上真实网络（非机房/代理）验收广告素材展示，及后台 Impressions/CPM。
 
 ## 目标与边界

@@ -18,6 +18,7 @@
 - 网络检索对照：多篇实测（如 [永夜：从 403 到正常展示](https://www.shuijingwanwq.com/2026/07/28/20461/)）确认开 VPN 时 invoke.js 403/空正文，关闭后 200；Adsterra 不统计代理、VPN、Tor 流量。本机 Clash TUN 出口 AWS，属同类，本机无法验收。
 - 存档样本中有一段在 `window!==window.top` 时直接 return 的逻辑，跳过的是 `kettledroopingcontinuation.com` 附加脚本（`_bbd`，劫持返回键/跳转类），横幅本身走 `watch.*` 请求，不受影响；外层 iframe 实际挡住了劫持行为。
 - 条款风险：Adsterra Publisher 条款要求未经书面同意不得修改广告代码，第三方资料称不得将广告代码放入 iframe。当前 iframe 包裹需向平台书面确认；未确认前存在展示不计费或账户风险。
+- 2026-10-10 工单 #143499527 回复：Lina 称 403 表示 Adblock/杀毒或 VPN/代理拦截，建议关闭并询问站点平台；Jeremy 确认该站成人广告已关闭。已回复：确认 403 来自本机 VPN/机房出口；平台为 Cloudflare Pages 静态站、已加 data-cfasync；说明同源 iframe 接入细节，请求书面确认该方式允许且展示计费，否则给出认可的接入方式。工单状态“进行中”，等待答复。
 - 官方参考：[静态 HTML 接入](https://help-publishers.adsterra.com/en/articles/5210780-adding-ads-to-a-static-html-site)、[Cloudflare 接入](https://help-publishers.adsterra.com/en/articles/5213852-using-adsterra-ads-with-cloudflare)、[VPN/代理与展示差异](https://adsterra.com/blog/what-is-discrepancy/)。
 
 ## 当前版本与正式部署验证
