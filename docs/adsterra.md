@@ -1,5 +1,15 @@
 # Adsterra 接入
 
+## 2026-10-10 加载失败排查
+
+- 正式广告 HTML 与源文件一致、HTTP 200；后台 hanzis.com Approved，广告位 31632666 Active，GET CODE 与源文件的 key、域名、尺寸一致。
+- 独立打开正式广告文档时，浏览器 Network 显示 invoke.js 为 HTTP 403 Forbidden，Content-Length 0；页面没有生成广告 iframe。普通 curl 为 200/0 字节，浏览器 UA 的桌面、手机请求均为 403/0 字节，添加 hanzis.com Referer 仍失败。
+- 实际学习页面中的广告文档响应 200。独立广告文档未受到父 iframe sandbox 限制仍无法加载，当前没有依据将父 iframe 隔离认定为直接原因。
+- 生产 HTML 没有 Rocket Loader 改写，广告文档没有主站响应头 CSP；不通过全面放宽 CSP、移除 sandbox 或替换未知域名处理服务端拒绝。
+- 本机域名解析得到代理虚拟地址；显式关闭 curl 代理仍不构成独立普通网络验收。使用公开 DNS 地址保持 HTTPS 证书验证的请求也返回 403，但网络路径是否仍受透明代理影响未确认。
+- 用户按手机移动网络关闭 VPN 的对照要求反馈仍为空白；尚未取得该设备的请求日志，不能将电脑的 403 推断为手机同样返回 403，也不能仅将故障归因于电脑代理。平台拒绝原因仍未确认；用户要求仅排查代码，不联系客服，未发送排障消息、未调整后台设置。
+- 官方参考：[静态 HTML 接入](https://help-publishers.adsterra.com/en/articles/5210780-adding-ads-to-a-static-html-site)、[Cloudflare 接入](https://help-publishers.adsterra.com/en/articles/5213852-using-adsterra-ads-with-cloudflare)、[VPN/代理与展示差异](https://adsterra.com/blog/what-is-discrepancy/)。
+
 ## 当前版本与正式部署验证
 
 - 默认展示版本通过受影响文件 ESLint、Next 构建（含 TypeScript）及静态产物检查。
