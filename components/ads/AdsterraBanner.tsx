@@ -20,7 +20,7 @@ export function AdsterraBanner() {
         <button type="button" className="min-h-11 px-2" onClick={() => setDismissed(true)}>关闭广告</button>
       </div>
       <iframe title="Adsterra 横幅广告" src="/ads/banner" width="320" height="50"
-        sandbox="allow-scripts allow-popups" referrerPolicy="no-referrer"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" referrerPolicy="strict-origin-when-cross-origin"
         className="block h-[50px] w-[320px] max-w-full border-0" />
     </div>
   </aside>;

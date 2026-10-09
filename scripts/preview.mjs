@@ -25,7 +25,6 @@ createServer(async (request, response) => {
     if (pathname === "/ads/banner.html" || pathname === "/ads/banner") {
       // This isolated document has its own restrictive CSP in HTML, like Pages.
       response.removeHeader("Content-Security-Policy");
-      response.setHeader("Referrer-Policy", "no-referrer");
       response.setHeader("X-Robots-Tag", "noindex, nofollow");
     }
     const assetPath = pathname === "/ads/banner" ? "/ads/banner.html" : pathname;

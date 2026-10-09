@@ -9,12 +9,10 @@
 /ads/banner.html
   ! Content-Security-Policy
   X-Robots-Tag: noindex, nofollow
-  ! Referrer-Policy
 
 /ads/banner
   ! Content-Security-Policy
   X-Robots-Tag: noindex, nofollow
-  ! Referrer-Policy
 
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable, no-transform

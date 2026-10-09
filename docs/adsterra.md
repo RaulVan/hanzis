@@ -11,6 +11,8 @@
 - 用户随后授权必要时联系客服。2026-10-10 已通过后台 Intercom 创建 Publishers Ticket #143499527，类型 Banner code problems，标题为 `hanzis.com Banner 320x50: invoke.js returns 403 / empty response`；后台明确显示“工单已创建”。
 - 工单提供公开网站、广告单元标识、复现 URL、403/空响应证据及 Referer/CSP/sandbox 配置；请求平台检查投放启用和请求拒绝原因，必要时提供同一 320×50 广告位的兼容代码。明确保持单个横幅、成人广告关闭，不增加其他广告格式。
 - 当前等待技术回复，尚未确认拒绝原因或恢复素材展示。创建工单不等于完成修复；截图 `/tmp/hanzis-adsterra-ticket-143499527.png`。
+- 根因复核：本机出口经 Clash TUN 到 AWS 台湾机房 IP（hosting=true），Adsterra 对机房流量返回 403，本机 403 不代表真实用户。线上集成本身另有两处缺陷：外层 iframe 和广告文档均为 `no-referrer`，Adsterra 收不到 hanzis.com 来源；sandbox 无 `allow-same-origin`，广告文档为 opaque 源，Cookie/存储访问报错。
+- 修复（用户确认安全取舍）：sandbox 改为 `allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox`，仍不授予 `allow-top-navigation*`；iframe `strict-origin-when-cross-origin`，广告文档 `<meta name="referrer" content="origin">`，取消 `_headers` 中 Referrer-Policy 的 detach。同源后广告脚本可访问主站页面与本机字帖设置，隔离弱于此前方案。参考同类实战：[Adsterra iframe、Referer 与 CPM](https://www.runningbai.cn/projects/adsterra-banner-iframe-warhounds)。
 - 官方参考：[静态 HTML 接入](https://help-publishers.adsterra.com/en/articles/5210780-adding-ads-to-a-static-html-site)、[Cloudflare 接入](https://help-publishers.adsterra.com/en/articles/5213852-using-adsterra-ads-with-cloudflare)、[VPN/代理与展示差异](https://adsterra.com/blog/what-is-discrepancy/)。
 
 ## 当前版本与正式部署验证
@@ -39,11 +41,11 @@
 
 ## 隔离与维护
 
-- 广告加载在 `public/ads/banner.html` 中，iframe sandbox 仅允许脚本和弹出链接，不允许访问本站同源存储或导航顶层页面。
+- 广告加载在 `public/ads/banner.html` 中，iframe sandbox 允许脚本、同源、弹出及弹窗脱离沙箱，不允许导航顶层页面；同源意味着广告脚本可访问本站页面与本机存储。
 - Cloudflare Pages 将 `.html` 自动重定向至无扩展名 URL；组件使用 `/ads/banner`，响应头例外同时覆盖该正式路径及原始 `.html` 路径，预览服务器使用同一映射。
 - 主站 CSP 保持不变。广告文档从全局 CSP 中排除，使用自身的 meta CSP，脚本来源仅允许官方代码所给的加载域名；嵌套广告 iframe 允许 HTTPS。
 - Cloudflare Pages `_headers` 多规则会合并重复 header，所以使用 detach 而非同时写第二个 CSP。参见 [Cloudflare Headers](https://developers.cloudflare.com/pages/configuration/headers/)。预览服务器模拟相同广告文档例外。
-- 广告文档 noindex/nofollow、不传 referrer，不进入 sitemap。现有 Google ads.txt 保留；未凭空新增未知的 Adsterra 授权销售声明。
+- 广告文档 noindex/nofollow，向广告方仅发送来源 origin，不进入 sitemap。现有 Google ads.txt 保留；未凭空新增未知的 Adsterra 授权销售声明。
 - 第三方广告仍可能使用 IP、浏览器信息及 Cookie，披露见 `/privacy/`。关闭不撤销已发生的数据处理。
 - 成人广告关闭不等于所有创意均适合儿童；需持续检查实际素材，必要时在平台进一步限制或移除广告位。此次未核验收益、填充率或广告点击转化。
 - 后续发布仍需明确推送部署授权。平台 Active、代码上线和真实素材展示分别核验；当前代码已上线，真实素材未展示。

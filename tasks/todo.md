@@ -9,7 +9,9 @@
 - [ ] 未验证：实际广告脚本与素材展示仍失败，不能将广告框架上线视为问题解决。
 - [x] 用户随后授权必要时联系客服；已创建技术工单 #143499527（Banner code problems），后台明确显示“工单已创建”。请求核查平台投放与 403 原因，并保留单个横幅、成人广告关闭。
 - [ ] 等待平台技术回复，根据有效诊断完成最小修复并核验实际广告展示。
-- 不适用：当前没有广告源码修改，不运行构建或部署；仅提交排查与工单记录，未变更广告投放配置。
+- [x] 复核根因：本机出口为 AWS 机房 IP，403 属平台拒绝机房流量；线上 iframe/广告文档 no-referrer 与 sandbox 缺少 allow-same-origin 为集成缺陷。
+- [x] 修复：sandbox 加 allow-same-origin、allow-popups-to-escape-sandbox；来源改为 strict-origin-when-cross-origin / origin；用户已确认同源隔离取舍与推送部署。
+- [ ] 线上真实网络（非机房/代理）验收广告素材展示，及后台 Impressions/CPM。
 
 ## 目标与边界
 
