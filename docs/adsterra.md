@@ -7,7 +7,10 @@
 - 实际学习页面中的广告文档响应 200。独立广告文档未受到父 iframe sandbox 限制仍无法加载，当前没有依据将父 iframe 隔离认定为直接原因。
 - 生产 HTML 没有 Rocket Loader 改写，广告文档没有主站响应头 CSP；不通过全面放宽 CSP、移除 sandbox 或替换未知域名处理服务端拒绝。
 - 本机域名解析得到代理虚拟地址；显式关闭 curl 代理仍不构成独立普通网络验收。使用公开 DNS 地址保持 HTTPS 证书验证的请求也返回 403，但网络路径是否仍受透明代理影响未确认。
-- 用户按手机移动网络关闭 VPN 的对照要求反馈仍为空白；尚未取得该设备的请求日志，不能将电脑的 403 推断为手机同样返回 403，也不能仅将故障归因于电脑代理。平台拒绝原因仍未确认；用户要求仅排查代码，不联系客服，未发送排障消息、未调整后台设置。
+- 用户按手机移动网络关闭 VPN 的对照要求反馈仍为空白；尚未取得该设备的请求日志，不能将电脑的 403 推断为手机同样返回 403，也不能仅将故障归因于电脑代理。
+- 用户随后授权必要时联系客服。2026-10-10 已通过后台 Intercom 创建 Publishers Ticket #143499527，类型 Banner code problems，标题为 `hanzis.com Banner 320x50: invoke.js returns 403 / empty response`；后台明确显示“工单已创建”。
+- 工单提供公开网站、广告单元标识、复现 URL、403/空响应证据及 Referer/CSP/sandbox 配置；请求平台检查投放启用和请求拒绝原因，必要时提供同一 320×50 广告位的兼容代码。明确保持单个横幅、成人广告关闭，不增加其他广告格式。
+- 当前等待技术回复，尚未确认拒绝原因或恢复素材展示。创建工单不等于完成修复；截图 `/tmp/hanzis-adsterra-ticket-143499527.png`。
 - 官方参考：[静态 HTML 接入](https://help-publishers.adsterra.com/en/articles/5210780-adding-ads-to-a-static-html-site)、[Cloudflare 接入](https://help-publishers.adsterra.com/en/articles/5213852-using-adsterra-ads-with-cloudflare)、[VPN/代理与展示差异](https://adsterra.com/blog/what-is-discrepancy/)。
 
 ## 当前版本与正式部署验证
