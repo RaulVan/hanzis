@@ -30,7 +30,7 @@ export default function GamesPage() {
           "@type": "ListItem", position: index + 1, name: game.title, url: `${SITE_URL}${game.href}`,
         })) },
       }} />
-      <PageHeading title="玩一局，记住几个字。" description="短短几分钟的汉字、拼音和诗词小游戏，无需注册，没有广告。" />
+      <PageHeading title="玩一局，记住几个字。" description="短短几分钟的汉字、拼音和诗词小游戏，无需注册，随时开始。" />
       <ul aria-label="小游戏列表" className="grid gap-4 md:grid-cols-3">
         {games.map(game => (
           <li key={game.href}>
