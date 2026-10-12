@@ -1,5 +1,28 @@
 # SEO 维护说明
 
+## 2026-10-12：Search Console 排除通知核查
+
+本次实际进入 `hanzis.com` 域名资源核对报告（报告标注更新日期 2026-10-09）：39 个网址已编入索引，157 个未编入索引。用户收到的两类通知不是本次发现的代码故障，应保留现有规范化规则。
+
+| 排除原因 | 实际网址 | 核查结果 |
+| --- | --- | --- |
+| 备用网页（有适当的规范标记） | 145 条，全部带查询参数：首页 `?text=` 71 条、字典 `?q=` 52 条、笔顺 `?char=` 16 条、诗词 `?poem=` 6 条 | 属于工具输入、查询或目录选择状态，沿用对应无参数页面的 canonical；不应让所有输入组合独立收录 |
+| 网页会自动重定向 | 1 条：`http://hanzis.com/` | 正式响应为 301，直接指向 `https://hanzis.com/`；HTTPS 首页在网址检查中显示“网址已收录到 Google”，用户声明和 Google 选择的规范网址一致 |
+
+正式站点验证：
+
+- sitemap 中全部 49 条 URL 直接返回 200，无重定向，只有一个与自身 URL 一致的 canonical，且没有 robots meta noindex。
+- 四类参数样本 `/?text=炉`、`/dictionary/?q=出`、`/stroke/?char=炉`、`/poetry/?poem=min-nong` 均返回 200，分别指向 `/`、`/dictionary/`、`/stroke/`、`/poetry/` 的 HTTPS canonical。
+- Search Console 对 `/dictionary/?q=出` 的网址检查明确显示“备用网页（有适当的规范标记）”，抓取成功、允许编入索引，Google 选择的规范网址与用户声明的 `https://hanzis.com/dictionary/` 相同。
+- `/pinyin` 正常 308 到 `/pinyin/`；sitemap 已使用最终带斜杠地址。
+- 另有 10 条“已发现 - 尚未编入索引”和 1 条“已抓取 - 尚未编入索引”，属于其他状态，未将本轮规范化核查描述为解决这些索引选择问题。
+
+无需删除 canonical、取消 HTTP→HTTPS 跳转、屏蔽参数 URL 抓取，或对这两项正常排除状态点击“验证修正情况”。现有参数链接仍承担用户输入与查询功能；保持其可用。正常排除记录可能继续显示，不以通知消失作为成功条件。
+
+此次没有修改业务源码、推送、部署或重新请求索引；提交仅包含核查记录。临时证据：`/tmp/hanzis-gsc-alternates-20261012.json`、`/tmp/hanzis-seo-live-audit-20261012.json`、`/tmp/hanzis-gsc-home-indexed-20261012.png`。
+
+官方依据：[Google 网页索引编制报告](https://support.google.com/webmasters/answer/7440203?hl=zh-Hans)将适当 canonical 的备用网页视为无需操作的正常状态；重定向源 URL 不收录，需要核对最终目标网址。
+
 ## 当前实现
 
 - 百度搜索资源平台使用根 layout 的 `baidu-site-verification` 标签验证 https://hanzis.com。2026-10-09 标签随 66fbfbe 部署，正式首页可读取，百度后台提示验证成功；保留标签以维持状态。所有权验证不等于抓取或收录。后续尝试 sitemap 提交时，百度显示该站点今日额度为 0，输入框与提交按钮不可用，未能提交。正式 sitemap HTTP 200，包含 49 个 URL；配额开放后再提交。
