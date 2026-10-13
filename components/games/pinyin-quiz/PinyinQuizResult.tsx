@@ -1,4 +1,5 @@
 "use client";
+import { ContentFeedback } from "@/components/learning/ContentFeedback";
 import { UiText } from "@/components/i18n/UiText";
 import { useTranslate } from "@/components/i18n/LanguageProvider";
 
@@ -59,6 +60,7 @@ export const PinyinQuizResult = forwardRef<HTMLHeadingElement, {
                         <span className="text-xs text-accent-foreground"><UiText>{outcome === "skipped" ? "已跳过" : `答错 ${wrongAttempts} 次后答对`}</UiText></span>
                       </p>
                       <p className="text-sm text-muted-foreground">{item.meaning ?? <UiText text="例：{0}" values={[item.word]} />}</p>
+                      <ContentFeedback contentId={`pinyin-quiz:${item.id}`} />
                     </div>
                     <Button asChild variant="link" size="sm" className="self-start px-0 sm:px-3">
                       <Link href={`/dictionary/?q=${encodeURIComponent(item.text)}`} aria-label={t("在字典中查看「{0}」", [item.text])}><UiText text="查字典" /></Link>
@@ -67,6 +69,15 @@ export const PinyinQuizResult = forwardRef<HTMLHeadingElement, {
                 ))}
               </ol>
             )}
+          </div>
+          <div className="space-y-2 border-t pt-4">
+            <h3 className="section-title"><UiText text="选一个知识点复习" /></h3>
+            <p className="text-sm text-muted-foreground"><UiText text="以下为课程入口，返回游戏后仍是综合题目。" /></p>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant="outline"><Link href="/pinyin/initials/#aspiration"><UiText text="送气与不送气" /></Link></Button>
+              <Button asChild variant="outline"><Link href="/pinyin/finals/#u-spelling"><UiText text="ü 的拼写与输入" /></Link></Button>
+              <Button asChild variant="outline"><Link href="/pinyin/tones/"><UiText text="复习四声与轻声" /></Link></Button>
+            </div>
           </div>
         </CardContent>
         <CardFooter className="flex-wrap justify-center gap-3">

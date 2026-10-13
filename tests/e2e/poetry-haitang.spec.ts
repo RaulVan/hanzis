@@ -11,7 +11,7 @@ for (const width of [1440, 375]) {
     const article = page.getByRole("article", { name: "春江花月夜原文与注释" });
     await expect(article).toBeVisible();
     await expect(page.locator("body")).not.toContainText(/海棠诗社|海棠资料|leozxl\/haitang|西窗烛/);
-    await expect(article.getByRole("link", { name: "chinese-poetry/chinese-poetry" })).toHaveAttribute("href", "https://github.com/chinese-poetry/chinese-poetry");
+    await expect(article.getByRole("link", { name: "chinese-poetry/chinese-poetry" })).toHaveCount(0);
     await expect(article.locator(".poem-verses")).toContainText("春江潮水连海平");
     await expect(article).toContainText("自动注音");
     await expect(article.getByRole("switch", { name: "显示拼音" })).not.toBeChecked();
@@ -137,17 +137,17 @@ test("a slow imported detail cannot replace a newly selected curated poem", asyn
 });
 
 
-test("platform credits disappear while literary text and the new source link remain", async ({ page }) => {
+test("platform credits move to copyright while literary text remains", async ({ page }) => {
   await page.goto("/poetry/?poem=haitang-10510");
   const article = page.getByRole("article");
   await expect(article).toBeVisible();
   await article.locator("summary").filter({ hasText: /^注解$/ }).click();
   await expect(article.locator("details[open]")).toContainText("版本据《韩昌黎诗系年集释》卷二");
   await expect(article).not.toContainText("西窗烛版本");
-  await expect(article).toContainText("诗词来源：chinese-poetry/chinese-poetry");
+  await expect(article).not.toContainText("chinese-poetry/chinese-poetry");
   await page.goto("/poetry/?poem=haitang-10024");
   await expect(page.locator(".poem-verses")).toContainText("何当共剪西窗烛，却话巴山夜雨时。");
-  await page.goto("/about/");
+  await page.goto("/about/copyright/");
   await expect(page.locator("body")).not.toContainText(/海棠|西窗烛|leozxl\/haitang/);
   await expect(page.getByRole("link", { name: "chinese-poetry/chinese-poetry" })).toHaveAttribute("href", "https://github.com/chinese-poetry/chinese-poetry");
 });

@@ -14,13 +14,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
 import { createWorksheetDocument } from "@/lib/worksheetLayout";
-import { extractWorksheetCharacters, MAX_WORKSHEET_CHARACTERS, MAX_WORKSHEET_PAGES } from "@/lib/worksheetConfig";
+import { extractWorksheetCharacters, MAX_WORKSHEET_CHARACTERS, MAX_WORKSHEET_PAGES, WORKSHEET_STORAGE_KEY } from "@/lib/worksheetConfig";
 import { useWorksheetStore } from "@/stores/worksheetStore";
 import { WorksheetPreview } from "./WorksheetPreview";
 import { WorksheetImportBanner } from "./WorksheetImportBanner";
 import { useWorksheetData } from "./useWorksheetData";
+import { WorksheetScenarioControls } from "./WorksheetScenarioControls";
+import { worksheetScenarioConfig, type WorksheetScenarioId } from "@/data/worksheetScenarios";
 
-export function WorksheetGenerator() {
+export function WorksheetGenerator({ scenario }: { scenario?: WorksheetScenarioId }) {
   const t = useTranslate();
   const { config, hydrate, hasHydrated, storageError, isComposing, currentPage: savedPage,
     setCurrentPage, setCharacters, setLoading } = useWorksheetStore();
@@ -37,7 +39,14 @@ export function WorksheetGenerator() {
   const tooLong = characterCount > MAX_WORKSHEET_CHARACTERS;
   const blocked = !data.ready || isComposing || tooLong || worksheet.exceedsPageLimit;
 
-  React.useEffect(() => { hydrate(); }, [hydrate]);
+  React.useEffect(() => {
+    let firstVisit = false;
+    if (scenario && !useWorksheetStore.getState().hasHydrated) {
+      try { firstVisit = localStorage.getItem(WORKSHEET_STORAGE_KEY) === null; } catch { /* Preserve in-memory state when storage is unavailable. */ }
+    }
+    hydrate();
+    if (scenario && firstVisit) useWorksheetStore.getState().setConfig(worksheetScenarioConfig(scenario));
+  }, [hydrate, scenario]);
   React.useEffect(() => {
     setCharacters(data.characters);
     setLoading(data.pending);
@@ -76,6 +85,7 @@ export function WorksheetGenerator() {
 
   return (
     <div className="flex min-w-0 flex-col gap-5">
+      {scenario ? <WorksheetScenarioControls key={scenario} scenario={scenario} disabled={Boolean(busy) || !hasHydrated || isComposing} /> : null}
       <React.Suspense fallback={null}><WorksheetImportBanner disabled={Boolean(busy)} /></React.Suspense>
       {storageError ? <Alert><AlertTitle><UiText text="本地保存提示" /></AlertTitle><AlertDescription><UiText>{storageError}</UiText></AlertDescription></Alert> : null}
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getPoem, poems, poemText } from "@/data/poems";
+import { PoemLearningGuide } from "@/components/poetry/PoemLearningGuide";
 import { PoemReader } from "@/components/poetry/PoemReader";
 import { Button } from "@/components/ui/button";
 import { pageMetadata, SITE_URL } from "@/lib/seo";
@@ -38,6 +39,6 @@ export default async function PoemPage({ params }: { params: Promise<{ slug: str
       <Link href="/poetry/" className="inline-flex min-h-11 items-center hover:underline"><UiText text="古诗词"  /></Link><span aria-hidden="true">/</span>
       <span aria-current="page">{poem.title}</span>
     </UiRegion>
-    <Button variant="ghost" asChild className="self-start"><Link href={`/poetry/?poem=${poem.slug}`}><ArrowLeft aria-hidden="true" /><UiText text="返回诗词目录"  /></Link></Button><PoemReader poem={poem} standalone />
+    <Button variant="ghost" asChild className="self-start"><Link href={`/poetry/?poem=${poem.slug}`}><ArrowLeft aria-hidden="true" /><UiText text="返回诗词目录"  /></Link></Button><PoemReader poem={poem} standalone /><PoemLearningGuide slug={poem.slug} />
   </div>;
 }

@@ -1,5 +1,11 @@
 # Adsterra 接入
 
+## 2026-10-13 当前实现
+
+- 本地源码已移除 Adsterra 组件、广告 HTML 和广告路径的 CSP 豁免；Google 站点验证 meta 与 ads.txt 保留，未启用 Google 广告。
+- 此记录不表示已部署，正式站点需在授权发布后另行验证。下方接入、投放及审核过程均为历史记录。
+
+
 ## 2026-10-10 加载失败排查
 
 - 正式广告 HTML 与源文件一致、HTTP 200；后台 hanzis.com Approved，广告位 31632666 Active，GET CODE 与源文件的 key、域名、尺寸一致。

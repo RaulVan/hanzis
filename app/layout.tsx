@@ -9,7 +9,6 @@ import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { AppProviders } from "@/components/layout/AppProviders";
-import { AdsterraBanner } from "@/components/ads/AdsterraBanner";
 import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 
 export const metadata: Metadata = {
@@ -37,7 +36,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <a href="#main-content" className="skip-link"><UiText text="跳到主要内容" /></a>
           <Navigation />
           <main id="main-content" tabIndex={-1} className="site-container main-content">{children}</main>
-          <AdsterraBanner />
           <Footer />
           <AppProviders />
         </LanguageProvider>

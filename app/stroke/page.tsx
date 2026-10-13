@@ -35,7 +35,7 @@ export default function StrokePage() {
         { title: "先观察完整笔顺", text: "输入一个汉字，播放笔顺动画，观察笔画的起点、方向和先后顺序。遇到复杂的字，可结合逐笔分解查看每一笔的位置。" },
         { title: "再动手跟写", text: "在书写测验中按顺序描写汉字，把观察到的笔画顺序变成手部练习。熟悉后可生成字帖，继续在纸上书写。" },
         { title: "结合字音与字义", text: "认识一个字时，把读音、意思和写法一起学习。本站提供 9,574 个本地汉字字形文件，部分生僻字可能没有笔顺资料。" },
-      ]} links={[{ href: "/", label: "生成汉字字帖" }, { href: "/dictionary/", label: "查询汉字释义" }, { href: "/about/#sources", label: "查看笔顺数据来源" }]} />
+      ]} links={[{ href: "/", label: "生成汉字字帖" }, { href: "/dictionary/", label: "查询汉字释义" }, { href: "/about/copyright/#sources", label: "查看笔顺数据来源" }]} />
     </>
   );
 }

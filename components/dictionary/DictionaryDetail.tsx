@@ -1,4 +1,5 @@
 "use client";
+import { ContentFeedback } from "@/components/learning/ContentFeedback";
 import { UiText } from "@/components/i18n/UiText";
 import { useTranslate } from "@/components/i18n/LanguageProvider";
 
@@ -36,8 +37,8 @@ export function DictionaryDetail({ term, preview = false }: { term: string; prev
     {entry.moe.length > 0 && <MoeDefinition entries={entry.moe} />}
     {entry.revised.length > 0 && <RevisedDefinition entries={entry.revised} expanded={!entry.moe.length} />}
     {entry.xinhua.length > 0 && <XinhuaDefinition entries={entry.xinhua} expanded={!entry.moe.length && !entry.revised.length} />}
-    {entry.openDefinition && <details open={!entry.moe.length && !entry.revised.length && !entry.xinhua.length} className="rounded-lg border border-border"><summary className="min-h-11 cursor-pointer px-5 py-4 font-semibold"><UiText text="开放词库释义{0}" values={[entry.moe.length ? "（补充）" : ""]} /></summary><div className="flex flex-col gap-3 border-t border-border px-5 py-4"><p className="whitespace-pre-wrap break-words leading-8">{entry.openDefinition}</p><p className="text-xs leading-6 text-muted-foreground"><UiText text="来源：cnchar-data 1.1.0，MIT。词库含历史用法，部分释义可能较旧；用于学习参考。" /></p></div></details>}
+    {entry.openDefinition && <details open={!entry.moe.length && !entry.revised.length && !entry.xinhua.length} className="rounded-lg border border-border"><summary className="min-h-11 cursor-pointer px-5 py-4 font-semibold"><UiText text="开放词库释义{0}" values={[entry.moe.length ? "（补充）" : ""]} /></summary><div className="flex flex-col gap-3 border-t border-border px-5 py-4"><p className="whitespace-pre-wrap break-words leading-8">{entry.openDefinition}</p><p className="text-xs leading-6 text-muted-foreground"><UiText text="词库含历史用法，部分释义可能较旧；用于学习参考。" /><a href="/about/copyright/#sources" className="ml-2 underline underline-offset-4"><UiText text="资料与版权说明" /></a></p></div></details>}
     {!entry.moe.length && !entry.revised.length && !entry.xinhua.length && !entry.openDefinition && !entry.unavailableSources.length && <Alert><AlertDescription><UiText text="当前词库还没有这个字词的释义。你仍可查看已有字形资料，或换一个常用词查询。" /></AlertDescription></Alert>}
     {characters.length > 1 && <section className="flex flex-col gap-3"><h3 className="section-title"><UiText text="一个字一个字地学" /></h3><div className="flex flex-wrap gap-2">{characters.map(char => <Button key={char} variant="outline" asChild><Link href={`/dictionary/?q=${encodeURIComponent(char)}`}>{char}<ArrowUpRight aria-hidden="true" /></Link></Button>)}</div></section>}
-  </article>;
+  <div><ContentFeedback contentId={`dictionary:${term}`} /></div></article>;
 }

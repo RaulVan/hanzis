@@ -3,7 +3,7 @@ import { getGameStars } from "@/lib/gameStars";
 import { parsePinyinSyllables, toneLabel, type PinyinSyllable } from "@/lib/pinyinSyllable";
 
 export const CHENGYU_WORDLE_TRIES = 6;
-export const CHENGYU_WORDLE_SOURCE_NOTE = "释义和读音来自 chinese-xinhua 成语快照，未经人工审校。每条成语只用资料里的一种读音。";
+export const CHENGYU_WORDLE_SOURCE_NOTE = "释义和读音来自成语资料快照，未经人工审校。每条成语只用资料里的一种读音。";
 
 export type ChengyuMark = "exact" | "present" | "absent";
 

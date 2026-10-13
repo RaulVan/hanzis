@@ -14,10 +14,10 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 375, height: 812 
     await expect(revised.getByText("xué xi", { exact: false }).first()).toBeVisible();
     await expect(revised.getByText("xué xí", { exact: false }).first()).toBeVisible();
     await expect(revised.getByText("受教研習。", { exact: true })).toBeVisible();
-    await article.locator("summary").filter({ hasText: "第三方整理字典" }).click();
+    await article.locator("summary").filter({ hasText: "整理词典" }).click();
     await expect(article.getByRole("region", { name: "第三方整理释义" })).toContainText("学习");
     await article.locator("summary").filter({ hasText: "开放词库释义" }).click();
-    await expect(article.getByText("来源：cnchar-data", { exact: false })).toBeVisible();
+    await expect(article.getByRole("link", { name: "资料与版权说明" }).last()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze()).violations).toEqual([]);
     await article.screenshot({ path: `/tmp/hanzis-dictionary-${viewport.width}.png` });
@@ -35,13 +35,13 @@ test("revised-only terms are discoverable and open automatically", async ({ page
 
 test("third-party character and idiom records expose their additional original fields", async ({ page }) => {
   await page.goto("/dictionary/?q=嗄&kind=character");
-  await page.locator("summary").filter({ hasText: "第三方整理字典" }).click();
+  await page.locator("summary").filter({ hasText: "整理词典" }).click();
   const thirdParty = page.getByRole("region", { name: "第三方整理释义" });
   await expect(thirdParty.getByText("汉字", { exact: true }).first()).toBeVisible();
   await thirdParty.getByText("更多原文资料", { exact: true }).first().click();
   await expect(thirdParty.getByText("声音嘶哑的", { exact: false }).last()).toBeVisible();
   await page.goto("/dictionary/?q=画蛇添足&kind=idiom");
-  await page.locator("summary").filter({ hasText: "第三方整理字典" }).click();
+  await page.locator("summary").filter({ hasText: "整理词典" }).click();
   await expect(page.getByRole("region", { name: "第三方整理释义" }).getByText("成语", { exact: true })).toBeVisible();
   await expect(page.getByRole("region", { name: "第三方整理释义" }).getByText("出处", { exact: true })).toBeVisible();
 });
@@ -66,7 +66,7 @@ test("a missing detail source leaves other definitions readable and retry restor
   await expect(page.getByText("《國語辭典簡編本》原文", { exact: false })).toBeVisible();
   await page.unroute(pattern);
   await page.getByRole("button", { name: "重试缺失释义" }).click();
-  await expect(page.locator("summary").filter({ hasText: "第三方整理字典" })).toBeVisible();
+  await expect(page.locator("summary").filter({ hasText: "整理词典" })).toBeVisible();
   await expect(page.getByRole("button", { name: "重试缺失释义" })).toHaveCount(0);
 });
 

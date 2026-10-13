@@ -10,11 +10,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "字帖生成" },
-  { href: "/pinyin/", label: "拼音学习" },
   { href: "/stroke/", label: "汉字笔顺" },
-  { href: "/poetry/", label: "古诗词" },
   { href: "/dictionary/", label: "中文字典" },
+  { href: "/poetry/", label: "古诗词" },
+  { href: "/pinyin/", label: "拼音学习" },
   { href: "/games/", label: "汉字游戏" },
 ];
 

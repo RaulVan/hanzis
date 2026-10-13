@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 import { poems } from "@/data/poems";
 
-const routes = ["", "/pinyin", "/pinyin/initials", "/pinyin/finals", "/pinyin/syllables", "/pinyin/tones", "/pinyin/practice", "/stroke", "/poetry", "/dictionary", "/games", "/games/hanzi-match", "/games/pinyin-quiz", "/games/feihua", "/games/poem-sort", "/games/chengyu-chain", "/games/chengyu-wordle", "/about", "/privacy"];
+const routes = ["", "/pinyin", "/pinyin/initials", "/pinyin/finals", "/pinyin/syllables", "/pinyin/tones", "/pinyin/practice", "/stroke", "/poetry", "/dictionary", "/games", "/games/hanzi-match", "/games/pinyin-quiz", "/games/feihua", "/games/poem-sort", "/games/chengyu-chain", "/games/chengyu-wordle", "/about", "/about/copyright", "/privacy", "/worksheets/tianzi", "/worksheets/mizi", "/worksheets/poetry"];
 
 export const dynamic = "force-static";
 

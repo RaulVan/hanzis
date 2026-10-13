@@ -1,17 +1,13 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { AxeBuilder } from "@axe-core/playwright";
 
 test.setTimeout(60_000);
 
-async function isolateAds(page: Page) {
-  await page.route("**/ads/banner*", route => route.fulfill({ contentType: "text/html", body: "<!doctype html><html lang='en'><head><title>Ad placeholder</title></head><body></body></html>" }));
-}
 
 for (const locale of ["zh-CN", "zh-TW", "en-US", "ja-JP", "fr-FR"]) {
   test(`browser language ${locale} selects the expected interface`, async ({ browser }) => {
     const context = await browser.newContext({ locale });
     const page = await context.newPage();
-    await isolateAds(page);
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
     await page.goto("/");
@@ -26,7 +22,6 @@ for (const locale of ["zh-CN", "zh-TW", "en-US", "ja-JP", "fr-FR"]) {
 }
 
 test("language switches preserve learning content and persist across navigation and reload", async ({ page }) => {
-  await isolateAds(page);
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto("/");
@@ -61,7 +56,6 @@ test("language switching still works when local storage is unavailable", async (
     Storage.prototype.setItem = () => { throw new DOMException("Blocked", "SecurityError"); };
   });
   const page = await context.newPage();
-  await isolateAds(page);
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.getByRole("button", { name: "中文", exact: true }).click();
@@ -72,7 +66,6 @@ test("language switching still works when local storage is unavailable", async (
 });
 
 test("English pages and a game round render with healthy consoles and responsive navigation", async ({ page }) => {
-  await isolateAds(page);
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto("/");
@@ -108,7 +101,6 @@ test("English pages and a game round render with healthy consoles and responsive
 });
 
 test("English daily idiom feedback fits every cell on a phone", async ({ page }) => {
-  await isolateAds(page);
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/games/chengyu-wordle/");
   await page.getByRole("button", { name: "English", exact: true }).click();
@@ -124,7 +116,6 @@ test("English daily idiom feedback fits every cell on a phone", async ({ page })
 });
 
 test("stroke information preserves its pinyin and radical when the interface switches", async ({ page }) => {
-  await isolateAds(page);
   await page.goto("/stroke/?char=无");
   const originalRadical = page.locator("dl > div").filter({ has: page.getByText("部首", { exact: true }) }).locator("dd");
   await expect(originalRadical).toHaveText(/^\p{Script=Han}$/u);

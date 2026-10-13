@@ -10,7 +10,7 @@ test("all sitemap pages expose unique canonical metadata without JavaScript", as
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.ok()).toBeTruthy();
   const urls = [...(await sitemap.text()).matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-  expect(urls).toHaveLength(19 + poems.length);
+  expect(urls).toHaveLength(23 + poems.length);
   expect(new Set(urls).size).toBe(urls.length);
   // New public routes must not silently disappear from the sitemap.
   const appFiles = await readdir(join(__dirname, "../../app"), { recursive: true });
@@ -140,4 +140,20 @@ test("guides, poetry links and structured data are readable without JavaScript",
   ]);
   await page.getByRole("navigation", { name: "面包屑" }).getByRole("link", { name: "古诗词", exact: true }).click();
   await expect(page).toHaveURL(/\/poetry\/$/);
+});
+
+test("new scenario samples and five poem guides are readable before hydration", async ({ page }) => {
+  for (const scenario of ["tianzi", "mizi", "poetry"]) {
+    await page.goto(`/worksheets/${scenario}/`);
+    await expect(page.getByRole("heading", { name: "观察样例，再开始练习" })).toBeVisible();
+    await expect(page.locator("figure svg")).toHaveCount(1);
+  }
+  for (const slug of ["jing-ye-si", "chun-xiao", "yong-e", "deng-guan-que-lou", "min-nong"]) {
+    await page.goto(`/poetry/${slug}/`);
+    const guide = page.getByRole("region", { name: "读懂这首诗" });
+    await expect(guide.locator("li")).toHaveCount(3);
+    await guide.locator("summary").click();
+    await expect(guide.locator("details")).toHaveAttribute("open", "");
+    await expect(guide.getByRole("link", { name: "用选字生成字帖" })).toHaveAttribute("href", /generate=poetry/);
+  }
 });

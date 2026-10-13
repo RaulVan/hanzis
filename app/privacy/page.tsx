@@ -11,8 +11,9 @@ export const metadata = pageMetadata(
 );
 
 const items = [
-  { icon: LockKeyhole, title: "不需要账号", text: "本站不提供注册或登录。学习、练习与游戏页面底部默认加载一个 Adsterra 小横幅，可随时关闭，不影响全部学习功能的免费使用。" },
-  { icon: Server, title: "第三方广告", text: "打开包含广告的页面时，浏览器会向 Adsterra 及其广告合作方请求内容，对方可接收 IP、浏览器信息等请求数据，并可能使用 Cookie 或其他技术进行广告投放与衡量。广告在隔离的框架中运行，不接收本站传入的字帖文字、设置或收藏。你可关闭广告以停止后续加载；已发送给第三方的请求无法撤回，第三方数据处理遵循其隐私政策。关闭状态不写入本机存储，刷新页面后会重新加载广告。" },
+  { icon: Server, title: "主动反馈", text: "报告问题会在浏览器中生成可编辑文本。只有你选择打开邮件草稿并在邮件应用中确认发送，内容才会发送至公开反馈邮箱；复制文本不会自动发送。页面地址不附带查询参数，避免把练习输入一并写入草稿。" },
+  { icon: LockKeyhole, title: "不需要账号", text: "本站不提供注册或登录，学习工具无需账号即可使用。" },
+  { icon: Server, title: "广告与网站验证", text: "当前版本不加载广告脚本或广告位。保留 Google 网站验证标识与 ads.txt 配置；这些配置本身不会加载 Google 广告。" },
   { icon: HardDrive, title: "练习内容留在浏览器", text: "字帖文字、排版设置和诗词收藏只保存在当前浏览器的 localStorage 中。生成 PDF、PNG 和打印内容也在设备本地完成，不上传到服务器。" },
   { icon: Database, title: "你可以随时清除", text: "删除浏览器站点数据会移除字帖设置与诗词收藏。若旧版设置格式异常，应用可能保留一份带时间戳的本地备份，方便避免误删；它仍只在浏览器中。" },
   { icon: Server, title: "托管与匿名统计", text: "页面、字体、汉字笔顺、字典分片和录音均从本站同源静态文件读取。生产站点由 Cloudflare 托管，并使用 Cloudflare Web Analytics 汇总页面访问与性能指标；它不读取字帖内容、排版设置或收藏。托管服务商也可能按其政策记录标准访问日志，例如 IP、时间和请求路径。" },
@@ -21,7 +22,7 @@ const items = [
 export default function PrivacyPage() {
   return <div className="mx-auto flex max-w-4xl flex-col gap-7">
     <PageHeading className="stacked-page-heading" title="隐私说明" description="学习记录由你掌握，核心功能在浏览器本地完成。" />
-    <p className="body-copy"><UiText text="本说明适用于当前静态版本，更新日期为 2026-10-09。学习工具的本地处理与广告分别说明如下。第三方广告的数据处理详见"  /><a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noreferrer" className="underline underline-offset-4"><UiText text="Adsterra 隐私政策"  /></a>。</p>
+    <p className="body-copy"><UiText text="本说明适用于当前静态版本，更新日期为 2026-10-13。以下说明本地存储、网络请求与主动反馈的处理方式。" /></p>
     <div className="grid gap-4 sm:grid-cols-2">{items.map(({ icon: Icon, title, text }) => <Card key={title}>
       <CardHeader><CardTitle className="flex items-center gap-2"><Icon aria-hidden="true" className="size-5 text-primary" /><UiText>{title}</UiText></CardTitle><CardDescription><UiText>{text}</UiText></CardDescription></CardHeader>
     </Card>)}</div>

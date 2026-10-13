@@ -1,4 +1,5 @@
 "use client";
+import { ContentFeedback } from "@/components/learning/ContentFeedback";
 import { UiText } from "@/components/i18n/UiText";
 import { useTranslate } from "@/components/i18n/LanguageProvider";
 
@@ -57,5 +58,5 @@ export function PoemReader({ poem, standalone = false }: { poem: Poem; standalon
     <p className="text-center text-xs leading-6 text-muted-foreground">{poem.haitang ? <UiText text="点击诗中的汉字可查字典；{0}" values={[standalone ? "可复制当前页面地址分享这篇作品。" : "可通过“打开作品链接”进入独立阅读页。"]} /> : <><UiText text="注音标本调，朗读中可能有变调；点击诗中的汉字可查字典。" /><br /><UiText text="原文采用常见简体版本，译文与注释为学习提示。" /></>}{!canPractice && <><br /><UiText text="本篇段落较长，暂不支持逐句默写，可选段生成字帖。" /></>}</p>
     {lookup && <PoemDictionaryDialog character={lookup.character} trigger={lookup.trigger} onClose={() => setLookup(null)} />}
     {practice && <RecitationPractice poem={practicePoem} onClose={() => setPractice(false)} />}
-  </article>;
+  <div><ContentFeedback contentId={`poem:${poem.slug}`} /></div></article>;
 }
