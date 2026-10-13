@@ -51,7 +51,7 @@ export default function AboutPage() {
 
     <section aria-labelledby="audio-title" className="space-y-4">
       <h2 id="audio-title" className="section-title flex items-center gap-2"><Volume2 aria-hidden="true" /><UiText text="录音与系统语音"  /></h2>
-      <Card><CardHeader><h3 className="text-lg font-semibold leading-snug"><UiText text="本地拼音录音"  /></h3><CardDescription><UiText text="站内包含 1,678 个 MP3 文件。项目所有者已于 2026-09-01 确认取得口头授权，书面授权说明将在后续补充；这些录音不包含在源码 MIT License 中。轻声或缺少录音的示例会明确使用设备的系统中文语音。"  /></CardDescription></CardHeader></Card>
+      <Card><CardHeader><h3 className="text-lg font-semibold leading-snug"><UiText text="本地拼音录音"  /></h3><CardDescription><UiText text="站内包含 1,678 个 MP3 文件。轻声或缺少录音的示例会明确使用设备的系统中文语音。"  /></CardDescription></CardHeader></Card>
     </section>
 
     <section aria-labelledby="license-title" className="space-y-4">
