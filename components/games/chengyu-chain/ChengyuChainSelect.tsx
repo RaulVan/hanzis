@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import { forwardRef } from "react";
 import { GameStars } from "@/components/games/GameStars";
@@ -19,27 +21,28 @@ export const ChengyuChainSelect = forwardRef<HTMLHeadingElement, {
   onDifficultyChange: (difficulty: ChengyuChain["difficulty"]) => void;
   onStart: (id: string) => void;
 }>(function ChengyuChainSelect({ difficulty, progress, onDifficultyChange, onStart }, headingRef) {
+  const t = useTranslate();
   const chains = chengyuChains.filter(chain => chain.difficulty === difficulty);
   return (
     <section aria-labelledby="chengyu-chain-select-title" className="study-panel flex min-w-0 flex-col gap-5 p-5 sm:p-6">
       <div className="flex flex-col gap-2">
-        <h2 id="chengyu-chain-select-title" ref={headingRef} tabIndex={-1} className="section-title">选一条成语链</h2>
-        <p className="text-muted-foreground">上一个成语的最后一个字，就是下一个成语的第一个字。四选一，接错会告诉你差在哪里。</p>
+        <h2 id="chengyu-chain-select-title" ref={headingRef} tabIndex={-1} className="section-title"><UiText text="选一条成语链" /></h2>
+        <p className="text-muted-foreground"><UiText text="上一个成语的最后一个字，就是下一个成语的第一个字。四选一，接错会告诉你差在哪里。" /></p>
       </div>
       <ToggleGroup
         type="single"
         value={difficulty}
         onValueChange={value => { if (value) onDifficultyChange(value as ChengyuChain["difficulty"]); }}
         variant="outline"
-        aria-label="选择难度"
+        aria-label={t("选择难度")}
         className="w-full sm:w-fit"
       >
         {(["beginner", "intermediate"] as const).map(item => (
-          <ToggleGroupItem key={item} value={item} className="min-h-11 flex-1 px-5 text-base sm:flex-none">{chengyuDifficultyLabels[item]}</ToggleGroupItem>
+          <ToggleGroupItem key={item} value={item} className="min-h-11 flex-1 px-5 text-base sm:flex-none"><UiText>{chengyuDifficultyLabels[item]}</UiText></ToggleGroupItem>
         ))}
       </ToggleGroup>
-      <p className="text-sm text-muted-foreground">{descriptions[difficulty]}</p>
-      <ul aria-label={`${chengyuDifficultyLabels[difficulty]}成语链`} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <p className="text-sm text-muted-foreground"><UiText>{descriptions[difficulty]}</UiText></p>
+      <ul aria-label={t("{0}成语链", [chengyuDifficultyLabels[difficulty]])} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {chains.map(chain => {
           const stars = progress[chain.id];
           const title = chain.idioms[0].text;
@@ -48,11 +51,11 @@ export const ChengyuChainSelect = forwardRef<HTMLHeadingElement, {
               <Button
                 variant="outline"
                 onClick={() => onStart(chain.id)}
-                aria-label={`${title}，${chain.idioms.length} 个成语${stars ? `，已获得 ${stars} 颗星` : "，未完成"}`}
+                aria-label={t("{0}，{1} 个成语{2}", [title, chain.idioms.length, stars ? `，已获得 ${stars} 颗星` : "，未完成"])}
                 className="h-auto min-h-11 w-full flex-col gap-1 px-3 py-3"
               >
                 <span className="font-serif text-2xl font-normal leading-none">{title}</span>
-                {stars ? <GameStars stars={stars} /> : <span className="text-xs font-normal text-muted-foreground">{chain.idioms.length} 个成语</span>}
+                {stars ? <GameStars stars={stars} /> : <span className="text-xs font-normal text-muted-foreground"><UiText text="{0} 个成语" values={[chain.idioms.length]} /></span>}
               </Button>
             </li>
           );

@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import * as React from "react";
 import type HanziWriter from "hanzi-writer";
@@ -52,6 +54,7 @@ function useCanvasSize() {
 }
 
 export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProps) {
+  const t = useTranslate();
   const writerContainerRef = React.useRef<HTMLDivElement>(null);
   const writerRef = React.useRef<HanziWriter | null>(null);
   const { stageRef, size } = useCanvasSize();
@@ -233,10 +236,10 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle>笔顺动画与书写练习</CardTitle>
-            <CardDescription className="mt-2">先看清每一笔，再在同一个字格中亲手练习。</CardDescription>
+            <CardTitle><UiText text="笔顺动画与书写练习" /></CardTitle>
+            <CardDescription className="mt-2"><UiText text="先看清每一笔，再在同一个字格中亲手练习。" /></CardDescription>
           </div>
-          <Badge variant="outline">{strokeCount} 画</Badge>
+          <Badge variant="outline"><UiText text="{0} 画" values={[strokeCount]} /></Badge>
         </div>
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6 xl:grid-cols-[minmax(260px,360px)_minmax(0,1fr)] xl:items-start">
@@ -244,7 +247,7 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
           <div
             ref={stageRef}
             role="group"
-            aria-label={`“${char}”字的笔顺动画和书写区域`}
+            aria-label={t("“{0}”字的笔顺动画和书写区域", [char])}
             aria-describedby="stroke-canvas-help"
             className="relative aspect-square w-full overflow-hidden rounded-xl border border-border bg-card text-border"
           >
@@ -256,24 +259,23 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
             {engineState === "loading" && <div className="absolute inset-0 grid place-items-center bg-card/80"><Skeleton className="size-32 rounded-xl" /></div>}
           </div>
           <p id="stroke-canvas-help" className="mt-3 text-center text-xs leading-6 text-muted-foreground">
-            书写测验支持鼠标、触控板和触摸屏；键盘用户可使用“提示下一笔”逐步查看。
-          </p>
+            <UiText text="书写测验支持鼠标、触控板和触摸屏；键盘用户可使用“提示下一笔”逐步查看。" /></p>
         </div>
 
         <div className="min-w-0 space-y-5">
           {engineState === "error" ? (
             <Alert variant="destructive">
               <CircleAlert aria-hidden="true" />
-              <AlertTitle>书写画布加载失败</AlertTitle>
+              <AlertTitle><UiText text="书写画布加载失败" /></AlertTitle>
               <AlertDescription>
-                <p>{engineError}</p>
-                <Button className="mt-3" variant="outline" onClick={() => setEngineRevision((value) => value + 1)}>重新加载画布</Button>
+                <p><UiText>{engineError}</UiText></p>
+                <Button className="mt-3" variant="outline" onClick={() => setEngineRevision((value) => value + 1)}><UiText text="重新加载画布" /></Button>
               </AlertDescription>
             </Alert>
           ) : (
             <>
               <fieldset className="space-y-2" disabled={engineState !== "ready" || activity === "playing" || activity === "paused" || activity === "quiz"}>
-                <legend className="text-sm font-medium">播放速度</legend>
+                <legend className="text-sm font-medium"><UiText text="播放速度" /></legend>
                 <div className="flex flex-wrap gap-2">
                   {STROKE_SPEEDS.map((preset) => (
                     <Button
@@ -283,23 +285,23 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
                       aria-pressed={speedId === preset.id}
                       onClick={() => setSpeedId(preset.id)}
                     >
-                      {preset.label}
+                      <UiText>{preset.label}</UiText>
                     </Button>
                   ))}
                 </div>
               </fieldset>
 
               <section className="space-y-3" aria-labelledby="animation-controls-title">
-                <h3 id="animation-controls-title" className="text-sm font-medium">动画控制</h3>
+                <h3 id="animation-controls-title" className="text-sm font-medium"><UiText text="动画控制" /></h3>
                 <div className="flex flex-wrap gap-2">
                   {activity === "playing" ? (
-                    <Button variant="outline" onClick={pauseAnimation}><Pause aria-hidden="true" />暂停</Button>
+                    <Button variant="outline" onClick={pauseAnimation}><Pause aria-hidden="true" /><UiText text="暂停" /></Button>
                   ) : activity === "paused" ? (
-                    <Button onClick={resumeAnimation}><Play aria-hidden="true" />继续播放</Button>
+                    <Button onClick={resumeAnimation}><Play aria-hidden="true" /><UiText text="继续播放" /></Button>
                   ) : (
-                    <Button onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><Play aria-hidden="true" />播放动画</Button>
+                    <Button onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><Play aria-hidden="true" /><UiText text="播放动画" /></Button>
                   )}
-                  <Button variant="outline" onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><RotateCcw aria-hidden="true" />重放</Button>
+                  <Button variant="outline" onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><RotateCcw aria-hidden="true" /><UiText text="重放" /></Button>
                 </div>
               </section>
 
@@ -307,19 +309,19 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
 
               <section className="space-y-3" aria-labelledby="quiz-controls-title">
                 <div>
-                  <h3 id="quiz-controls-title" className="text-sm font-medium">书写测验</h3>
-                  <p className="mt-1 text-sm leading-7 text-muted-foreground">写错三次会自动显示当前笔画；也可以主动查看提示。</p>
+                  <h3 id="quiz-controls-title" className="text-sm font-medium"><UiText text="书写测验" /></h3>
+                  <p className="mt-1 text-sm leading-7 text-muted-foreground"><UiText text="写错三次会自动显示当前笔画；也可以主动查看提示。" /></p>
                 </div>
                 {activity === "quiz" ? (
                   <div className="flex flex-wrap gap-2">
-                    <Button onClick={showHint}><Lightbulb aria-hidden="true" />提示下一笔</Button>
-                    <Button variant="outline" onClick={startQuiz}><RotateCcw aria-hidden="true" />重新开始</Button>
-                    <Button variant="ghost" onClick={leaveQuiz}>退出练习</Button>
+                    <Button onClick={showHint}><Lightbulb aria-hidden="true" /><UiText text="提示下一笔" /></Button>
+                    <Button variant="outline" onClick={startQuiz}><RotateCcw aria-hidden="true" /><UiText text="重新开始" /></Button>
+                    <Button variant="ghost" onClick={leaveQuiz}><UiText text="退出练习" /></Button>
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    <Button onClick={startQuiz} disabled={engineState !== "ready" || activity === "playing" || activity === "paused"}><PencilLine aria-hidden="true" />{activity === "quiz-complete" ? "再练一次" : "开始书写测验"}</Button>
-                    {activity === "quiz-complete" && <Button variant="outline" onClick={playAnimation}><Play aria-hidden="true" />再看动画</Button>}
+                    <Button onClick={startQuiz} disabled={engineState !== "ready" || activity === "playing" || activity === "paused"}><PencilLine aria-hidden="true" /><UiText>{activity === "quiz-complete" ? "再练一次" : "开始书写测验"}</UiText></Button>
+                    {activity === "quiz-complete" && <Button variant="outline" onClick={playAnimation}><Play aria-hidden="true" /><UiText text="再看动画" /></Button>}
                   </div>
                 )}
               </section>
@@ -327,7 +329,7 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
               <div className="rounded-lg bg-muted px-4 py-3 text-sm leading-7" role="status" aria-live="polite">
                 <div className="flex items-start gap-2">
                   {activity === "quiz-complete" && <CheckCircle2 className="mt-1 size-4 shrink-0 text-success" aria-hidden="true" />}
-                  <span>{activityLabel}</span>
+                  <span><UiText>{activityLabel}</UiText></span>
                 </div>
               </div>
             </>

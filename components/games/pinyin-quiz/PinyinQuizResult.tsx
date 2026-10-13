@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import Link from "next/link";
 import { forwardRef } from "react";
@@ -21,30 +23,31 @@ export const PinyinQuizResult = forwardRef<HTMLHeadingElement, {
   onReplay: () => void;
   onSettings: () => void;
 }>(function PinyinQuizResult({ settings, score, bestStreak, answered, review, newRecord, persisted, onReplay, onSettings }, headingRef) {
+  const t = useTranslate();
   return (
     <section aria-labelledby="pinyin-quiz-result-title" className="mx-auto w-full max-w-3xl min-w-0">
       <Card>
         <CardHeader className="items-center text-center">
           <Trophy aria-hidden="true" />
-          <CardTitle id="pinyin-quiz-result-title" ref={headingRef} tabIndex={-1}>本轮结束</CardTitle>
-          <CardDescription>{modeLabels[settings.mode]} · {toneModeLabels[settings.toneMode]} · {durationLabel(settings.duration)}</CardDescription>
+          <CardTitle id="pinyin-quiz-result-title" ref={headingRef} tabIndex={-1}><UiText text="本轮结束" /></CardTitle>
+          <CardDescription><UiText>{modeLabels[settings.mode]}</UiText> · <UiText>{toneModeLabels[settings.toneMode]}</UiText> · <UiText>{durationLabel(settings.duration)}</UiText></CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-2 text-center">
-            <p className="font-serif text-6xl leading-none">{score}<span className="text-2xl text-muted-foreground"> 题答对</span></p>
-            <p className="text-sm text-muted-foreground">共作答 {answered} 题 · 最长连对 {bestStreak} 题{newRecord ? " · 新纪录" : ""}</p>
+            <p className="font-serif text-6xl leading-none">{score}<span className="text-2xl text-muted-foreground"><UiText text=" 题答对" /></span></p>
+            <p className="text-sm text-muted-foreground"><UiText text="共作答 {0} 题 · 最长连对 {1} 题{2}" values={[answered, bestStreak, newRecord ? " · 新纪录" : ""]} /></p>
           </div>
           {!persisted && (
             <Alert>
               <CircleAlert aria-hidden="true" />
-              <AlertTitle>成绩未能保存</AlertTitle>
-              <AlertDescription>当前浏览器不允许本地存储，本次成绩只保留到关闭页面为止。</AlertDescription>
+              <AlertTitle><UiText text="成绩未能保存" /></AlertTitle>
+              <AlertDescription><UiText text="当前浏览器不允许本地存储，本次成绩只保留到关闭页面为止。" /></AlertDescription>
             </Alert>
           )}
           <div className="flex flex-col gap-3">
-            <h3 className="section-title">再看一遍</h3>
+            <h3 className="section-title"><UiText text="再看一遍" /></h3>
             {review.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{answered === 0 ? "这一轮还没有作答。" : "没有答错或跳过的题，全部一次答对。"}</p>
+              <p className="text-sm text-muted-foreground"><UiText>{answered === 0 ? "这一轮还没有作答。" : "没有答错或跳过的题，全部一次答对。"}</UiText></p>
             ) : (
               <ol className="flex flex-col divide-y">
                 {review.map(({ item, outcome, wrongAttempts }) => (
@@ -53,12 +56,12 @@ export const PinyinQuizResult = forwardRef<HTMLHeadingElement, {
                       <p className="flex flex-wrap items-baseline gap-2">
                         <span className="font-serif text-xl">{item.text}</span>
                         <span className="text-base">{item.pinyin}</span>
-                        <span className="text-xs text-accent-foreground">{outcome === "skipped" ? "已跳过" : `答错 ${wrongAttempts} 次后答对`}</span>
+                        <span className="text-xs text-accent-foreground"><UiText>{outcome === "skipped" ? "已跳过" : `答错 ${wrongAttempts} 次后答对`}</UiText></span>
                       </p>
-                      <p className="text-sm text-muted-foreground">{item.meaning ?? `例：${item.word}`}</p>
+                      <p className="text-sm text-muted-foreground">{item.meaning ?? <UiText text="例：{0}" values={[item.word]} />}</p>
                     </div>
                     <Button asChild variant="link" size="sm" className="self-start px-0 sm:px-3">
-                      <Link href={`/dictionary/?q=${encodeURIComponent(item.text)}`} aria-label={`在字典中查看「${item.text}」`}>查字典</Link>
+                      <Link href={`/dictionary/?q=${encodeURIComponent(item.text)}`} aria-label={t("在字典中查看「{0}」", [item.text])}><UiText text="查字典" /></Link>
                     </Button>
                   </li>
                 ))}
@@ -69,12 +72,10 @@ export const PinyinQuizResult = forwardRef<HTMLHeadingElement, {
         <CardFooter className="flex-wrap justify-center gap-3">
           <Button onClick={onReplay}>
             <RotateCcw data-icon="inline-start" aria-hidden="true" />
-            再来一轮
-          </Button>
+            <UiText text="再来一轮" /></Button>
           <Button variant="outline" onClick={onSettings}>
             <Settings2 data-icon="inline-start" aria-hidden="true" />
-            调整设置
-          </Button>
+            <UiText text="调整设置" /></Button>
         </CardFooter>
       </Card>
     </section>

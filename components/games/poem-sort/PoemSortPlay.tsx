@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import { useEffect, useRef } from "react";
 import { ArrowLeft, CircleAlert, CircleCheck, Info, Lightbulb } from "lucide-react";
@@ -14,6 +16,7 @@ export function PoemSortPlay({ state, onChoose, onHint, onExit }: {
   onHint: () => void;
   onExit: () => void;
 }) {
+  const t = useTranslate();
   const line = state.level.lines[state.lineIndex];
   const remaining = poemSortRemaining(state);
   const firstTile = useRef<HTMLButtonElement>(null);
@@ -31,22 +34,21 @@ export function PoemSortPlay({ state, onChoose, onHint, onExit }: {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <h2 id="poem-sort-play-title" className="section-title">{state.level.title}</h2>
-          <Badge variant="outline">{poemSortDifficultyLabels[state.level.difficulty]}</Badge>
+          <Badge variant="outline"><UiText>{poemSortDifficultyLabels[state.level.difficulty]}</UiText></Badge>
         </div>
         <Button variant="ghost" onClick={onExit}>
           <ArrowLeft data-icon="inline-start" aria-hidden="true" />
-          换一首诗
-        </Button>
+          <UiText text="换一首诗" /></Button>
       </div>
 
       <dl className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
-        <div className="flex gap-1"><dt>进度</dt><dd className="font-semibold text-foreground">第 {state.lineIndex + 1} / {state.level.lines.length} 句</dd></div>
-        <div className="flex gap-1"><dt>点错</dt><dd className="font-semibold text-foreground">{state.mistakes}</dd></div>
-        <div className="flex gap-1"><dt>提示</dt><dd className="font-semibold text-foreground">{state.hints}</dd></div>
+        <div className="flex gap-1"><dt><UiText text="进度" /></dt><dd className="font-semibold text-foreground"><UiText text="第 {0} / {1} 句" values={[state.lineIndex + 1, state.level.lines.length]} /></dd></div>
+        <div className="flex gap-1"><dt><UiText text="点错" /></dt><dd className="font-semibold text-foreground">{state.mistakes}</dd></div>
+        <div className="flex gap-1"><dt><UiText text="提示" /></dt><dd className="font-semibold text-foreground">{state.hints}</dd></div>
       </dl>
 
       {state.lineIndex > 0 && (
-        <ol aria-label="已经排好的句子" className="flex flex-col gap-1 text-sm text-muted-foreground">
+        <ol aria-label={t("已经排好的句子")} className="flex flex-col gap-1 text-sm text-muted-foreground">
           {state.level.lines.slice(0, state.lineIndex).map((done, index) => (
             <li key={index} className="font-serif text-lg text-foreground">{done.chars.join("")}</li>
           ))}
@@ -54,7 +56,7 @@ export function PoemSortPlay({ state, onChoose, onHint, onExit }: {
       )}
 
       <div id="poem-sort-board" className="flex flex-col items-center gap-4">
-        <p className="sr-only">已放入：{placed || "还没有字"}</p>
+        <p className="sr-only"><UiText text="已放入：{0}" values={[placed || "还没有字"]} /></p>
         <div aria-hidden="true" className="flex max-w-full justify-center gap-0.5 sm:gap-2">
           {line.chars.map((char, index) => (
             <span
@@ -71,7 +73,7 @@ export function PoemSortPlay({ state, onChoose, onHint, onExit }: {
         </div>
         {state.filled > 0 && <p className="text-sm text-muted-foreground">{line.pinyin.slice(0, state.filled).join(" ")}</p>}
 
-        <div role="group" aria-label="待排序的字" className="flex max-w-full flex-wrap justify-center gap-2">
+        <div role="group" aria-label={t("待排序的字")} className="flex max-w-full flex-wrap justify-center gap-2">
           {remaining.map((tileIndex, index) => (
             <Button
               key={tileIndex}
@@ -90,13 +92,12 @@ export function PoemSortPlay({ state, onChoose, onHint, onExit }: {
       <div className="flex justify-center">
         <Button variant="outline" onClick={onHint}>
           <Lightbulb data-icon="inline-start" aria-hidden="true" />
-          放入下一个字
-        </Button>
+          <UiText text="放入下一个字" /></Button>
       </div>
 
       <p role="status" aria-live="polite" className={cn("flex min-h-12 items-start gap-2 rounded-lg border px-3 py-2.5 text-sm", (kind === "line" || kind === "hint") && "border-success/40 text-success", kind === "wrong" && "border-destructive/40 text-destructive", kind === "idle" && "text-muted-foreground")}>
         <FeedbackIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-        <span>{state.feedback.text}</span>
+        <span><UiText>{state.feedback.text}</UiText></span>
       </p>
     </section>
   );

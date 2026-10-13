@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./fixtures";
 import { AxeBuilder } from "@axe-core/playwright";
 
 const axeTags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
@@ -42,7 +42,8 @@ test("desktop: a wrong tile stays put, the poem can be rebuilt, and the best sta
   await page.screenshot({ path: "/tmp/hanzis-poem-sort-result-1440.png" });
   expect((await new AxeBuilder({ page }).withTags(axeTags).analyze()).violations).toEqual([]);
   await page.getByRole("link", { name: "读全诗《静夜思》" }).click();
-  await expect(page.locator("main")).toContainText("床前明月光", { timeout: 15_000 });
+  await expect(page.locator(".poem-verses a[data-poetry-character]")).toHaveCount(20, { timeout: 15_000 });
+  expect(await page.locator(".poem-verses a[data-poetry-character]").evaluateAll(links => links.map(link => link.getAttribute("data-poetry-character")).join(""))).toBe(jingYeSi.join(""));
 
   await page.goto("/games/poem-sort/");
   await expect(page.getByRole("button", { name: /静夜思，李白，4 句，已获得 3 颗星/ })).toBeVisible();

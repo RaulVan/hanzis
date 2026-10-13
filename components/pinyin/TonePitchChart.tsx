@@ -1,3 +1,6 @@
+"use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
 
 const contours: Record<number, { path: string; label: string }> = {
@@ -9,25 +12,26 @@ const contours: Record<number, { path: string; label: string }> = {
 };
 
 export function TonePitchChart({ toneId, className }: { toneId: number; className?: string }) {
+  const t = useTranslate();
   const contour = contours[toneId] ?? contours[0];
 
   return (
     <svg
       viewBox="0 0 160 104"
       role="img"
-      aria-label={contour.label}
+      aria-label={t(contour.label)}
       className={cn("h-auto w-full text-primary", className)}
     >
-      <title>{contour.label}</title>
+      <title>{t(contour.label)}</title>
       <g className="text-border" stroke="currentColor" strokeWidth="1">
         <path d="M 30 14 H 152" />
         <path d="M 30 54 H 152" strokeDasharray="3 4" />
         <path d="M 30 94 H 152" />
       </g>
       <g className="fill-muted-foreground text-[8px]" aria-hidden="true">
-        <text x="2" y="17">高 5</text>
-        <text x="2" y="57">中 3</text>
-        <text x="2" y="97">低 1</text>
+        <text x="2" y="17"><UiText text="高 5" /></text>
+        <text x="2" y="57"><UiText text="中 3" /></text>
+        <text x="2" y="97"><UiText text="低 1" /></text>
       </g>
       <path
         d={contour.path}
@@ -41,8 +45,7 @@ export function TonePitchChart({ toneId, className }: { toneId: number; classNam
       />
       {toneId === 0 ? (
         <text x="92" y="43" textAnchor="middle" className="fill-accent-foreground text-[9px]" aria-hidden="true">
-          短 · 轻
-        </text>
+          <UiText text="短 · 轻" /></text>
       ) : null}
     </svg>
   );

@@ -1,8 +1,13 @@
+"use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
+
 import Link from "next/link";
 import { SITE_URL } from "@/lib/seo";
 import { StructuredData } from "@/components/seo/StructuredData";
 
 export function Breadcrumbs({ items }: { items: { name: string; href: string }[] }) {
+  const t = useTranslate();
   return <>
     <StructuredData data={{
       "@context": "https://schema.org",
@@ -12,12 +17,12 @@ export function Breadcrumbs({ items }: { items: { name: string; href: string }[]
         item: new URL(item.href, SITE_URL).href,
       })),
     }} />
-    <nav aria-label="面包屑" className="mb-4 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+    <nav aria-label={t("面包屑")} className="mb-4 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
       {items.map((item, index) => <span key={item.href} className="inline-flex items-center gap-x-2">
         {index > 0 && <span aria-hidden="true">/</span>}
         {index === items.length - 1
-          ? <span aria-current="page">{item.name}</span>
-          : <Link href={item.href} className="inline-flex min-h-11 items-center hover:underline">{item.name}</Link>}
+          ? <span aria-current="page"><UiText>{item.name}</UiText></span>
+          : <Link href={item.href} className="inline-flex min-h-11 items-center hover:underline"><UiText>{item.name}</UiText></Link>}
       </span>)}
     </nav>
   </>;

@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,12 +16,13 @@ export const pinyinNavigation = [
 ];
 
 export function PinyinNavigation() {
+  const t = useTranslate();
   const pathname = usePathname().replace(/\/$/, "");
-  return <nav className="sub-navigation" aria-label="拼音学习分类">
+  return <nav className="sub-navigation" aria-label={t("拼音学习分类")}>
     {pinyinNavigation.map((item) => {
       const active = pathname === item.href.replace(/\/$/, "");
       return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
-        className={cn("navigation-link", active && "is-active")}>{item.label}</Link>;
+        className={cn("navigation-link", active && "is-active")}><UiText>{item.label}</UiText></Link>;
     })}
   </nav>;
 }

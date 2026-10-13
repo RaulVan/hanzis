@@ -1,3 +1,4 @@
+import { UiText } from "@/components/i18n/UiText";
 import type { Metadata, Viewport } from "next";
 import "@fontsource/noto-sans-sc/400.css";
 import "@fontsource/noto-sans-sc/600.css";
@@ -9,6 +10,7 @@ import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { AppProviders } from "@/components/layout/AppProviders";
 import { AdsterraBanner } from "@/components/ads/AdsterraBanner";
+import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -31,12 +33,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN">
       <body>
-        <a href="#main-content" className="skip-link">跳到主要内容</a>
-        <Navigation />
-        <main id="main-content" tabIndex={-1} className="site-container main-content">{children}</main>
-        <AdsterraBanner />
-        <Footer />
-        <AppProviders />
+        <LanguageProvider>
+          <a href="#main-content" className="skip-link"><UiText text="跳到主要内容" /></a>
+          <Navigation />
+          <main id="main-content" tabIndex={-1} className="site-container main-content">{children}</main>
+          <AdsterraBanner />
+          <Footer />
+          <AppProviders />
+        </LanguageProvider>
       </body>
     </html>
   );

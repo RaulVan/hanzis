@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import Link from "next/link";
 import { forwardRef } from "react";
@@ -26,28 +28,29 @@ export const FeihuaResult = forwardRef<HTMLHeadingElement, {
   onReplay: () => void;
   onExit: () => void;
 }>(function FeihuaResult({ keyChar, tier, mode = "fill", stars, mistakes, answers, persisted, onReplay, onExit }, headingRef) {
+  const t = useTranslate();
   return (
     <section aria-labelledby="feihua-result-title" className="mx-auto w-full max-w-3xl min-w-0">
       <Card>
         <CardHeader className="items-center text-center">
           <Trophy aria-hidden="true" />
-          <CardTitle id="feihua-result-title" ref={headingRef} tabIndex={-1}>{mode === "theme" ? `「${keyChar}」主题完成` : mode === "recite" ? `「${keyChar}」对句完成` : `「${keyChar}」字令完成`}</CardTitle>
-          <CardDescription>{feihuaTierLabels[tier]} · {answers.length} 句</CardDescription>
+          <CardTitle id="feihua-result-title" ref={headingRef} tabIndex={-1}><UiText>{mode === "theme" ? `「${keyChar}」主题完成` : mode === "recite" ? `「${keyChar}」对句完成` : `「${keyChar}」字令完成`}</UiText></CardTitle>
+          <CardDescription><UiText text="{0} · {1} 句" values={[feihuaTierLabels[tier], answers.length]} /></CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-2 text-center">
             <GameStars stars={stars} className="[&_svg]:size-7" />
-            <p className="text-sm text-muted-foreground">错选 {mistakes} 次 · 每错 3 次少一颗星</p>
+            <p className="text-sm text-muted-foreground"><UiText text="错选 {0} 次 · 每错 3 次少一颗星" values={[mistakes]} /></p>
           </div>
           {!persisted && (
             <Alert>
               <CircleAlert aria-hidden="true" />
-              <AlertTitle>成绩未能保存</AlertTitle>
-              <AlertDescription>当前浏览器不允许本地存储，本次成绩只保留到关闭页面为止。</AlertDescription>
+              <AlertTitle><UiText text="成绩未能保存" /></AlertTitle>
+              <AlertDescription><UiText text="当前浏览器不允许本地存储，本次成绩只保留到关闭页面为止。" /></AlertDescription>
             </Alert>
           )}
           <div className="flex flex-col gap-3">
-            <h3 className="section-title">本轮诗句</h3>
+            <h3 className="section-title"><UiText text="本轮诗句" /></h3>
             <ol className="flex flex-col divide-y">
               {answers.map(({ line, mistakes: lineMistakes }) => (
                 <li key={line.id} className="flex flex-col gap-1 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
@@ -55,27 +58,25 @@ export const FeihuaResult = forwardRef<HTMLHeadingElement, {
                     <p className="font-serif text-xl"><Verse text={line.text} keyChar={keyChar} /></p>
                     <p className="text-sm text-muted-foreground">
                       《{line.title}》 {line.author}（{line.dynasty}）
-                      {lineMistakes > 0 && <span className="ml-2 text-xs text-accent-foreground">错选 {lineMistakes} 次</span>}
+                      {lineMistakes > 0 && <span className="ml-2 text-xs text-accent-foreground"><UiText text="错选 {0} 次" values={[lineMistakes]} /></span>}
                     </p>
                   </div>
                   <Button asChild variant="link" size="sm" className="self-start px-0 sm:px-3">
-                    <Link href={feihuaWorkHref(line)} aria-label={`读全诗《${line.title}》`}>读全诗</Link>
+                    <Link href={feihuaWorkHref(line)} aria-label={t("读全诗《{0}》", [line.title])}><UiText text="读全诗" /></Link>
                   </Button>
                 </li>
               ))}
             </ol>
-            <p className="text-xs text-muted-foreground">诗句取自本站古诗词资料中的课本与选集篇目。</p>
+            <p className="text-xs text-muted-foreground"><UiText text="诗句取自本站古诗词资料中的课本与选集篇目。" /></p>
           </div>
         </CardContent>
         <CardFooter className="flex-wrap justify-center gap-3">
           <Button onClick={onReplay}>
             <RotateCcw data-icon="inline-start" aria-hidden="true" />
-            再来 8 句
-          </Button>
+            <UiText text="再来 8 句" /></Button>
           <Button variant="outline" onClick={onExit}>
             <ArrowLeft data-icon="inline-start" aria-hidden="true" />
-            换一个字
-          </Button>
+            <UiText text="换一个字" /></Button>
         </CardFooter>
       </Card>
     </section>

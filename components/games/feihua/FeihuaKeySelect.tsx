@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import { forwardRef } from "react";
 import { GameStars } from "@/components/games/GameStars";
@@ -29,37 +31,38 @@ export const FeihuaKeySelect = forwardRef<HTMLHeadingElement, {
   onModeChange: (mode: FeihuaMode) => void;
   onStart: (id: string) => void;
 }>(function FeihuaKeySelect({ data, tier, mode, progress, onTierChange, onModeChange, onStart }, headingRef) {
+  const t = useTranslate();
   const choices = mode === "theme"
     ? FEIHUA_THEMES.map(theme => ({ id: theme.id, label: theme.name, count: feihuaThemeLines(data, tier, theme.id).length, large: false }))
     : data.keys.map(key => ({ id: key, label: key, count: feihuaLinesFor(data, tier, key).length, large: true }));
   return (
     <section aria-labelledby="feihua-keys-title" className="study-panel flex min-w-0 flex-col gap-5 p-5 sm:p-6">
       <div className="flex flex-col gap-2">
-        <h2 id="feihua-keys-title" ref={headingRef} tabIndex={-1} className="section-title">{mode === "theme" ? "选一个主题，开始行令" : "选一个字，开始行令"}</h2>
-        <p className="text-muted-foreground">{modeDescriptions[mode]}答完就能看到出处，再去读整首诗。</p>
+        <h2 id="feihua-keys-title" ref={headingRef} tabIndex={-1} className="section-title"><UiText>{mode === "theme" ? "选一个主题，开始行令" : "选一个字，开始行令"}</UiText></h2>
+        <p className="text-muted-foreground"><UiText text="{0}答完就能看到出处，再去读整首诗。" values={[modeDescriptions[mode]]} /></p>
       </div>
       <ToggleGroup
         type="single"
         value={mode}
         onValueChange={value => { if (value) onModeChange(value as FeihuaMode); }}
         variant="outline"
-        aria-label="选择玩法"
+        aria-label={t("选择玩法")}
         className="w-full sm:w-fit"
       >
-        {(["fill", "theme", "recite"] as const).map(item => <ToggleGroupItem key={item} value={item} className="min-h-11 flex-1 px-5 text-base sm:flex-none">{feihuaModeLabels[item]}</ToggleGroupItem>)}
+        {(["fill", "theme", "recite"] as const).map(item => <ToggleGroupItem key={item} value={item} className="min-h-11 flex-1 px-5 text-base sm:flex-none"><UiText>{feihuaModeLabels[item]}</UiText></ToggleGroupItem>)}
       </ToggleGroup>
       <ToggleGroup
         type="single"
         value={tier}
         onValueChange={value => { if (value) onTierChange(value as FeihuaTier); }}
         variant="outline"
-        aria-label="选择难度"
+        aria-label={t("选择难度")}
         className="w-full sm:w-fit"
       >
-        {(["basic", "advanced"] as const).map(item => <ToggleGroupItem key={item} value={item} className="min-h-11 flex-1 px-5 text-base sm:flex-none">{feihuaTierLabels[item]}</ToggleGroupItem>)}
+        {(["basic", "advanced"] as const).map(item => <ToggleGroupItem key={item} value={item} className="min-h-11 flex-1 px-5 text-base sm:flex-none"><UiText>{feihuaTierLabels[item]}</UiText></ToggleGroupItem>)}
       </ToggleGroup>
-      <p className="text-sm text-muted-foreground">{tierDescriptions[tier]}</p>
-      <ul aria-label={mode === "theme" ? `${feihuaTierLabels[tier]}主题` : `${feihuaTierLabels[tier]}关键字`} className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+      <p className="text-sm text-muted-foreground"><UiText>{tierDescriptions[tier]}</UiText></p>
+      <ul aria-label={t(mode === "theme" ? `${feihuaTierLabels[tier]}主题` : `${feihuaTierLabels[tier]}关键字`)} className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {choices.map(choice => {
           const stars = progress[feihuaProgressKey(tier, choice.id, mode)];
           const name = mode === "theme" ? `${choice.label}主题飞花令` : mode === "recite" ? `「${choice.label}」字对句` : `「${choice.label}」字飞花令`;
@@ -68,11 +71,11 @@ export const FeihuaKeySelect = forwardRef<HTMLHeadingElement, {
               <Button
                 variant="outline"
                 onClick={() => onStart(choice.id)}
-                aria-label={`${name}，${choice.count} 句可选${stars ? `，已获得 ${stars} 颗星` : "，未完成"}`}
+                aria-label={t("{0}，{1} 句可选{2}", [t(name), choice.count, stars ? `，已获得 ${stars} 颗星` : "，未完成"])}
                 className="h-auto w-full flex-col gap-1 px-2 py-3"
               >
-                <span className={choice.large ? "font-serif text-4xl font-normal leading-none" : "font-serif text-2xl font-normal leading-none"}>{choice.label}</span>
-                {stars ? <GameStars stars={stars} /> : <span className="text-xs font-normal text-muted-foreground">{choice.count} 句</span>}
+                <span className={choice.large ? "font-serif text-4xl font-normal leading-none" : "font-serif text-2xl font-normal leading-none"}><UiText>{choice.label}</UiText></span>
+                {stars ? <GameStars stars={stars} /> : <span className="text-xs font-normal text-muted-foreground"><UiText text="{0} 句" values={[choice.count]} /></span>}
               </Button>
             </li>
           );

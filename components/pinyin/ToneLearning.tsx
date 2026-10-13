@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import { useState } from "react";
 import { Info, Square, Volume2 } from "lucide-react";
@@ -82,6 +84,7 @@ const toneDetails: Record<number, ToneDetail> = {
 };
 
 export function ToneLearning() {
+  const t = useTranslate();
   const [selectedToneId, setSelectedToneId] = useState(1);
   const audio = usePronunciation();
   const selectedTone = tones.find((tone) => tone.id === selectedToneId) ?? tones[0];
@@ -106,21 +109,21 @@ export function ToneLearning() {
 
   return (
     <section aria-labelledby="tone-learning-title" className="flex min-w-0 flex-col gap-6">
-      <h2 id="tone-learning-title" className="sr-only">四声与轻声学习</h2>
+      <h2 id="tone-learning-title" className="sr-only"><UiText text="四声与轻声学习" /></h2>
 
       <Alert>
         <Info aria-hidden="true" />
-        <AlertTitle>声调标注口诀</AlertTitle>
+        <AlertTitle><UiText text="声调标注口诀" /></AlertTitle>
         <AlertDescription>
-          <p>有 a 先标 a；没有 a 找 o、e；i、u 并列标后一个；轻声不标调号。</p>
+          <p><span lang="zh-CN">有 a 先标 a；没有 a 找 o、e；i、u 并列标后一个；轻声不标调号。</span></p>
         </AlertDescription>
       </Alert>
 
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,1fr)]">
         <Card className="min-w-0">
           <CardHeader>
-            <CardTitle>听懂声调的高低变化</CardTitle>
-            <CardDescription>选择一种声调，先看曲线，再跟着例字读。</CardDescription>
+            <CardTitle><UiText text="听懂声调的高低变化" /></CardTitle>
+            <CardDescription><UiText text="选择一种声调，先看曲线，再跟着例字读。" /></CardDescription>
           </CardHeader>
           <CardContent>
             <ToggleGroup
@@ -129,53 +132,53 @@ export function ToneLearning() {
               onValueChange={selectTone}
               variant="outline"
               spacing={3}
-              aria-label="选择声调"
+              aria-label={t("选择声调")}
               className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
             >
               {tones.map((tone) => (
                 <ToggleGroupItem
                   key={tone.id}
                   value={String(tone.id)}
-                  aria-label={`${tone.name}，${tone.description}${tone.pitch === "-" ? "" : `，调值 ${tone.pitch}`}`}
+                  aria-label={t(`${t(tone.name)}, ${t(tone.description)}${tone.pitch === "-" ? "" : `, ${t("调值 {0}", [tone.pitch])}`}`)}
                   className="h-auto min-h-40 w-full flex-col whitespace-normal p-4"
                 >
                   <span className="flex w-full items-center justify-between gap-2 text-base">
-                    <span>{tone.name}</span>
-                    <span className="font-serif text-2xl" aria-hidden="true">{tone.symbol || "轻"}</span>
+                    <span><UiText>{tone.name}</UiText></span>
+                    <span className="font-serif text-2xl" aria-hidden="true"><UiText>{tone.symbol || "轻"}</UiText></span>
                   </span>
                   <TonePitchChart toneId={tone.id} className="max-h-24" />
                   <span className="text-xs text-muted-foreground">
-                    {tone.pitch === "-" ? "短而轻，无固定调值" : `${tone.description} · 调值 ${tone.pitch}`}
+                    <UiText>{tone.pitch === "-" ? "短而轻，无固定调值" : `${tone.description} · 调值 ${tone.pitch}`}</UiText>
                   </span>
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
           </CardContent>
           <CardFooter>
-            <p className="text-sm text-muted-foreground">曲线纵轴从低 1 到高 5；第三声展示单独朗读时的完整调形。</p>
+            <p className="text-sm text-muted-foreground"><UiText text="曲线纵轴从低 1 到高 5；第三声展示单独朗读时的完整调形。" /></p>
           </CardFooter>
         </Card>
 
         <Card className="min-w-0">
           <CardHeader>
             <div className="flex flex-wrap items-center gap-3">
-              <CardTitle>{selectedTone.name}</CardTitle>
+              <CardTitle><UiText>{selectedTone.name}</UiText></CardTitle>
               <Badge variant="secondary">
-                {selectedTone.pitch === "-" ? "无固定调值" : `调值 ${selectedTone.pitch}`}
+                <UiText>{selectedTone.pitch === "-" ? "无固定调值" : `调值 ${selectedTone.pitch}`}</UiText>
               </Badge>
             </div>
-            <CardDescription>{detail.instruction}</CardDescription>
+            <CardDescription><UiText>{detail.instruction}</UiText></CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <TonePitchChart toneId={selectedTone.id} className="mx-auto max-w-sm" />
-            <p className="text-sm text-muted-foreground">{detail.note}</p>
+            <p className="text-sm text-muted-foreground"><UiText>{detail.note}</UiText></p>
             <Button onClick={playSelectedTone} className="w-full">
               {audio.activeKey === selectedAudioKey ? <Square data-icon="inline-start" aria-hidden="true" /> : <Volume2 data-icon="inline-start" aria-hidden="true" />}
-              {audio.activeKey === selectedAudioKey ? "停止播放" : `播放 ${selectedTone.example.pinyin}`}
+              <UiText>{audio.activeKey === selectedAudioKey ? "停止播放" : `播放 ${selectedTone.example.pinyin}`}</UiText>
             </Button>
             <Separator />
             <div className="flex flex-col gap-3">
-              <h3 className="text-base font-medium">跟着例字读</h3>
+              <h3 className="text-base font-medium"><UiText text="跟着例字读" /></h3>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
                 {detail.examples.map((example) => {
                   const key = `tone-example-${selectedTone.id}-${example.char}`;
@@ -184,7 +187,7 @@ export function ToneLearning() {
                       key={example.char}
                       variant="outline"
                       className="h-auto min-w-0 flex-col gap-1 whitespace-normal py-3"
-                      aria-label={`播放 ${example.char}，${example.pinyin}，${example.meaning}`}
+                      aria-label={t("播放 {0}，{1}，{2}", [example.char, example.pinyin, example.meaning])}
                       onClick={() => void audio.play(key, [example])}
                     >
                       <span className="font-serif text-3xl font-normal">{example.char}</span>
@@ -200,9 +203,9 @@ export function ToneLearning() {
           </CardContent>
           <CardFooter>
             <p className="text-sm text-muted-foreground">
-              {selectedTone.id === 0
+              <UiText>{selectedTone.id === 0
                 ? "轻声示例使用设备的系统中文语音，不会拿一声录音代替。"
-                : "一至四声优先播放站内本地录音；播放失败时可直接重试。"}
+                : "一至四声优先播放站内本地录音；播放失败时可直接重试。"}</UiText>
             </p>
           </CardFooter>
         </Card>

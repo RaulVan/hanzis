@@ -1,3 +1,4 @@
+import { UiText } from "@/components/i18n/UiText";
 import { PinyinPageHeader } from "@/components/pinyin/PinyinPageHeader";
 import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
@@ -25,14 +26,14 @@ export default function PinyinPage() {
   return <><PinyinPageHeader {...heading} /><div className="space-y-6">
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {lessons.map((lesson, index) => <Card key={lesson.href} className="min-w-0">
-        <CardHeader><div className="mb-1 flex items-center gap-2 text-sm text-muted-foreground"><BookOpen className="size-4" aria-hidden="true" />第 {index + 1} 步</div><CardTitle>{lesson.title}</CardTitle><CardDescription>{lesson.description}</CardDescription></CardHeader>
-        <CardContent className="flex-1"><p className="text-lg leading-loose text-muted-foreground">{lesson.examples}</p></CardContent>
-        <CardFooter><Button asChild variant={index === 0 ? "default" : "outline"}><Link href={`/pinyin/${lesson.href}/`}>{index === 4 ? "开始练习" : `学习${lesson.title}`}<ArrowRight aria-hidden="true" /></Link></Button></CardFooter>
+        <CardHeader><div className="mb-1 flex items-center gap-2 text-sm text-muted-foreground"><BookOpen className="size-4" aria-hidden="true" /><UiText text="第 {0} 步" values={[index + 1]} /></div><CardTitle><UiText>{lesson.title}</UiText></CardTitle><CardDescription><UiText>{lesson.description}</UiText></CardDescription></CardHeader>
+        <CardContent className="flex-1"><p className="text-lg leading-loose text-muted-foreground"><UiText>{lesson.examples}</UiText></p></CardContent>
+        <CardFooter><Button asChild variant={index === 0 ? "default" : "outline"}><Link href={`/pinyin/${lesson.href}/`}><UiText>{index === 4 ? "开始练习" : `学习${lesson.title}`}</UiText><ArrowRight aria-hidden="true" /></Link></Button></CardFooter>
       </Card>)}
       <Card className="bg-muted">
-        <CardHeader><CardTitle className="flex items-center gap-2"><Ear aria-hidden="true" />慢慢听，大声读</CardTitle><CardDescription>不需要账号，随时开始，也可以反复练习。</CardDescription></CardHeader>
-        <CardContent className="space-y-3 text-sm text-muted-foreground"><p className="flex items-start gap-2"><Volume2 className="mt-1 size-4 shrink-0" aria-hidden="true" />声母呼读音、韵母、例字优先使用本地录音。</p><p>轻声等没有录音的内容会明确标为系统中文语音，发音因设备而异；需要设备已安装中文语音。</p></CardContent>
-        <CardFooter><p className="text-sm">先听清，再跟读，不必急着背完。</p></CardFooter>
+        <CardHeader><CardTitle className="flex items-center gap-2"><Ear aria-hidden="true" /><UiText text="慢慢听，大声读"  /></CardTitle><CardDescription><UiText text="不需要账号，随时开始，也可以反复练习。"  /></CardDescription></CardHeader>
+        <CardContent className="space-y-3 text-sm text-muted-foreground"><p className="flex items-start gap-2"><Volume2 className="mt-1 size-4 shrink-0" aria-hidden="true" /><UiText text="声母呼读音、韵母、例字优先使用本地录音。"  /></p><p><UiText text="轻声等没有录音的内容会明确标为系统中文语音，发音因设备而异；需要设备已安装中文语音。"  /></p></CardContent>
+        <CardFooter><p className="text-sm"><UiText text="先听清，再跟读，不必急着背完。"  /></p></CardFooter>
       </Card>
     </div>
   </div></>;

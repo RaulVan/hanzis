@@ -1,4 +1,4 @@
-import { expect, test, type Locator } from "@playwright/test";
+import { expect, test, type Locator } from "./fixtures";
 
 async function expectLocalClips(stage: Locator, strokeCount: number) {
   await expect(stage.locator("path[clip-path]")).toHaveCount(strokeCount * 3);

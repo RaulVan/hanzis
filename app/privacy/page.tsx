@@ -1,3 +1,4 @@
+import { UiText } from "@/components/i18n/UiText";
 import { pageMetadata } from "@/lib/seo";
 import { Database, HardDrive, LockKeyhole, Server } from "lucide-react";
 import { PageHeading } from "@/components/layout/PageHeading";
@@ -20,10 +21,10 @@ const items = [
 export default function PrivacyPage() {
   return <div className="mx-auto flex max-w-4xl flex-col gap-7">
     <PageHeading className="stacked-page-heading" title="隐私说明" description="学习记录由你掌握，核心功能在浏览器本地完成。" />
-    <p className="body-copy">本说明适用于当前静态版本，更新日期为 2026-10-09。学习工具的本地处理与广告分别说明如下。第三方广告的数据处理详见 <a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noreferrer" className="underline underline-offset-4">Adsterra 隐私政策</a>。</p>
+    <p className="body-copy"><UiText text="本说明适用于当前静态版本，更新日期为 2026-10-09。学习工具的本地处理与广告分别说明如下。第三方广告的数据处理详见"  /><a href="https://adsterra.com/privacy-policy/" target="_blank" rel="noreferrer" className="underline underline-offset-4"><UiText text="Adsterra 隐私政策"  /></a>。</p>
     <div className="grid gap-4 sm:grid-cols-2">{items.map(({ icon: Icon, title, text }) => <Card key={title}>
-      <CardHeader><CardTitle className="flex items-center gap-2"><Icon aria-hidden="true" className="size-5 text-primary" />{title}</CardTitle><CardDescription>{text}</CardDescription></CardHeader>
+      <CardHeader><CardTitle className="flex items-center gap-2"><Icon aria-hidden="true" className="size-5 text-primary" /><UiText>{title}</UiText></CardTitle><CardDescription><UiText>{text}</UiText></CardDescription></CardHeader>
     </Card>)}</div>
-    <p className="text-sm leading-7 text-muted-foreground">Cloudflare 将 Web Analytics 描述为不使用客户端状态（例如 Cookie 或 localStorage）识别用户的隐私友好型统计；详见其<a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noreferrer" className="underline underline-offset-4">产品说明</a>。请勿在字帖中输入身份证号、联系方式等敏感信息。虽然内容不由本站应用上传，下载、打印或共享生成文件时仍应由你自行确认接收方和使用范围。</p>
+    <p className="text-sm leading-7 text-muted-foreground"><UiText text="Cloudflare 将 Web Analytics 描述为不使用客户端状态（例如 Cookie 或 localStorage）识别用户的隐私友好型统计；详见其"  /><a href="https://www.cloudflare.com/web-analytics/" target="_blank" rel="noreferrer" className="underline underline-offset-4"><UiText text="产品说明"  /></a><UiText text="。请勿在字帖中输入身份证号、联系方式等敏感信息。虽然内容不由本站应用上传，下载、打印或共享生成文件时仍应由你自行确认接收方和使用范围。"  /></p>
   </div>;
 }

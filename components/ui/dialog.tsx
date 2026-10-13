@@ -1,4 +1,5 @@
 "use client"
+import { UiText } from "@/components/i18n/UiText";
 
 import * as React from "react"
 import { XIcon } from "lucide-react"
@@ -73,7 +74,7 @@ function DialogContent({
             className="absolute top-2 right-2 flex size-11 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
           >
             <XIcon />
-            <span className="sr-only">关闭</span>
+            <span className="sr-only"><UiText text="关闭" /></span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
@@ -111,7 +112,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close asChild>
-          <Button variant="outline">关闭</Button>
+          <Button variant="outline"><UiText text="关闭" /></Button>
         </DialogPrimitive.Close>
       )}
     </div>

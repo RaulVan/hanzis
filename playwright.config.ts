@@ -7,6 +7,7 @@ export default defineConfig({
   retries: 0,
   reporter: "list",
   use: {
+    locale: "zh-CN",
     baseURL: "http://127.0.0.1:4317",
     screenshot: "only-on-failure",
     trace: "retain-on-failure",

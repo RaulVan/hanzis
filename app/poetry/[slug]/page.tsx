@@ -1,3 +1,5 @@
+import { UiText } from "@/components/i18n/UiText";
+import { UiRegion } from "@/components/i18n/UiRegion";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -31,11 +33,11 @@ export default async function PoemPage({ params }: { params: Promise<{ slug: str
         ] },
       ],
     }} />
-    <nav aria-label="面包屑" className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
-      <Link href="/" className="inline-flex min-h-11 items-center hover:underline">字帖生成</Link><span aria-hidden="true">/</span>
-      <Link href="/poetry/" className="inline-flex min-h-11 items-center hover:underline">古诗词</Link><span aria-hidden="true">/</span>
+    <UiRegion as="nav" label="面包屑" className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+      <Link href="/" className="inline-flex min-h-11 items-center hover:underline"><UiText text="字帖生成"  /></Link><span aria-hidden="true">/</span>
+      <Link href="/poetry/" className="inline-flex min-h-11 items-center hover:underline"><UiText text="古诗词"  /></Link><span aria-hidden="true">/</span>
       <span aria-current="page">{poem.title}</span>
-    </nav>
-    <Button variant="ghost" asChild className="self-start"><Link href={`/poetry/?poem=${poem.slug}`}><ArrowLeft aria-hidden="true" />返回诗词目录</Link></Button><PoemReader poem={poem} standalone />
+    </UiRegion>
+    <Button variant="ghost" asChild className="self-start"><Link href={`/poetry/?poem=${poem.slug}`}><ArrowLeft aria-hidden="true" /><UiText text="返回诗词目录"  /></Link></Button><PoemReader poem={poem} standalone />
   </div>;
 }

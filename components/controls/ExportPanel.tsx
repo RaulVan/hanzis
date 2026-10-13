@@ -1,4 +1,5 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
 
 import { Download, ImageDown, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,17 +24,17 @@ export function ExportPanel({ onExportPDF, onExportImage, onPrint, disabled = fa
     <div className="flex w-full flex-col gap-2" aria-busy={Boolean(busy)}>
       <Button size="lg" onClick={onExportPDF} disabled={disabled || Boolean(busy)}>
         {busy === "pdf" ? <Spinner data-icon="inline-start" /> : <Download data-icon="inline-start" />}
-        {busy === "pdf" ? "正在生成 PDF" : "导出 PDF"}
+        <UiText>{busy === "pdf" ? "正在生成 PDF" : "导出 PDF"}</UiText>
       </Button>
       <Button variant="outline" size="lg" onClick={onPrint} disabled={disabled || Boolean(busy)}>
         {busy === "print" ? <Spinner data-icon="inline-start" /> : <Printer data-icon="inline-start" />}
-        {busy === "print" ? "正在准备打印" : "打印字帖"}
+        <UiText>{busy === "print" ? "正在准备打印" : "打印字帖"}</UiText>
       </Button>
       <Button variant="ghost" onClick={onExportImage} disabled={disabled || Boolean(busy)}>
         {busy === "png" ? <Spinner data-icon="inline-start" /> : <ImageDown data-icon="inline-start" />}
-        {busy === "png" ? "正在生成图片" : `导出第 ${currentPage + 1} 页 PNG`}
+        <UiText>{busy === "png" ? "正在生成图片" : `导出第 ${currentPage + 1} 页 PNG`}</UiText>
       </Button>
-      {busy || reason ? <p className="text-center text-xs text-muted-foreground" role="status">{busy ? progress || "正在准备清晰字帖，请稍候……" : reason}</p> : null}
+      {busy || reason ? <p className="text-center text-xs text-muted-foreground" role="status"><UiText>{busy ? progress || "正在准备清晰字帖，请稍候……" : reason}</UiText></p> : null}
     </div>
   );
 }

@@ -1,15 +1,20 @@
+"use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
+
 import { drawWorksheetPage } from "@/lib/worksheetDrawing";
 import type { WorksheetDocument } from "@/lib/worksheetLayout";
 
 export function WorksheetPageSVG({ document, pageIndex }: { document: WorksheetDocument; pageIndex: number }) {
+  const t = useTranslate();
   const operations = drawWorksheetPage(document, pageIndex);
   const text = document.pages[pageIndex]?.filter((row) => !row.empty).map((row) => row.character?.char).join("、");
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${document.width} ${document.height}`}
       className="worksheet-page block h-auto w-full" role="img"
-      aria-label={`${document.config.title || "汉字书写练习"}，第 ${pageIndex + 1} 页，共 ${document.pages.length} 页`}
+      aria-label={t("{0}，第 {1} 页，共 {2} 页", [document.config.title || "汉字书写练习", pageIndex + 1, document.pages.length])}
       style={{ aspectRatio: `${document.widthMm} / ${document.heightMm}` }}>
-      <desc>{text ? `本页练习：${text}。` : "空白练习字格。"}纸张尺寸 {document.widthMm} × {document.heightMm} 毫米。</desc>
+      <desc><UiText text="{0}纸张尺寸 {1} × {2} 毫米。" values={[text ? `本页练习：${text}。` : "空白练习字格。", document.widthMm, document.heightMm]} /></desc>
       {operations.map((operation, index) => {
         if (operation.kind === "line") return <line key={index} x1={operation.x1} y1={operation.y1} x2={operation.x2} y2={operation.y2} stroke={operation.color} strokeWidth={operation.width} strokeDasharray={operation.dash?.join(" ")} opacity={operation.opacity} />;
         if (operation.kind === "rect") return <rect key={index} x={operation.x} y={operation.y} width={operation.width} height={operation.height} fill={operation.fill ? operation.color : "none"} stroke={operation.fill ? "none" : operation.color} strokeWidth={operation.lineWidth} />;

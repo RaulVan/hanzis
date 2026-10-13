@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 import { useEffect, useState } from "react";
 import { getPoem, type Poem } from "@/data/poems";
 import { getHaitangPoem } from "@/lib/haitangData";
@@ -8,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PoemReader } from "./PoemReader";
 
 function ImportedPoem({ slug, standalone }: { slug: string; standalone: boolean }) {
+  const t = useTranslate();
   const [poem, setPoem] = useState<Poem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [revision, setRevision] = useState(0);
@@ -18,8 +21,8 @@ function ImportedPoem({ slug, standalone }: { slug: string; standalone: boolean 
     });
     return () => { active = false; };
   }, [slug, revision]);
-  if (error) return <Alert variant="destructive"><AlertDescription>{error}<Button variant="outline" onClick={() => { setError(null); setRevision(value => value + 1); }}>重新加载诗词</Button></AlertDescription></Alert>;
-  if (!poem) return <div className="study-panel p-8" role="status" aria-label="正在加载诗词"><Skeleton className="h-96" /></div>;
+  if (error) return <Alert variant="destructive"><AlertDescription><UiText>{error}</UiText><Button variant="outline" onClick={() => { setError(null); setRevision(value => value + 1); }}><UiText text="重新加载诗词" /></Button></AlertDescription></Alert>;
+  if (!poem) return <div className="study-panel p-8" role="status" aria-label={t("正在加载诗词")}><Skeleton className="h-96" /></div>;
   return <PoemReader key={slug} poem={poem} standalone={standalone} />;
 }
 export function PoetrySelection({ slug, standalone = false }: { slug: string; standalone?: boolean }) {

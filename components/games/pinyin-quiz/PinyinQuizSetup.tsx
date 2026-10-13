@@ -1,4 +1,6 @@
 "use client";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
+import { UiText } from "@/components/i18n/UiText";
 
 import { forwardRef } from "react";
 import { Play } from "lucide-react";
@@ -19,18 +21,19 @@ function Choice<T extends string | number>({ legend, value, options, label, onCh
   label: (option: T) => string;
   onChange: (value: T) => void;
 }) {
+  const t = useTranslate();
   return (
     <fieldset className="flex min-w-0 flex-col gap-2">
-      <legend className="mb-2 text-sm font-semibold">{legend}</legend>
+      <legend className="mb-2 text-sm font-semibold"><UiText>{legend}</UiText></legend>
       <ToggleGroup
         type="single"
         value={String(value)}
         onValueChange={next => { const option = options.find(item => String(item) === next); if (option !== undefined) onChange(option); }}
         variant="outline"
-        aria-label={legend}
+        aria-label={t(legend)}
         className="w-full flex-wrap sm:w-fit"
       >
-        {options.map(option => <ToggleGroupItem key={option} value={String(option)} className="min-h-11 flex-1 px-4 text-base sm:flex-none">{label(option)}</ToggleGroupItem>)}
+        {options.map(option => <ToggleGroupItem key={option} value={String(option)} className="min-h-11 flex-1 px-4 text-base sm:flex-none"><UiText>{label(option)}</UiText></ToggleGroupItem>)}
       </ToggleGroup>
     </fieldset>
   );
@@ -46,22 +49,19 @@ export const PinyinQuizSetup = forwardRef<HTMLHeadingElement, {
   return (
     <section aria-labelledby="pinyin-quiz-setup-title" className="study-panel mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-6 p-5 sm:p-6">
       <div className="flex flex-col gap-2">
-        <h2 id="pinyin-quiz-setup-title" ref={headingRef} tabIndex={-1} className="section-title">选择题型开始快答</h2>
-        <p className="text-muted-foreground">看到汉字就写出拼音，按回车提交。答错可以再试，想不出来就跳过看答案。</p>
+        <h2 id="pinyin-quiz-setup-title" ref={headingRef} tabIndex={-1} className="section-title"><UiText text="选择题型开始快答" /></h2>
+        <p className="text-muted-foreground"><UiText text="看到汉字就写出拼音，按回车提交。答错可以再试，想不出来就跳过看答案。" /></p>
       </div>
       <Choice legend="题型" value={settings.mode} options={["character", "word"] as const} label={option => modeLabels[option]} onChange={mode => onChange({ ...settings, mode })} />
       <Choice legend="声调" value={settings.toneMode} options={["plain", "toned"] as const} label={option => toneModeLabels[option]} onChange={toneMode => onChange({ ...settings, toneMode })} />
       <Choice legend="时间" value={settings.duration} options={[90, 180, 0] as const} label={durationLabel} onChange={duration => onChange({ ...settings, duration })} />
       <p className="text-sm text-muted-foreground">
-        {settings.toneMode === "toned" ? "标声调时用数字写在音节后，如 hao3；也可以直接输入 ā á ǎ à。轻声可以不写。" : "不标调时只看字母是否拼对。"}
-        ü 可以输入 v，如 lv 表示 lü。
-      </p>
+        <UiText text="{0} ü 可以输入 v，如 lv 表示 lü。" values={[settings.toneMode === "toned" ? "标声调时用数字写在音节后，如 hao3；也可以直接输入 ā á ǎ à。轻声可以不写。" : "不标调时只看字母是否拼对。"]} /></p>
       <div className="flex flex-wrap items-center gap-4">
         <Button size="lg" onClick={onStart}>
           <Play data-icon="inline-start" aria-hidden="true" />
-          开始
-        </Button>
-        <p className="text-sm text-muted-foreground">{best ? `这个设置的最好成绩：答对 ${best.score} 题，最长连对 ${best.bestStreak} 题` : "这个设置还没有成绩"}</p>
+          <UiText text="开始" /></Button>
+        <p className="text-sm text-muted-foreground"><UiText>{best ? `这个设置的最好成绩：答对 ${best.score} 题，最长连对 ${best.bestStreak} 题` : "这个设置还没有成绩"}</UiText></p>
       </div>
     </section>
   );

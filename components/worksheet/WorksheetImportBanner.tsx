@@ -1,4 +1,5 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -28,23 +29,23 @@ export function WorksheetImportBanner({ disabled = false }: { disabled?: boolean
     const remaining = new URLSearchParams(search.toString());
     remaining.delete("text"); remaining.delete("generate");
     router.replace(remaining.size ? `/?${remaining}` : "/", { scroll: false });
-    toast("正在生成诗词字帖", { action: { label: "撤销", onClick: () => setInputText(previous) } });
+    toast(<UiText>{"正在生成诗词字帖"}</UiText>, { action: { label: <UiText text="撤销" />, onClick: () => setInputText(previous) } });
   }, [direct, incoming, hasHydrated, disabled, search, router, setInputText]);
   if (!incoming || incoming === dismissed || !hasHydrated || direct) return null;
   return (
     <Alert>
-      <AlertTitle>有一段文字可以用来练习</AlertTitle>
+      <AlertTitle><UiText text="有一段文字可以用来练习" /></AlertTitle>
       <AlertDescription>
         <p className="break-all">{Array.from(incoming).slice(0, 100).join("")}{Array.from(incoming).length > 100 ? "……" : ""}</p>
-        <p>{count ? `${count} 个汉字；只有确认后才会替换当前练习内容。` : "这段文字没有可生成字帖的汉字，当前内容不会改变。"}</p>
+        <p><UiText>{count ? `${count} 个汉字；只有确认后才会替换当前练习内容。` : "这段文字没有可生成字帖的汉字，当前内容不会改变。"}</UiText></p>
         <div className="mt-2 flex flex-wrap gap-2">
           <Button disabled={disabled || count === 0} onClick={() => {
             const previous = config.characters;
             setInputText(incoming);
             setDismissed(incoming);
-            toast("已导入练习内容", { action: { label: "撤销", onClick: () => setInputText(previous) } });
-          }}>使用这段文字</Button>
-          <Button variant="outline" disabled={disabled} onClick={() => setDismissed(incoming)}>保留当前内容</Button>
+            toast(<UiText>{"已导入练习内容"}</UiText>, { action: { label: <UiText text="撤销" />, onClick: () => setInputText(previous) } });
+          }}><UiText text="使用这段文字" /></Button>
+          <Button variant="outline" disabled={disabled} onClick={() => setDismissed(incoming)}><UiText text="保留当前内容" /></Button>
         </div>
       </AlertDescription>
     </Alert>

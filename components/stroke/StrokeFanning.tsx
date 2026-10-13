@@ -1,3 +1,6 @@
+"use client";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
+import { UiText } from "@/components/i18n/UiText";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { HanziData } from "@/lib/hanziData";
@@ -10,6 +13,7 @@ interface StrokeFanningProps {
 }
 
 export function StrokeFanning({ char, data, strokeNames }: StrokeFanningProps) {
+  const t = useTranslate();
   const stages = getCumulativeStrokePaths(data.strokes);
 
   return (
@@ -17,14 +21,14 @@ export function StrokeFanning({ char, data, strokeNames }: StrokeFanningProps) {
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle>逐笔分解</CardTitle>
-            <CardDescription className="mt-2">每一格增加一笔，朱红色表示本格新写的笔画。</CardDescription>
+            <CardTitle><UiText text="逐笔分解" /></CardTitle>
+            <CardDescription className="mt-2"><UiText text="每一格增加一笔，朱红色表示本格新写的笔画。" /></CardDescription>
           </div>
-          <Badge variant="secondary">{stages.length} 步</Badge>
+          <Badge variant="secondary"><UiText text="{0} 步" values={[stages.length]} /></Badge>
         </div>
       </CardHeader>
       <CardContent>
-        <ol className="grid min-w-0 grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6" aria-label={`“${char}”字的逐笔分解`}>
+        <ol className="grid min-w-0 grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6" aria-label={t("“{0}”字的逐笔分解", [char])}>
           {stages.map((paths, index) => (
             <li key={index} className="min-w-0">
               <figure className="space-y-2">
@@ -45,7 +49,7 @@ export function StrokeFanning({ char, data, strokeNames }: StrokeFanningProps) {
                   <span className="absolute left-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-muted text-xs font-semibold text-muted-foreground" aria-hidden="true">{index + 1}</span>
                 </div>
                 <figcaption className="break-words text-center text-xs leading-5 text-muted-foreground">
-                  {getStrokeName(strokeNames[index], index)}
+                  <UiText>{getStrokeName(strokeNames[index], index)}</UiText>
                 </figcaption>
               </figure>
             </li>

@@ -1,4 +1,5 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
 
 import { FieldGroup, FieldLegend, FieldSet } from "@/components/ui/field";
 import { useWorksheetStore } from "@/stores/worksheetStore";
@@ -8,7 +9,7 @@ export function DisplayOptions() {
   const { config, setConfig, setShowPinyin, setShowStrokeOrder } = useWorksheetStore();
   return (
     <FieldSet className="gap-0">
-      <FieldLegend className="sr-only">标注与练习</FieldLegend>
+      <FieldLegend className="sr-only"><UiText text="标注与练习" /></FieldLegend>
       <FieldGroup className="gap-0">
         <SettingSwitch id="worksheet-pinyin" label="拼音标注" checked={config.showPinyin} onCheckedChange={setShowPinyin} />
         <SettingSwitch id="worksheet-strokes" label="笔顺分解" checked={config.showStrokeOrder || config.displayMode === "stroke-order"}

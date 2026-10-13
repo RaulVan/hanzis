@@ -1,3 +1,6 @@
+import { UiText } from "@/components/i18n/UiText";
+import { UiRegion } from "@/components/i18n/UiRegion";
+import { UiLink } from "@/components/i18n/UiLink";
 import { StructuredData } from "@/components/seo/StructuredData";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -31,25 +34,25 @@ export default function GamesPage() {
         })) },
       }} />
       <PageHeading title="玩一局，记住几个字。" description="短短几分钟的汉字、拼音和诗词小游戏，无需注册，随时开始。" />
-      <ul aria-label="小游戏列表" className="grid gap-4 md:grid-cols-3">
+      <UiRegion as="ul" label="小游戏列表" className="grid gap-4 md:grid-cols-3">
         {games.map(game => (
           <li key={game.href}>
             <Card className="h-full">
               <CardHeader>
-                <CardTitle><Link href={game.href} className="underline-offset-4 hover:underline">{game.title}</Link></CardTitle>
-                <CardDescription>{game.skill} · {game.time}</CardDescription>
-                <p className="body-copy pt-2 text-sm">{game.text}</p>
+                <CardTitle><Link href={game.href} className="underline-offset-4 hover:underline"><UiText>{game.title}</UiText></Link></CardTitle>
+                <CardDescription><UiText>{game.skill}</UiText> · <UiText>{game.time}</UiText></CardDescription>
+                <p className="body-copy pt-2 text-sm"><UiText>{game.text}</UiText></p>
               </CardHeader>
               <CardFooter className="mt-auto">
-                <Link href={game.href} className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary" aria-label={`开始玩${game.title}`}>
-                  开始玩<ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
+                <UiLink href={game.href} label={`开始玩${game.title}`} className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary">
+                  <UiText text="开始玩"  /><ArrowRight aria-hidden="true" className="size-4" />
+                </UiLink>
               </CardFooter>
             </Card>
           </li>
         ))}
-      </ul>
-      <p className="mt-6 text-sm text-muted-foreground">成绩和进度只保存在当前浏览器，换设备或清除浏览数据后会重新开始。</p>
+      </UiRegion>
+      <p className="mt-6 text-sm text-muted-foreground"><UiText text="成绩和进度只保存在当前浏览器，换设备或清除浏览数据后会重新开始。"  /></p>
     </>
   );
 }

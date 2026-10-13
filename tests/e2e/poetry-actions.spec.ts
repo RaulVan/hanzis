@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 for (const width of [1440, 375]) test(`imported poems offer single-character lookup and real standalone reading at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: width === 375 ? 812 : 1000 });

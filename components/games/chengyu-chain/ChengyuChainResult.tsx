@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import Link from "next/link";
 import { forwardRef } from "react";
@@ -18,25 +20,26 @@ export const ChengyuChainResult = forwardRef<HTMLHeadingElement, {
   onReplay: () => void;
   onExit: () => void;
 }>(function ChengyuChainResult({ state, stars, persisted, onReplay, onExit }, headingRef) {
+  const t = useTranslate();
   const title = state.chain.idioms[0].text;
   return (
     <section aria-labelledby="chengyu-chain-result-title" className="mx-auto w-full max-w-3xl min-w-0">
       <Card>
         <CardHeader className="items-center text-center">
           <Trophy aria-hidden="true" />
-          <CardTitle id="chengyu-chain-result-title" ref={headingRef} tabIndex={-1}>「{title}」接完了</CardTitle>
-          <CardDescription>{chengyuDifficultyLabels[state.chain.difficulty]} · {state.chain.idioms.length} 个成语</CardDescription>
+          <CardTitle id="chengyu-chain-result-title" ref={headingRef} tabIndex={-1}><UiText text="「{0}」接完了" values={[title]} /></CardTitle>
+          <CardDescription><UiText text="{0} · {1} 个成语" values={[chengyuDifficultyLabels[state.chain.difficulty], state.chain.idioms.length]} /></CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-2 text-center">
             <GameStars stars={stars} className="[&_svg]:size-7" />
-            <p className="text-sm text-muted-foreground">接错 {state.mistakes} 次，提示 {state.hints} 次。每用 1 次提示、每错 3 次，少一颗星。</p>
+            <p className="text-sm text-muted-foreground"><UiText text="接错 {0} 次，提示 {1} 次。每用 1 次提示、每错 3 次，少一颗星。" values={[state.mistakes, state.hints]} /></p>
           </div>
           {!persisted && (
             <Alert>
               <CircleAlert aria-hidden="true" />
-              <AlertTitle>成绩未能保存</AlertTitle>
-              <AlertDescription>当前浏览器不允许本地存储，本次成绩只保留到关闭页面为止。</AlertDescription>
+              <AlertTitle><UiText text="成绩未能保存" /></AlertTitle>
+              <AlertDescription><UiText text="当前浏览器不允许本地存储，本次成绩只保留到关闭页面为止。" /></AlertDescription>
             </Alert>
           )}
           <ol className="flex flex-col divide-y">
@@ -48,22 +51,20 @@ export const ChengyuChainResult = forwardRef<HTMLHeadingElement, {
                   <p className="text-sm text-muted-foreground">{idiom.example}</p>
                 </div>
                 <Button asChild variant="link" size="sm" className="self-start px-0 sm:px-3">
-                  <Link href={`/dictionary/?q=${encodeURIComponent(idiom.text)}`} aria-label={`在字典中查看「${idiom.text}」`}>查字典</Link>
+                  <Link href={`/dictionary/?q=${encodeURIComponent(idiom.text)}`} aria-label={t("在字典中查看「{0}」", [idiom.text])}><UiText text="查字典" /></Link>
                 </Button>
               </li>
             ))}
           </ol>
-          <p className="text-xs text-muted-foreground">成语、释义和例句由{CHENGYU_CHAIN_SOURCE}，尚未完成人工审校。</p>
+          <p className="text-xs text-muted-foreground"><UiText text="成语、释义和例句由{0}，尚未完成人工审校。" values={[CHENGYU_CHAIN_SOURCE]} /></p>
         </CardContent>
         <CardFooter className="flex-wrap justify-center gap-3">
           <Button onClick={onReplay}>
             <RotateCcw data-icon="inline-start" aria-hidden="true" />
-            再接一次
-          </Button>
+            <UiText text="再接一次" /></Button>
           <Button variant="outline" onClick={onExit}>
             <ArrowLeft data-icon="inline-start" aria-hidden="true" />
-            换一条
-          </Button>
+            <UiText text="换一条" /></Button>
         </CardFooter>
       </Card>
     </section>

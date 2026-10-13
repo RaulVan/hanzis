@@ -1,6 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import { AxeBuilder } from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 const accessibilityRoutes = ["/", "/pinyin/tones/", "/pinyin/practice/", "/stroke/", "/poetry/", "/dictionary/?q=学习", "/about/", "/privacy/"];
 

@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./fixtures";
 import { AxeBuilder } from "@axe-core/playwright";
 import { hanziMatchLevels } from "../../data/hanziMatchLevels";
 
@@ -123,8 +123,9 @@ test("blocked storage still lets the level finish and says progress was not save
 });
 
 test("short landscape phone shows the whole board and feedback without scrolling during play", async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 812, height: 375 }, isMobile: true, hasTouch: true });
+  const context = await browser.newContext({ locale: "zh-CN", viewport: { width: 812, height: 375 }, isMobile: true, hasTouch: true });
   const page = await context.newPage();
+  await context.route("**/ads/banner*", route => route.fulfill({ contentType: "text/html", body: "<!doctype html><html lang='en'><head><title>Ad placeholder</title></head><body></body></html>" }));
   const errors = trackErrors(page);
   await page.goto("/games/hanzi-match/");
   await page.getByRole("button", { name: /^第 1 关 看看天地/ }).tap();

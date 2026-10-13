@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
@@ -15,6 +17,7 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
   onNext: () => void;
   onExit: () => void;
 }) {
+  const t = useTranslate();
   const question = currentFeihuaQuestion(state)!;
   const mark = question.highlight ?? state.key;
   const solved = isFeihuaLineSolved(state);
@@ -40,21 +43,20 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
     <section aria-labelledby="feihua-play-title" className="study-panel mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-5 p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 id="feihua-play-title" className="section-title">飞花令 ·「{state.key}」</h2>
-          <Badge variant="outline">{feihuaTierLabels[state.tier]}</Badge>
+          <h2 id="feihua-play-title" className="section-title"><UiText text="飞花令 ·「{0}」" values={[state.key]} /></h2>
+          <Badge variant="outline"><UiText>{feihuaTierLabels[state.tier]}</UiText></Badge>
         </div>
         <Button variant="ghost" onClick={onExit}>
           <ArrowLeft data-icon="inline-start" aria-hidden="true" />
-          换一个字
-        </Button>
+          <UiText text="换一个字" /></Button>
       </div>
 
       <dl className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
-        <div className="flex gap-1"><dt>进度</dt><dd className="font-semibold text-foreground">第 {state.index + 1} / {state.questions.length} 句</dd></div>
-        <div className="flex gap-1"><dt>错选</dt><dd className="font-semibold text-foreground">{state.mistakes}</dd></div>
+        <div className="flex gap-1"><dt><UiText text="进度" /></dt><dd className="font-semibold text-foreground"><UiText text="第 {0} / {1} 句" values={[state.index + 1, state.questions.length]} /></dd></div>
+        <div className="flex gap-1"><dt><UiText text="错选" /></dt><dd className="font-semibold text-foreground">{state.mistakes}</dd></div>
       </dl>
 
-      <p className="sr-only">诗句：{spoken}</p>
+      <p className="sr-only"><UiText text="诗句：{0}" values={[spoken]} /></p>
       <div aria-hidden="true" className="flex justify-center gap-1 sm:gap-2">
         {chars.map((char, index) => {
           const blank = question.blanks.indexOf(index);
@@ -79,7 +81,7 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
       </div>
 
       {!solved ? (
-        <div role="group" aria-label={`第 ${state.filled + 1} 个空的候选字`} className="mx-auto grid w-full max-w-md grid-cols-4 gap-2 sm:gap-3">
+        <div role="group" aria-label={t("第 {0} 个空的候选字", [state.filled + 1])} className="mx-auto grid w-full max-w-md grid-cols-4 gap-2 sm:gap-3">
           {options.map((option, index) => {
             const crossed = state.eliminated.includes(option);
             return (
@@ -88,7 +90,7 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
                 ref={index === options.findIndex(item => !state.eliminated.includes(item)) ? firstOption : undefined}
                 variant="outline"
                 disabled={crossed}
-                aria-label={crossed ? `${option}，已排除` : option}
+                aria-label={t(crossed ? `${option}，已排除` : option)}
                 onClick={() => onChoose(option)}
                 className={cn("h-16 font-serif text-3xl font-normal", crossed && "line-through")}
               >
@@ -102,11 +104,11 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
           <p className="text-sm text-muted-foreground">《{question.line.title}》 {question.line.author}（{question.line.dynasty}）</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button ref={nextButton} onClick={onNext}>
-              {last ? "查看本轮结果" : "下一句"}
+              <UiText>{last ? "查看本轮结果" : "下一句"}</UiText>
               <ArrowRight data-icon="inline-end" aria-hidden="true" />
             </Button>
             <Button asChild variant="outline">
-              <Link href={feihuaWorkHref(question.line)}>读全诗<ArrowUpRight data-icon="inline-end" aria-hidden="true" /></Link>
+              <Link href={feihuaWorkHref(question.line)}><UiText text="读全诗" /><ArrowUpRight data-icon="inline-end" aria-hidden="true" /></Link>
             </Button>
           </div>
         </div>
@@ -114,7 +116,7 @@ export function FeihuaPlay({ state, onChoose, onNext, onExit }: {
 
       <p role="status" aria-live="polite" className={cn("flex min-h-12 items-start gap-2 rounded-lg border px-3 py-2.5 text-sm", (kind === "solved" || kind === "correct") && "border-success/40 text-success", kind === "wrong" && "border-destructive/40 text-destructive", kind === "idle" && "text-muted-foreground")}>
         <FeedbackIcon aria-hidden="true" className="mt-0.5 size-4" />
-        <span>{describeFeihuaFeedback(state.feedback, mark)}</span>
+        <span><UiText>{describeFeihuaFeedback(state.feedback, mark)}</UiText></span>
       </p>
     </section>
   );

@@ -4,6 +4,7 @@ import { PageHeading } from "@/components/layout/PageHeading";
 import { StrokeViewer } from "@/components/stroke/StrokeViewer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LearningGuide } from "@/components/learning/LearningGuide";
+import { UiRegion } from "@/components/i18n/UiRegion";
 
 export const metadata = pageMetadata(
   "/stroke/",
@@ -13,13 +14,13 @@ export const metadata = pageMetadata(
 
 function StrokeViewerFallback() {
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]" role="status" aria-label="正在加载笔顺工具">
+    <UiRegion as="div" label="正在加载笔顺工具" className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]" role="status">
       <div className="space-y-6">
         <Skeleton className="h-56 w-full" />
         <Skeleton className="h-[620px] w-full" />
       </div>
       <Skeleton className="h-[420px] w-full" />
-    </div>
+    </UiRegion>
   );
 }
 

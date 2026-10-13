@@ -1,4 +1,6 @@
 "use client";
+import { UiText } from "@/components/i18n/UiText";
+import { useTranslate } from "@/components/i18n/LanguageProvider";
 
 import * as React from "react";
 import { ChevronDown, RefreshCw } from "lucide-react";
@@ -19,6 +21,7 @@ import { WorksheetImportBanner } from "./WorksheetImportBanner";
 import { useWorksheetData } from "./useWorksheetData";
 
 export function WorksheetGenerator() {
+  const t = useTranslate();
   const { config, hydrate, hasHydrated, storageError, isComposing, currentPage: savedPage,
     setCurrentPage, setCharacters, setLoading } = useWorksheetStore();
   const [busy, setBusy] = React.useState<WorksheetExportKind | null>(null);
@@ -54,11 +57,11 @@ export function WorksheetGenerator() {
       if (kind === "pdf") await exportWorksheetPDF(worksheet, updateProgress);
       else if (kind === "png") await exportWorksheetPNG(worksheet, currentPage);
       else await printWorksheet(worksheet, updateProgress);
-      toast.success(kind === "print" ? "打印窗口已打开，请核对纸张尺寸" : kind === "pdf" ? `已生成 ${worksheet.pages.length} 页 PDF` : `已导出第 ${currentPage + 1} 页 PNG`);
+      toast.success(<UiText>{kind === "print" ? "打印窗口已打开，请核对纸张尺寸" : kind === "pdf" ? `已生成 ${worksheet.pages.length} 页 PDF` : `已导出第 ${currentPage + 1} 页 PNG`}</UiText>);
     } catch (error) {
       const message = error instanceof Error ? error.message : "导出失败，请重试。";
       setExportError(message);
-      toast.error(message);
+      toast.error(<UiText>{message}</UiText>);
     } finally {
       busyLock.current = false;
       setBusy(null);
@@ -74,14 +77,14 @@ export function WorksheetGenerator() {
   return (
     <div className="flex min-w-0 flex-col gap-5">
       <React.Suspense fallback={null}><WorksheetImportBanner disabled={Boolean(busy)} /></React.Suspense>
-      {storageError ? <Alert><AlertTitle>本地保存提示</AlertTitle><AlertDescription>{storageError}</AlertDescription></Alert> : null}
+      {storageError ? <Alert><AlertTitle><UiText text="本地保存提示" /></AlertTitle><AlertDescription><UiText>{storageError}</UiText></AlertDescription></Alert> : null}
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
-        <aside aria-label="字帖设置" className="no-print min-w-0">
+        <aside aria-label={t("字帖设置")} className="no-print min-w-0">
           <Card className="gap-4 py-4">
-            <CardHeader className="px-4"><CardTitle>练习内容</CardTitle><CardDescription className="sr-only">每个汉字练习一行，设置自动保存在本机。</CardDescription></CardHeader>
+            <CardHeader className="px-4"><CardTitle><UiText text="练习内容" /></CardTitle><CardDescription className="sr-only"><UiText text="每个汉字练习一行，设置自动保存在本机。" /></CardDescription></CardHeader>
             <CardContent className="px-4">
               <fieldset disabled={Boolean(busy) || !hasHydrated} inert={Boolean(busy) || !hasHydrated} className="flex min-w-0 flex-col gap-3">
-                <legend className="sr-only">字帖编辑选项</legend>
+                <legend className="sr-only"><UiText text="字帖编辑选项" /></legend>
                 <InputPanel />
                 <Separator />
                 <GridSelector />
@@ -90,7 +93,7 @@ export function WorksheetGenerator() {
                 <Separator />
                 <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
                   <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between">更多设置<ChevronDown data-icon="inline-end" /></Button>
+                    <Button variant="ghost" className="w-full justify-between"><UiText text="更多设置" /><ChevronDown data-icon="inline-end" /></Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pt-4"><AdvancedSettings /></CollapsibleContent>
                 </Collapsible>
@@ -99,23 +102,22 @@ export function WorksheetGenerator() {
             <CardFooter className="px-4">
               <ExportPanel onExportPDF={() => void exportDocument("pdf")} onExportImage={() => void exportDocument("png")}
                 onPrint={() => void exportDocument("print")} disabled={blocked} busy={busy} currentPage={currentPage} progress={progress} reason={reason} />
-              {exportError ? <Alert variant="destructive"><AlertTitle>字帖未能导出</AlertTitle><AlertDescription>
-                <p>{exportError}</p><Button variant="outline" disabled={blocked || Boolean(busy)} onClick={() => void exportDocument(lastExport)}><RefreshCw data-icon="inline-start" />重试</Button>
+              {exportError ? <Alert variant="destructive"><AlertTitle><UiText text="字帖未能导出" /></AlertTitle><AlertDescription>
+                <p><UiText>{exportError}</UiText></p><Button variant="outline" disabled={blocked || Boolean(busy)} onClick={() => void exportDocument(lastExport)}><RefreshCw data-icon="inline-start" /><UiText text="重试" /></Button>
               </AlertDescription></Alert> : null}
             </CardFooter>
           </Card>
         </aside>
         <div className="flex min-w-0 flex-col gap-4">
-          {unavailable && data.ready ? <Alert><AlertTitle>{data.usingFallback ? "正在使用基础字形" : "部分学习资料暂缺"}</AlertTitle><AlertDescription>
-            {data.usingFallback ? <p>字库未能加载，已保留字形和字格；本次导出不含拼音、部首或笔顺资料。</p> : <>
-              {data.missingStrokes.length ? <p>以下汉字暂缺笔顺，字形仍可练习：{data.missingStrokes.join("、")}。</p> : null}
-              {config.showPinyin && data.missingAnnotations.length ? <p>以下汉字暂缺拼音，已保留原字：{data.missingAnnotations.join("、")}。</p> : null}
+          {unavailable && data.ready ? <Alert><AlertTitle><UiText>{data.usingFallback ? "正在使用基础字形" : "部分学习资料暂缺"}</UiText></AlertTitle><AlertDescription>
+            {data.usingFallback ? <p><UiText text="字库未能加载，已保留字形和字格；本次导出不含拼音、部首或笔顺资料。" /></p> : <>
+              {data.missingStrokes.length ? <p><UiText text="以下汉字暂缺笔顺，字形仍可练习：{0}。" values={[data.missingStrokes.join("、")]} /></p> : null}
+              {config.showPinyin && data.missingAnnotations.length ? <p><UiText text="以下汉字暂缺拼音，已保留原字：{0}。" values={[data.missingAnnotations.join("、")]} /></p> : null}
             </>}
-            <Button variant="outline" size="sm" disabled={Boolean(busy)} onClick={data.retry}><RefreshCw data-icon="inline-start" />重新加载资料</Button>
+            <Button variant="outline" size="sm" disabled={Boolean(busy)} onClick={data.retry}><RefreshCw data-icon="inline-start" /><UiText text="重新加载资料" /></Button>
           </AlertDescription></Alert> : null}
-          {worksheet.exceedsPageLimit ? <Alert variant="destructive"><AlertTitle>页数超出导出上限</AlertTitle><AlertDescription>
-            当前排版需要 {worksheet.pages.length} 页。单次最多导出 {MAX_WORKSHEET_PAGES} 页，请增加每行格数、关闭插空行或减少文字。内容未被删除。
-          </AlertDescription></Alert> : null}
+          {worksheet.exceedsPageLimit ? <Alert variant="destructive"><AlertTitle><UiText text="页数超出导出上限" /></AlertTitle><AlertDescription>
+            <UiText text="当前排版需要 {0} 页。单次最多导出 {1} 页，请增加每行格数、关闭插空行或减少文字。内容未被删除。" values={[worksheet.pages.length, MAX_WORKSHEET_PAGES]} /></AlertDescription></Alert> : null}
           <WorksheetPreview document={worksheet} currentPage={currentPage} onPageChange={setCurrentPage} pending={data.pending}
             ready={data.ready} error={data.message} onRetry={data.retry} onUseBasicCharacters={data.useBasicCharacters} disabled={Boolean(busy)} />
         </div>
