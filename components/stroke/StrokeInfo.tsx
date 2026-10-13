@@ -54,7 +54,7 @@ export function StrokeInfo({ char, info, infoStatus, strokeCount }: StrokeInfoPr
             </>
           ) : (
             <>
-              <InfoRow label="拼音">{info?.pinyinWithTone || <UiText text="暂未收录" />}</InfoRow>
+              <InfoRow label="拼音">{info?.pinyinWithTone ? <span className="font-sans" lang="zh-Latn">{info.pinyinWithTone}</span> : <UiText text="暂未收录" />}</InfoRow>
               <InfoRow label="部首">{info?.radical || <UiText text="暂未收录" />}</InfoRow>
               <InfoRow label="结构">{info?.struct || <UiText text="暂未收录" />}</InfoRow>
               <InfoRow label="笔画名称">{names.length ? names.join("、") : <UiText text="暂未收录" />}</InfoRow>

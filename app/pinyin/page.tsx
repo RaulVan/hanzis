@@ -27,7 +27,10 @@ export default function PinyinPage() {
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {lessons.map((lesson, index) => <Card key={lesson.href} className="min-w-0">
         <CardHeader><div className="mb-1 flex items-center gap-2 text-sm text-muted-foreground"><BookOpen className="size-4" aria-hidden="true" /><UiText text="第 {0} 步" values={[index + 1]} /></div><CardTitle><UiText>{lesson.title}</UiText></CardTitle><CardDescription><UiText>{lesson.description}</UiText></CardDescription></CardHeader>
-        <CardContent className="flex-1"><p className="text-lg leading-loose text-muted-foreground"><UiText>{lesson.examples}</UiText></p></CardContent>
+        <CardContent className="flex-1">{index === 4
+          ? <p className="text-lg leading-relaxed text-muted-foreground"><UiText>{lesson.examples}</UiText></p>
+          : <p className="pinyin-samples text-muted-foreground" lang="zh-Latn">{lesson.examples.split(/\s+/).map(sample => <span key={sample}>{sample}{" "}</span>)}</p>}
+        </CardContent>
         <CardFooter><Button asChild variant={index === 0 ? "default" : "outline"}><Link href={`/pinyin/${lesson.href}/`}><UiText>{index === 4 ? "开始练习" : `学习${lesson.title}`}</UiText><ArrowRight aria-hidden="true" /></Link></Button></CardFooter>
       </Card>)}
       <Card className="bg-muted">

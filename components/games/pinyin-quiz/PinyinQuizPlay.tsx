@@ -84,7 +84,7 @@ export function PinyinQuizPlay({ settings, state, secondsLeft, onSubmit, onSkip,
       <p id="pinyin-quiz-prompt" className="text-center font-serif text-7xl leading-tight sm:text-8xl" aria-label={t("第 {0} 题：{1}", [state.answers.length + 1, item.text])}>{item.text}</p>
 
       <form onSubmit={submit} className="flex flex-col gap-3">
-        <label htmlFor="pinyin-quiz-answer" className="text-sm font-semibold"><UiText text="写出上面{0}的拼音" values={[settings.mode === "word" ? "词语" : "汉字"]} /></label>
+        <label htmlFor="pinyin-quiz-answer" className="text-sm font-semibold"><UiText>{settings.mode === "word" ? "写出上面词语的拼音" : "写出上面汉字的拼音"}</UiText></label>
         <div className="flex gap-2">
           <Input
             ref={input}

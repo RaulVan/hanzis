@@ -17,7 +17,7 @@ for (const locale of ["zh-CN", "zh-TW", "en-US", "ja-JP", "fr-FR"]) {
     await page.goto("/");
     const chinese = locale.startsWith("zh");
     await expect(page.locator("html")).toHaveAttribute("lang", chinese ? "zh-CN" : "en");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(chinese ? "把每一个字，写得更好。" : "Write every character a little better.");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(chinese ? "把每一个字，写得更好。" : "Chinese handwriting worksheets");
     await expect(page.locator("#worksheet-text")).toHaveValue("春眠不觉晓，处处闻啼鸟。");
     await expect(page.getByRole("button", { name: chinese ? "中文" : "English", exact: true })).toHaveAttribute("aria-pressed", "true");
     expect(errors).toEqual([]);
@@ -40,7 +40,7 @@ test("language switches preserve learning content and persist across navigation 
   await expect(page.locator("#worksheet-text")).toHaveValue("字有无，春眠不觉晓。");
   await expect(page.getByRole("navigation", { name: "Main navigation" })).not.toContainText(/[\p{Script=Han}]/u);
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Poetry", exact: true }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Read a poem. Remember a moment.", { timeout: 15_000 });
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Classical Chinese poetry", { timeout: 15_000 });
   await expect(page).toHaveTitle("Learn classical poetry · text, pinyin & notes | Hanzis");
   await page.getByRole("switch", { name: "Show pinyin" }).uncheck();
   await expect(page.locator(".poem-verses")).toContainText("床前明月光");
@@ -102,7 +102,7 @@ test("English pages and a game round render with healthy consoles and responsive
   await page.getByRole("button", { name: "Open menu" }).click();
   await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toBeVisible();
   await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Dictionary" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Look up a character. Discover its meaning.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Chinese dictionary");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });

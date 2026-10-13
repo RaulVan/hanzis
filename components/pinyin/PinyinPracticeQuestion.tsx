@@ -76,7 +76,7 @@ export function PinyinPracticeQuestion({
       <CardContent className="flex flex-col gap-6">
         {question.kind === "sight" ? (
           <div className="flex min-h-32 items-center justify-center rounded-xl bg-muted p-5" aria-label={t("汉字 {0}", [question.char])}>
-            <span className="font-serif text-7xl leading-none"><UiText>{question.char}</UiText></span>
+            <span className="font-serif text-7xl leading-none" lang="zh-CN">{question.char}</span>
           </div>
         ) : (
           <div className="flex min-h-32 flex-col items-center justify-center gap-3 rounded-xl bg-muted p-5">
@@ -119,7 +119,7 @@ export function PinyinPracticeQuestion({
               aria-label={t("选择 {0}", [option.label])}
               className="h-auto min-h-14 w-full whitespace-normal px-4 py-3 text-base"
             >
-              <UiText>{option.label}</UiText>
+              {question.kind === "sight" ? <span className="font-sans" lang="zh-Latn">{option.label}</span> : <UiText>{option.label}</UiText>}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>

@@ -191,7 +191,7 @@ export function ToneLearning() {
                       onClick={() => void audio.play(key, [example])}
                     >
                       <span className="font-serif text-3xl font-normal">{example.char}</span>
-                      <span className="text-base font-normal">{example.pinyin}</span>
+                      <span className="font-sans text-base font-normal" lang="zh-Latn">{example.pinyin}</span>
                       <span className="text-xs font-normal text-muted-foreground">{example.meaning}</span>
                       {audio.activeKey === key ? <Spinner data-icon="inline-end" /> : <Volume2 data-icon="inline-end" aria-hidden="true" />}
                     </Button>

@@ -40,7 +40,7 @@ export function PinyinLearning({ kind }: { kind: PinyinLessonKind }) {
       <Card className="min-w-0">
         <CardHeader className="gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><CardTitle><UiText>{lesson.title}</UiText></CardTitle><CardDescription className="mt-2"><UiText text="{0} 个{1}，点击开始学习。" values={[lesson.items.length, lesson.noun]} /></CardDescription></div>
+            <div><CardTitle><UiText>{lesson.title}</UiText></CardTitle><CardDescription className="mt-2"><UiText text={`{0} 个${lesson.noun}，点击开始学习。`} values={[lesson.items.length]} /></CardDescription></div>
             <Field className="w-auto gap-1">
               <FieldLabel htmlFor="pinyin-category" className="sr-only"><UiText text="{0}分类" values={[lesson.noun]} /></FieldLabel>
               <Select value={category} onValueChange={(value) => { setCategory(value); audio.stop(); }}>
@@ -62,8 +62,8 @@ export function PinyinLearning({ kind }: { kind: PinyinLessonKind }) {
       <Card className="min-w-0">
         <CardHeader className="text-center">
           <CardTitle className="sr-only"><UiText text="{0} {1} 的发音与例字" values={[lesson.noun, selected.letter]} /></CardTitle>
-          <div className="font-serif text-7xl leading-tight" aria-hidden="true">{selected.letter}</div>
-          <CardDescription className="text-xl text-foreground"><UiText>{kind === "initials" ? "呼读音 " : ""}</UiText>{selected.pinyin}</CardDescription>
+          <div className="font-sans text-7xl leading-tight" lang="zh-Latn" aria-hidden="true">{selected.letter}</div>
+          <CardDescription className="text-xl text-foreground"><UiText>{kind === "initials" ? "呼读音 " : ""}</UiText><span className="font-sans" lang="zh-Latn">{selected.pinyin}</span></CardDescription>
           <p className="text-sm text-accent-foreground"><UiText>{selected.category}</UiText></p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -77,7 +77,7 @@ export function PinyinLearning({ kind }: { kind: PinyinLessonKind }) {
             {selected.examples.map((example) => <Button key={example.char} variant="ghost" className="h-auto min-w-0 flex-col gap-1 py-3"
               aria-label={t("播放例字 {0} {1}", [example.char, example.pinyin])} onClick={() => void audio.play(`example:${example.char}`, [example])}>
               <span className="font-serif text-4xl font-normal">{example.char}</span>
-              <span className="text-sm font-normal text-muted-foreground">{example.pinyin}</span>
+              <span className="font-sans text-sm font-normal text-muted-foreground" lang="zh-Latn">{example.pinyin}</span>
               {audio.activeKey === `example:${example.char}` ? <Spinner /> : <Volume2 className="mt-1 size-4" aria-hidden="true" />}
             </Button>)}
           </div>

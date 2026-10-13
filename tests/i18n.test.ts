@@ -16,7 +16,7 @@ test("interface templates translate while learning values stay verbatim", () => 
   assert.equal(translate("第 {0} / {1} 页", "en", ["2", "5"]), "Page 2 / 5");
   assert.equal(translate("用“{0}”生成字帖", "en", ["字"]), "Create worksheet for “字”");
   assert.equal(translate("查询“字”的释义", "en"), "Look up “字”");
-  assert.equal(translate("写出上面{0}的拼音", "en", ["词语"]), "Write the pinyin for the Words above");
+  assert.equal(translate("写出上面词语的拼音", "en"), "Type the pinyin for this word");
   assert.equal(translate("第 2 / 8 句", "zh"), "第 2 / 8 句");
   assert.equal(translate("春眠不觉晓，处处闻啼鸟。", "en"), "春眠不觉晓，处处闻啼鸟。");
 });
