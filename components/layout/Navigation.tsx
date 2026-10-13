@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/stroke/", label: "汉字笔顺" },
+  { href: "/", label: "字帖生成" },
   { href: "/dictionary/", label: "中文字典" },
   { href: "/poetry/", label: "古诗词" },
   { href: "/pinyin/", label: "拼音学习" },

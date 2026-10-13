@@ -1,14 +1,24 @@
 import { expect, test } from "./fixtures";
 
-const labels = ["汉字笔顺", "中文字典", "古诗词", "拼音学习", "汉字游戏"];
-const routes = ["/stroke/", "/dictionary/", "/poetry/", "/pinyin/", "/games/"];
+const labels = ["汉字笔顺", "字帖生成", "中文字典", "古诗词", "拼音学习", "汉字游戏"];
+const routes = ["/stroke/", "/", "/dictionary/", "/poetry/", "/pinyin/", "/games/"];
 for (const width of [1440, 375]) {
-  test(`five navigation entries and copyright flow at ${width}px`, async ({ page }) => {
+  test(`six navigation entries and copyright flow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/about/");
     if (width < 768) await page.getByRole("button", { name: "打开导航" }).click();
     const nav = page.getByRole("navigation", { name: width < 768 ? "移动端主导航" : "主导航", exact: true });
     await expect(nav.getByRole("link")).toHaveText(labels);
+    await nav.getByRole("link", { name: "字帖生成", exact: true }).click();
+    await expect(page).toHaveURL("http://127.0.0.1:4317/");
+    if (width < 768) {
+      await expect(page.getByRole("navigation", { name: "移动端主导航" })).toHaveCount(0);
+      await page.getByRole("button", { name: "打开导航" }).click();
+    }
+    await expect(nav.getByRole("link", { name: "字帖生成", exact: true })).toHaveAttribute("aria-current", "page");
+    await page.goto("/about/");
+    if (width < 768) await page.getByRole("button", { name: "打开导航" }).click();
+
     expect(await nav.getByRole("link").evaluateAll(links => links.map(link => link.getAttribute("href")))).toEqual(routes);
     await page.getByRole("link", { name: "版权说明", exact: true }).click();
     await expect(page).toHaveURL(/\/about\/copyright\/$/);
