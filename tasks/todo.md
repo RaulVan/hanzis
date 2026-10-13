@@ -1,5 +1,16 @@
 # Hanzis 发布版实施与验收
 
+## 2026-10-13：推送部署优化版本
+
+- [x] 用户授权推送部署；确认 origin 为 RaulVan/hanzis、main 自动部署到 Cloudflare Pages/hanzis.com，保留两份原始未跟踪文档。
+- [x] 已推送 e0826f3、8f4dc2b；Cloudflare Pages f8d61af4-6c3b-44aa-ac23-30acfcf7aa19 与 Workers Build 718612fd-96ac-4ef8-b7a1-3f2593f8aed5 均 success。
+- [x] 正式站点1440/375px双语导航、米字格应用预设、669,511字节真实PDF、诗词问答、拼音答题、字典查询、反馈邮箱和版权入口通过；无页面脚本异常或广告请求。
+- [x] 三个场景和版权页HTTP200、自引用canonical、sitemap53条、笔画JSON与许可文件200、MP3 Range206验证通过。
+- [ ] 收尾验证：旧 /ads/banner 仍返回历史898字节广告HTML，带查询参数、Pages默认域名与本次预览均404；已尝试单URL及hanzis.com全站缓存清理，保留DNS/规则不变。补充两个退役地址到版权页的301，待第二轮发布验证。
+- 依据：https://developers.cloudflare.com/pages/configuration/serving-pages/#caching-and-performance 以及 https://developers.cloudflare.com/pages/configuration/redirects/ 。HTTP初测使用Python urllib被403拒绝，curl与实际Chromium访问正常；浏览器导航产生的预取ERR_ABORTED不作为业务失败。
+- 本轮未验证：实体打印、音频人工听辨、邮箱实际收件及AdSense审核；保留原有两份未跟踪文档。
+
+
 ## 2026-10-13：补回字帖导航入口
 
 - [x] 核对 main 与工作区；保留原有两份未跟踪分析文档。

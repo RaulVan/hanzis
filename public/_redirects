@@ -1,0 +1,3 @@
+# Retired ad documents must not fall back to stale Pages assets.
+/ads/banner /about/copyright/ 301
+/ads/banner.html /about/copyright/ 301
