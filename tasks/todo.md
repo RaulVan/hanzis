@@ -1,5 +1,16 @@
 # Hanzis 发布版实施与验收
 
+## 2026-10-14：提交推送并部署功能修复
+
+- [x] 核对 main、origin 和提交 cb15533；保留原有两份未跟踪分析文档，暂存区为空。
+- [x] 推送已验证修复 cb15533；Cloudflare Pages 5397471f-89ab-47f2-8f41-1d1f731f3c1e 与 Workers Build 7fc270de-0f84-4b7d-913b-c8ba0a2b3054 均 success。
+- [x] 正式域名7项修复回归通过：首轮6项通过，1项因页面导航 ERR_CONNECTION_CLOSED 中断，单独复验通过；未改业务代码。日志 /tmp/hanzis-production-review-e2e.log 与 /tmp/hanzis-production-review-retry.log。
+- [x] 首页、笔顺、字典、米字格场景与笔画JSON均HTTP200；旧广告地址仍301至版权页。curl初次TLS连接失败，重试恢复；未关闭证书校验。
+- [x] release:verify复核通过：13,211文件、57HTML、376,369,825字节。
+- 发布记录随本次独立文档提交推送；最终远端一致性在推送后核对。
+- 验证范围：复用上一轮已通过的源码检查与构建，本轮检查部署状态与正式站点；不替代真机、实体打印或人工听辨。
+
+
 ## 2026-10-14：功能与设计审阅修复
 
 - [x] 确认 main 和已有改动；保留两份未跟踪分析文档；复核 Next.js 路由文档及 Hanzi Writer 尺寸 API。
