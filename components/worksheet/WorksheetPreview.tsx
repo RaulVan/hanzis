@@ -10,6 +10,7 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { Skeleton } from "@/components/ui/skeleton";
 import type { WorksheetDocument } from "@/lib/worksheetLayout";
 import { WorksheetPageSVG } from "./WorksheetPageSVG";
+import { WorksheetZoomPreview } from "./WorksheetZoomPreview";
 
 interface WorksheetPreviewProps {
   document: WorksheetDocument;
@@ -41,7 +42,8 @@ export function WorksheetPreview({ document, currentPage, onPageChange, pending,
   return (
     <section aria-labelledby="worksheet-preview-title" className="worksheet-stage w-full min-w-0 rounded-xl border border-border bg-muted p-4 sm:p-5">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <h2 id="worksheet-preview-title" className="ui-heading text-xl font-medium"><UiText text="字帖预览" /></h2>
+        <h2 id="worksheet-preview-title" tabIndex={-1} className="ui-heading text-xl font-medium"><UiText text="字帖预览" /></h2>
+        <WorksheetZoomPreview document={document} currentPage={currentPage} onPageChange={onPageChange} disabled={Boolean(disabled) || pending || !ready} />
         <div className="flex items-center gap-3 text-sm tabular-nums text-muted-foreground" aria-live="polite">
           <Badge variant="outline"><UiText>{document.config.pageSize}</UiText></Badge>
           <span><UiText>{pending ? "排版中" : `共 ${document.pages.length} 页`}</UiText></span>

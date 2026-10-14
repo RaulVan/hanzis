@@ -56,6 +56,7 @@ export function StrokeViewer() {
   const [currentChar, setCurrentChar] = React.useState(queryCharacter ?? DEFAULT_STROKE_CHARACTER);
   const [input, setInput] = React.useState(queryCharacter ?? DEFAULT_STROKE_CHARACTER);
   const [inputError, setInputError] = React.useState("");
+  const [commonExpanded, setCommonExpanded] = React.useState(false);
   const [dataState, setDataState] = React.useState<DataState>({ status: "loading" });
   const [characterInfo, setCharacterInfo] = React.useState<CharacterInfo | null>(null);
   const [infoStatus, setInfoStatus] = React.useState<"loading" | "ready" | "unavailable">("loading");
@@ -120,7 +121,7 @@ export function StrokeViewer() {
       <Card>
         <CardHeader>
           <CardTitle><UiText text="选一个字开始" /></CardTitle>
-          <CardDescription><UiText text="输入多个字时，只查询其中第一个汉字。当前字会保存在网址中，方便再次打开。" /></CardDescription>
+          <CardDescription className="hidden sm:block"><UiText text="输入多个字时，只查询其中第一个汉字。当前字会保存在网址中，方便再次打开。" /></CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <form onSubmit={submitCharacter} className="flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -141,14 +142,15 @@ export function StrokeViewer() {
                 placeholder={t("例如：永")}
                 className="font-serif text-xl"
              />
-              {inputError ? <FieldError id="stroke-character-error"><UiText>{inputError}</UiText></FieldError> : <FieldDescription id="stroke-character-help"><UiText text="支持常用汉字与扩展区汉字；未收录时会明确提示。" /></FieldDescription>}
+              {inputError ? <FieldError id="stroke-character-error"><UiText>{inputError}</UiText></FieldError> : <FieldDescription id="stroke-character-help" className="hidden sm:block"><UiText text="支持常用汉字与扩展区汉字；未收录时会明确提示。" /></FieldDescription>}
             </Field>
             <Button type="submit" className="w-full sm:mb-[28px] sm:w-auto"><Search aria-hidden="true" /><UiText text="查询笔顺" /></Button>
           </form>
 
           <div className="space-y-3">
-            <p className="text-sm font-medium"><UiText text="常用字" /></p>
-            {commonCharacterGroups.map((group) => (
+            <div className="flex items-center justify-between gap-2"><p className="text-sm font-medium"><UiText text="常用字" /></p><Button variant="ghost" className="sm:hidden" aria-expanded={commonExpanded} aria-controls="stroke-common-characters" onClick={() => setCommonExpanded(value => !value)}><UiText text={commonExpanded ? "收起常用字" : "展开常用字"} /></Button></div>
+            {!commonExpanded && <div className="flex gap-2 sm:hidden">{Array.from("一人大木天").map(char => <Button key={char} size="icon" variant={currentChar === char ? "default" : "outline"} aria-label={t("学习“{0}”字", [char])} aria-pressed={currentChar === char} onClick={() => selectCharacter(char)} className="font-serif text-lg">{char}</Button>)}</div>}
+            <div id="stroke-common-characters" className={commonExpanded ? "space-y-3" : "hidden space-y-3 sm:block"}>{commonCharacterGroups.map((group) => (
               <div key={group.label} className="grid min-w-0 gap-2 sm:grid-cols-[56px_minmax(0,1fr)] sm:items-start">
                 <span className="pt-2 text-sm text-muted-foreground"><UiText>{group.label}</UiText></span>
                 <div className="flex min-w-0 flex-wrap gap-2">
@@ -168,7 +170,7 @@ export function StrokeViewer() {
                   ))}
                 </div>
               </div>
-            ))}
+            ))}</div>
           </div>
         </CardContent>
       </Card>

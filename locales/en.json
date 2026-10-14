@@ -1274,5 +1274,21 @@
   "中国教育和科研计算机网：普通话语音": "CERNET: Mandarin phonetics",
   "湖南第一师范学院：怎么使用汉语拼音方案": "Hunan First Normal University: using the Hanyu Pinyin Scheme",
   "版本提示：教育局《悯农》资料采用“盘中飧”，本站沿用“盘中餐”；《登鹳鹊楼》与本站标题“登鹳雀楼”的字形也不同。相关资料用于核对诗意，不据此宣称原文版本完全一致。": "Version note: the Education Bureau resource for 悯农 uses 盘中飧, while this site retains 盘中餐. Its title 登鹳鹊楼 also differs from this site’s 登鹳雀楼. These references support interpretation, not a claim that the text versions are identical.",
-  "当前版本不加载广告脚本或广告位。保留 Google 网站验证标识与 ads.txt 配置；这些配置本身不会加载 Google 广告。": "This version does not load ad scripts or ad units. Google site verification tags and ads.txt configuration remain; these do not load Google ads by themselves."
+  "当前版本不加载广告脚本或广告位。保留 Google 网站验证标识与 ads.txt 配置；这些配置本身不会加载 Google 广告。": "This version does not load ad scripts or ad units. Google site verification tags and ads.txt configuration remain; these do not load Google ads by themselves.",
+  "书写测验支持鼠标、触控板和触摸屏；键盘用户可用“上一笔 / 下一笔”查看演示。": "Practice with a mouse, trackpad or touch screen. Use Previous stroke / Next stroke for a keyboard-accessible demonstration.",
+  "逐笔演示": "Step-by-step demonstration",
+  "上一笔": "Previous stroke",
+  "下一笔": "Next stroke",
+  "逐笔查看：第 {0} / {1} 笔，仅演示，不计入测验。": "Stroke {0} of {1}. Demonstration only; practice scores are unchanged.",
+  "展开常用字": "More characters",
+  "收起常用字": "Fewer characters",
+  "请输入一个有效的拼音音节，例如 xue 或 xué。": "Enter one valid pinyin syllable, such as xue or xué.",
+  "词典加载失败，请检查网络后重试。": "The dictionary could not load. Check your connection and try again.",
+  "放大预览": "Enlarge preview",
+  "字帖大图预览": "Expanded worksheet preview",
+  "放大检查拼音、描红和笔顺；可横向、纵向滚动，导出尺寸不变。": "Zoom in to check pinyin, tracing and strokes. Scroll in either direction. Export dimensions stay the same.",
+  "缩小预览": "Zoom out",
+  "放大预览比例": "Zoom in",
+  "可滚动的字帖大图": "Scrollable worksheet preview",
+  "查看预览": "View preview"
 }

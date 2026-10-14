@@ -6,6 +6,8 @@ import * as React from "react";
 import type HanziWriter from "hanzi-writer";
 import {
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   CircleAlert,
   Lightbulb,
   Pause,
@@ -66,6 +68,7 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
   const [mistakes, setMistakes] = React.useState(0);
   const [completedStrokes, setCompletedStrokes] = React.useState(0);
   const [quizMessage, setQuizMessage] = React.useState("");
+  const [demonstration, setDemonstration] = React.useState<number | null>(null);
   const [reducedMotion, setReducedMotion] = React.useState(false);
   const speed = getStrokeSpeed(speedId);
 
@@ -89,6 +92,7 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
     setMistakes(0);
     setCompletedStrokes(0);
     setQuizMessage("");
+    setDemonstration(null);
 
     void import("hanzi-writer").then(async (module) => {
       if (!active) return;
@@ -98,9 +102,9 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
         border: readDesignToken("--border"),
       };
       writer = module.default.create(container, char, {
-        width: size,
-        height: size,
-        padding: Math.max(16, Math.round(size * 0.07)),
+        width: 300,
+        height: 300,
+        padding: 21,
         renderer: "svg",
         showCharacter: true,
         showOutline: true,
@@ -148,12 +152,23 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
       if (writerRef.current === writer) writerRef.current = null;
       container.replaceChildren();
     };
-  }, [char, data, engineRevision, reducedMotion, size, speed.animationSpeed, speed.delayBetweenStrokes]);
+  }, [char, data, engineRevision, reducedMotion, speed.animationSpeed, speed.delayBetweenStrokes]);
+
+  React.useEffect(() => {
+    if (engineState !== "ready") return;
+    // This API preserves the render state and updates an active quiz's coordinates.
+    writerRef.current?.updateDimensions({ width: size, height: size, padding: Math.max(16, Math.round(size * 0.07)) });
+    for (const path of writerContainerRef.current?.querySelectorAll("path[clip-path]") ?? []) {
+      const id = path.getAttribute("clip-path")?.match(/#([^"')]+)["']?\)$/)?.[1];
+      if (id) path.setAttribute("clip-path", `url(#${id})`);
+    }
+  }, [size, engineState]);
 
   function playAnimation() {
     const writer = writerRef.current;
     if (!writer || engineState !== "ready") return;
     writer.cancelQuiz();
+    setDemonstration(null);
     setActivity("playing");
     setQuizMessage("");
     void writer.animateCharacter({
@@ -181,6 +196,7 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
     const writer = writerRef.current;
     if (!writer || engineState !== "ready") return;
     writer.cancelQuiz();
+    setDemonstration(null);
     setActivity("quiz");
     setMistakes(0);
     setCompletedStrokes(0);
@@ -229,7 +245,14 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
         ? `书写测验进行中，已完成 ${completedStrokes} / ${strokeCount} 笔，修正 ${mistakes} 次。 ${quizMessage}`
         : activity === "quiz-complete"
           ? quizMessage
-          : "画布已准备好";
+          : demonstration !== null ? t("逐笔查看：第 {0} / {1} 笔，仅演示，不计入测验。", [demonstration + 1, strokeCount]) : "画布已准备好";
+
+  const animationButtons = <div className="flex flex-wrap gap-2">
+    {activity === "playing" ? <Button variant="outline" onClick={pauseAnimation}><Pause aria-hidden="true" /><UiText text="暂停" /></Button>
+      : activity === "paused" ? <Button onClick={resumeAnimation}><Play aria-hidden="true" /><UiText text="继续播放" /></Button>
+      : <Button onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><Play aria-hidden="true" /><UiText text="播放动画" /></Button>}
+    <Button variant="outline" onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><RotateCcw aria-hidden="true" /><UiText text="重放" /></Button>
+  </div>;
 
   return (
     <Card className="min-w-0">
@@ -244,6 +267,7 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
       </CardHeader>
       <CardContent className="grid min-w-0 gap-6 xl:grid-cols-[minmax(260px,360px)_minmax(0,1fr)] xl:items-start">
         <div className="mx-auto w-full max-w-[360px]">
+          <div className="mb-4 sm:hidden">{animationButtons}</div>
           <div
             ref={stageRef}
             role="group"
@@ -256,10 +280,20 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
               <path d="M0 0L100 100M100 0L0 100" fill="none" stroke="currentColor" strokeDasharray="1 3" opacity="0.5" />
             </svg>
             <div ref={writerContainerRef} className="absolute inset-0 touch-none [&>svg]:block [&>svg]:size-full" aria-hidden="true" />
+            {demonstration !== null && <svg viewBox="0 0 1024 1024" className="absolute inset-0 size-full bg-card" aria-hidden="true">
+              <path d="M512 0V1024M0 512H1024" fill="none" stroke="currentColor" strokeDasharray="20 20" strokeWidth="4" />
+              <g transform="translate(72 846) scale(.86 -.86)">
+                {data.strokes.slice(0, demonstration + 1).map((path, index) => <path key={index} d={path} fill="currentColor" className={index === demonstration ? "text-primary" : "text-foreground"} />)}
+              </g>
+            </svg>}
             {engineState === "loading" && <div className="absolute inset-0 grid place-items-center bg-card/80"><Skeleton className="size-32 rounded-xl" /></div>}
           </div>
           <p id="stroke-canvas-help" className="mt-3 text-center text-xs leading-6 text-muted-foreground">
-            <UiText text="书写测验支持鼠标、触控板和触摸屏；键盘用户可使用“提示下一笔”逐步查看。" /></p>
+            <UiText text="书写测验支持鼠标、触控板和触摸屏；键盘用户可用“上一笔 / 下一笔”查看演示。" /></p>
+          <div className="mt-3 flex flex-wrap justify-center gap-2" aria-label={t("逐笔演示")} role="group">
+            <Button variant="outline" disabled={engineState !== "ready" || activity === "quiz" || activity === "playing" || activity === "paused" || demonstration === null || demonstration === 0} onClick={() => setDemonstration(value => Math.max(0, (value ?? 0) - 1))}><ChevronLeft aria-hidden="true" /><UiText text="上一笔" /></Button>
+            <Button variant="outline" disabled={engineState !== "ready" || activity === "quiz" || activity === "playing" || activity === "paused" || demonstration === strokeCount - 1} onClick={() => { setActivity("idle"); setDemonstration(value => Math.min(strokeCount - 1, (value ?? -1) + 1)); }}><UiText text="下一笔" /><ChevronRight aria-hidden="true" /></Button>
+          </div>
         </div>
 
         <div className="min-w-0 space-y-5">
@@ -291,18 +325,9 @@ export function StrokeAnimation({ char, data, strokeCount }: StrokeAnimationProp
                 </div>
               </fieldset>
 
-              <section className="space-y-3" aria-labelledby="animation-controls-title">
+              <section className="hidden space-y-3 sm:block" aria-labelledby="animation-controls-title">
                 <h3 id="animation-controls-title" className="text-sm font-medium"><UiText text="动画控制" /></h3>
-                <div className="flex flex-wrap gap-2">
-                  {activity === "playing" ? (
-                    <Button variant="outline" onClick={pauseAnimation}><Pause aria-hidden="true" /><UiText text="暂停" /></Button>
-                  ) : activity === "paused" ? (
-                    <Button onClick={resumeAnimation}><Play aria-hidden="true" /><UiText text="继续播放" /></Button>
-                  ) : (
-                    <Button onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><Play aria-hidden="true" /><UiText text="播放动画" /></Button>
-                  )}
-                  <Button variant="outline" onClick={playAnimation} disabled={engineState !== "ready" || activity === "quiz"}><RotateCcw aria-hidden="true" /><UiText text="重放" /></Button>
-                </div>
+                {animationButtons}
               </section>
 
               <Separator />

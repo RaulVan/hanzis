@@ -23,7 +23,7 @@ export function Navigation() {
   const { language, setLanguage } = useLanguage();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const isActive = (href: string) => href === "/" ? pathname === "/" : `${pathname.replace(/\/$/, "")}/`.startsWith(href);
+  const isActive = (href: string) => href === "/" ? pathname === "/" || pathname.startsWith("/worksheets/") : `${pathname.replace(/\/$/, "")}/`.startsWith(href);
 
   return (
     <header className="site-header no-print">

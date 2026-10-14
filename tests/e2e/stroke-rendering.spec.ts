@@ -22,6 +22,12 @@ for (const width of [1440, 375]) {
     page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
     await page.goto("/stroke/?char=%E8%AF%B4");
     await expect(page.getByText("画布已准备好", { exact: true })).toBeVisible();
+    if (width === 1440) {
+      const help = await page.locator("#stroke-character-help").boundingBox();
+      expect(help!.width).toBeGreaterThan(200);
+      expect(help!.height).toBeLessThan(60);
+    }
+    if (width === 375) await page.getByRole("button", { name: "展开常用字", exact: true }).click();
     for (const char of ["学", "说", "学", "说"]) {
       await page.getByRole("button", { name: `学习“${char}”字`, exact: true }).click();
       await expect(page).toHaveURL(new RegExp(`char=${encodeURIComponent(char)}$`));

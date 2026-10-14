@@ -88,6 +88,7 @@ export function WorksheetGenerator({ scenario }: { scenario?: WorksheetScenarioI
       {scenario ? <WorksheetScenarioControls key={scenario} scenario={scenario} disabled={Boolean(busy) || !hasHydrated || isComposing} /> : null}
       <React.Suspense fallback={null}><WorksheetImportBanner disabled={Boolean(busy)} /></React.Suspense>
       {storageError ? <Alert><AlertTitle><UiText text="本地保存提示" /></AlertTitle><AlertDescription><UiText>{storageError}</UiText></AlertDescription></Alert> : null}
+      <div className="lg:hidden"><Button variant="outline" asChild><a href="#worksheet-preview-title"><UiText text="查看预览" /></a></Button></div>
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
         <aside aria-label={t("字帖设置")} className="no-print min-w-0">
           <Card className="gap-4 py-4">

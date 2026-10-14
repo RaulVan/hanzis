@@ -34,6 +34,8 @@ export function dictionaryShard(word: string): string { return ((word.codePointA
 
 const variantHeads: Record<string, string[]> = { "发": ["發", "髮"], "后": ["後", "后"], "干": ["乾", "幹", "干"], "里": ["里", "裡"], "台": ["臺", "台"], "面": ["面", "麵"], "复": ["復", "複"], "钟": ["鐘", "鍾"], "系": ["系", "係", "繫"], "只": ["只", "隻"], "征": ["征", "徵"] };
 
+export class DictionaryInputError extends Error {}
+
 export function validateDictionaryQuery(query: DictionaryQuery): string | null {
   if (Array.from(query.q).length > 24) return "最多输入 24 个字，或一个拼音音节。";
   if (query.q && !/^[\p{Script=Han}a-züêāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ1-4\s]+$/iu.test(query.q)) return "请输入汉字、词语或拼音，不需要标点。";
@@ -43,7 +45,7 @@ export function validateDictionaryQuery(query: DictionaryQuery): string | null {
 
 export async function searchDictionary(query: DictionaryQuery): Promise<DictionarySearchResult> {
   const error = validateDictionaryQuery(query);
-  if (error) throw new Error(error);
+  if (error) throw new DictionaryInputError(error);
   const cnchar = await loadCnchar();
   if (!cnchar) throw new Error("汉字检索数据加载失败，请重试。");
   const text = query.q.trim();
@@ -52,8 +54,12 @@ export async function searchDictionary(query: DictionaryQuery): Promise<Dictiona
   let characters: string[] = [];
   if (characterOnly || (query.kind === "all" && Array.from(text).length === 1)) {
     if (pinyinQuery) {
-      const value = cnchar.spellToWord(text.toLowerCase().replaceAll(" ", ""), "array", "alltone");
-      characters = Array.isArray(value) ? value : Array.from(value);
+      try {
+        const value = cnchar.spellToWord(text.toLowerCase().replaceAll(" ", ""), "array", "alltone");
+        characters = Array.isArray(value) ? value : Array.from(value);
+      } catch {
+        throw new DictionaryInputError("请输入一个有效的拼音音节，例如 xue 或 xué。");
+      }
     } else characters = text ? [...new Set(Array.from(filterChineseCharacters(text)))] : hanziManifest.characters;
     characters = characters.filter(char => (!query.strokes || getStrokeCount(char) === query.strokes) && (!query.radical || getRadical(char).radical === query.radical));
     if (characterOnly) return { terms: [...new Set(characters)], unavailableSources: [] };
